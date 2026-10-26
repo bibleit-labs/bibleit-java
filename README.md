@@ -92,13 +92,15 @@ var ssh = new SshClient(command -> {
     // stdout is the command's InputStream; the application owns its lifetime.
     return Protocol.decodeCommandResponse(command, stdout);
 });
-var reading = ssh.readVerses(new Reference("web", "43", 3, 16));
+var reading = ssh.readVerses(new Reference("web", "John", 3, 16));
 System.out.println(reading.verses().getFirst().text());
 ```
 
 `Commands` constructs validated protocol v1 commands; `Protocol` decodes finite
 responses. `SshClient` adds typed discovery, reading, translations, token metadata,
 organization and Live results. Unknown fields remain in `raw()` or `fields()`.
+SSH references accept a source book ID or a normalized book name from the
+selected translation's catalog, including names containing spaces.
 The executor owns authentication, host-key verification, cancellation and
 connection lifetime. Streaming subscriptions need a caller-owned connection.
 Command and result `toString()` methods redact their contents. Wire values and

@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Scripture reference. Zero chapter or verse means omitted.
+ * Scripture reference using a source book ID or a normalized book name from the
+ * selected translation's catalog. Zero chapter or verse means omitted.
  * @param translation the translation
- * @param book the book
+ * @param book the source book ID or translation-specific book name
  * @param chapter the chapter
  * @param verse the verse
  */
@@ -15,7 +16,7 @@ public record Reference(String translation, String book, int chapter, int verse)
     /**
      * Copies and validates the reference components.
      * @param translation the translation
-     * @param book the book
+     * @param book the source book ID or translation-specific book name
      * @param chapter the chapter
      * @param verse the verse
      */
