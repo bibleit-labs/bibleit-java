@@ -21,6 +21,7 @@ jobs:
           check-latest: true
           cache: maven
       - run: ./mvnw --batch-mode --no-transfer-progress verify
+        shell: bash
   contract:
     runs-on: ubuntu-latest
     steps:
