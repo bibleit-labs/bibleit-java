@@ -1,78 +1,67 @@
-# Maven Central releases
+# Releasing to Maven Central
 
-Coordinates: `app.bibleit:bibleit-java`. The POM is prepared for `0.0.1`;
-this document does not assert that it has been published.
+The library is published as `app.bibleit:bibleit-java` using Gradle and the
+[Gradle Maven Publish Plugin](https://vanniktech.github.io/gradle-maven-publish-plugin/central/).
 
-## One-time setup
+## Maintainer setup
 
-1. Sign in at [Central Portal](https://central.sonatype.com/publishing/namespaces).
-   Register `app.bibleit`. Add its assigned verification key as a TXT record at
-   the root `bibleit.app` (DNS name `@`). Confirm public DNS with
-   `dig +short TXT bibleit.app`, then select **Verify Namespace**.
-   Wait until the portal shows **Verified**. Retain the TXT record.
-2. In the Central Portal avatar menu, open your account and generate a **user
-   token**. Keep both the token username and password; they differ from your
-   normal sign-in credentials. Do not paste either into chat or source control.
-3. Authenticate GitHub CLI with `gh auth login`. Run
-   `bash scripts/setup-publishing.sh` locally. The script prompts for the Central
-   credentials, creates a dedicated passphrase-protected RSA signing key named
-   `Bibleit Labs` (or reuses that exact identity), publishes its public key and
-   stores four secrets in the repository's `maven-central` environment:
+Register the `app.bibleit` namespace in [Central Portal](https://central.sonatype.com).
+Prove control of `bibleit.app` using the assigned root-domain DNS TXT record.
+Wait until the namespace is verified before publishing.
 
-   | Secret | Value |
-   | --- | --- |
-   | `MAVEN_CENTRAL_USERNAME` | Central user-token username |
-   | `MAVEN_CENTRAL_PASSWORD` | Central user-token password |
-   | `MAVEN_GPG_PRIVATE_KEY` | ASCII-armored secret signing key |
-   | `MAVEN_GPG_PASSPHRASE` | Signing key passphrase |
+Generate a Central **user token**, keeping its token username and password
+separate from account sign-in credentials. In an authenticated local terminal,
+run `bash scripts/setup-publishing.sh`. This creates or reuses a passphrase-protected
+`Bibleit Labs` signing key and configures the repository's `maven-central`
+GitHub Actions environment:
 
-   The script never writes a private-key export into the repository. Securely
-   back up the signing key and revocation certificate outside the checkout.
-   Configure required reviewers on `maven-central` if desired. Protect release
-   tags and restrict who can modify publishing workflows.
+| Secret | Value |
+| --- | --- |
+| `MAVEN_CENTRAL_USERNAME` | Central user-token username |
+| `MAVEN_CENTRAL_PASSWORD` | Central user-token password |
+| `MAVEN_GPG_PRIVATE_KEY` | ASCII-armored secret signing key |
+| `MAVEN_GPG_PASSPHRASE` | Signing key passphrase |
 
-References: [namespace verification](https://central.sonatype.org/register/namespace/),
-[Central publishing plugin](https://central.sonatype.org/publish/publish-portal-maven/),
-[GPG signing requirements](https://central.sonatype.org/publish/requirements/gpg/).
+The workflow maps these secrets to the publishing plugin's Gradle environment
+properties. It uses in-memory signing; no private-key file enters the checkout.
+Keep credentials out of source, issues and logs. Back up the signing key and
+revocation certificate securely. Configure environment reviewers and tag
+protection according to the project's release policy.
 
-## Prepare and publish
+Publish the **public** key to a
+[Central-supported keyserver](https://central.sonatype.org/publish/requirements/gpg/)
+and verify retrieval by its full fingerprint before releasing. Keyserver
+propagation can delay validation; a successful upload alone does not establish
+that Central can retrieve it. Never share the private key or passphrase publicly.
 
-1. Run `./mvnw verify`, `python3 scripts/generate.py` and check generated diffs.
-   Run `docker build -t bibleit-java:verify .` for Java 27 Linux validation.
-2. Update the POM version and changelog. Commit using Conventional Commits.
-   For `0.0.1`, keep the existing POM version.
-3. Merge the reviewed changes onto `main` and ensure CI passes.
-4. Tag that commit and push:
+## Release process
+
+1. Run `./gradlew clean build`, `python3 scripts/generate.py` and
+   `docker build -t bibleit-java:verify .`.
+2. Set `version` in `gradle.properties` and update `CHANGELOG.md`.
+3. Commit using Conventional Commits, merge to `main` and ensure CI passes.
+4. Create and push an annotated release tag matching that version:
 
    ```sh
    git tag -a v0.0.1 -m 'chore(release): 0.0.1'
    git push origin v0.0.1
    ```
 
-   The tag workflow checks that the tag matches the POM and belongs to `main`,
-   then runs `./mvnw -Prelease deploy`: tests, library/sources/Javadoc JARs,
-   GPG signatures and upload through Central Publisher Portal. It automatically
-   publishes only after validation and waits for publication. Manual dispatch
-   accepts an existing release tag, using the same checks.
-5. Inspect the Actions result and Central deployment. Confirm resolution of
-   `app.bibleit:bibleit-java:0.0.1` from a clean Maven cache. Indexing can lag.
-   Only then announce the release, make the GitHub repository public, and update
-   bibleit-server documentation as planned by the maintainer.
+5. The publishing workflow validates credentials, the tag, version and ancestry,
+   then runs `./gradlew build publishAndReleaseToMavenCentral`. Gradle generates
+   the POM, library, sources and Javadoc JARs, signs them and submits them to
+   Central. Inspect both the Actions result and Central deployment status.
+6. Verify resolution from a clean dependency cache before announcing the release.
+   Central indexing and repository availability may lag publication.
 
-Published coordinates are immutable. Never reuse a version after publication.
-An ambiguous or failed run requires inspecting Central before rerunning; automatic
-workflow concurrency prevents overlapping releases but does not make reruns safe.
+Manual dispatch accepts an existing release tag and applies the same checks.
+A failed or ambiguous run requires inspecting Central before retrying. Published
+coordinates are immutable; never replace a published version or move a published
+release tag.
 
-## Local release bundle check
+## Local publication checks
 
-With a local signing key, the release profile can build a signed upload bundle
-without publishing:
-
-```sh
-./mvnw -Prelease -Dcentral.skipUpload=true deploy
-```
-
-For a full local publication, supply a Maven `settings.xml` server named `central`
-with user-token credentials. Prefer CI secret storage for regular releases.
-Never commit settings containing credentials. Normal `verify` builds do not load
-the Central publishing extension or need signing credentials.
+`./gradlew build generatePomFileForMavenPublication` validates the unsigned
+artifacts and POM without publishing. With the signing environment configured,
+`./gradlew publishToMavenLocal` also exercises signing against a local repository.
+Normal builds and tests do not require credentials.

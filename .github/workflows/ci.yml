@@ -6,6 +6,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   verify:
     strategy:
@@ -19,8 +22,8 @@ jobs:
           distribution: temurin
           java-version: '27'
           check-latest: true
-          cache: maven
-      - run: ./mvnw --batch-mode --no-transfer-progress verify
+          cache: gradle
+      - run: ./gradlew --no-daemon build
         shell: bash
   contract:
     runs-on: ubuntu-latest

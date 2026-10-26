@@ -1,19 +1,20 @@
 # Bibleit Java client
 
-Java **27** SDK for [Bibleit](https://bibleit.app), following the Go and Lua
-clients' operation names with Java camelCase methods, Java beans for REST models,
-records for SSH results, and checked exceptions for I/O failures.
+A Java SDK for [Bibleit](https://bibleit.app), providing Scripture reading,
+search, Live resources, OAuth authentication, and SSH protocol helpers.
 
 ## Installation
 
 Maven coordinates: `app.bibleit:bibleit-java`.
 
-```xml
-<dependency>
-  <groupId>app.bibleit</groupId>
-  <artifactId>bibleit-java</artifactId>
-  <version>0.0.1</version>
-</dependency>
+```kotlin
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("app.bibleit:bibleit-java:0.0.1")
+}
 ```
 
 Java 27 or newer is required. The package is `app.bibleit`.
@@ -50,10 +51,9 @@ there are no application retry loops. See [API and transport details](docs/api.m
 
 ```java
 import app.bibleit.Options;
-import com.fasterxml.jackson.databind.JsonNode;
 
 var pages = client.readPersonalBookPages(accountId, "web", "43", Options.defaults());
-for (JsonNode page; (page = pages.nextPage()) != null;) {
+for (var page : pages) {
     System.out.println(page.path("verses"));
 }
 var event = client.pollLiveEvents(liveId, "", 25);
@@ -100,7 +100,7 @@ Wire commands and raw fields can contain secrets; their `toString()` is redacted
 
 ```sh
 sdk env                      # optional: selects the installed OpenJDK 27
-./mvnw verify                # tests, library, sources and Javadoc JARs
+./gradlew build              # tests, library, sources and Javadoc JARs
 python3 scripts/generate.py  # regenerate checked-in wrappers and models
 # Linux validation using the official Java 27 image:
 docker build -t bibleit-java:verify .

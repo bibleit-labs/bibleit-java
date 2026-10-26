@@ -88,15 +88,52 @@ class ClientTest {
         var calls = new AtomicInteger();
         var client = new BibleitClient("", r -> response(200,page(calls.getAndIncrement()==0 ? "\"next\"" : "null",calls.get()),Map.of()));
         var options = Options.builder().query("limit","1").build();
-        var pages = client.readPersonalBookPages("account","web","43",options);
-        assertEquals(0,calls.get()); assertNotNull(pages.nextPage()); assertEquals(1,calls.get());
-        assertNotNull(pages.nextPage()); assertNull(pages.nextPage()); assertEquals(2,calls.get());
+        var pages = client.readPersonalBookPages("account","web","43",options).iterator();
+        assertEquals(0,calls.get()); assertNotNull(pages.next()); assertEquals(1,calls.get());
+        assertNotNull(pages.next()); assertFalse(pages.hasNext()); assertEquals(2,calls.get());
         assertFalse(options.query.containsKey("after"));
     }
     @Test void paginationRejectsLoopsAndStopsAfterFailure() throws Exception {
         var client = new BibleitClient("",r -> response(200,page("\"same\"",1),Map.of()));
+        var pages = client.readPersonalBookPages("account","web","43",Options.defaults()).iterator();
+        assertNotNull(pages.next()); assertThrows(UncheckedIOException.class,pages::hasNext); assertFalse(pages.hasNext());
+    }
+    @Test void enhancedForLoopsAreLazyAndRepeatable() throws Exception {
+        var calls = new AtomicInteger();
+        var closed = new AtomicInteger();
+        var client = new BibleitClient("", request -> {
+            calls.incrementAndGet();
+            boolean second = request.uri().getQuery().contains("after=");
+            return new Response(200, HttpHeaders.of(Map.of(), (k,v) -> true),
+                new ByteArrayInputStream(page(second ? "null" : "\"next\"", second ? 2 : 1).getBytes(StandardCharsets.UTF_8)) {
+                    @Override public void close() { closed.incrementAndGet(); }
+                });
+        });
         var pages = client.readPersonalBookPages("account","web","43",Options.defaults());
-        assertNotNull(pages.nextPage()); assertThrows(IOException.class,pages::nextPage); assertNull(pages.nextPage());
+        var iterator = pages.iterator();
+        assertEquals(0,calls.get());
+        assertTrue(iterator.hasNext()); assertTrue(iterator.hasNext());
+        assertEquals(1,calls.get()); assertEquals(1,closed.get());
+        assertNotNull(iterator.next());
+        for (var page : pages) { assertNotNull(page); break; }
+        assertEquals(2,calls.get());
+        int count = 0;
+        for (var page : pages) { count++; assertNotNull(page); }
+        assertEquals(2,count); assertEquals(4,calls.get()); assertEquals(4,closed.get());
+        var empty = client.readPersonalBookPages("account","web","43",Options.defaults()).iterator();
+        assertNotNull(empty.next()); assertNotNull(empty.next());
+        assertFalse(empty.hasNext());
+        assertThrows(NoSuchElementException.class,empty::next);
+    }
+    @Test void iteratorInterruptionPreservesInterruptFlag() {
+        var client = new BibleitClient("",request -> { throw new InterruptedException("cancelled"); });
+        var iterator = client.readPersonalBookPages("account","web","43",Options.defaults()).iterator();
+        try {
+            var failure = assertThrows(UncheckedIOException.class,iterator::hasNext);
+            assertInstanceOf(InterruptedIOException.class,failure.getCause());
+            assertTrue(Thread.currentThread().isInterrupted());
+            assertFalse(iterator.hasNext());
+        } finally { Thread.interrupted(); }
     }
     @Test void oauthHasSeparateOriginAndValidatedPkce() throws Exception {
         var requests = new ArrayList<HttpRequest>();

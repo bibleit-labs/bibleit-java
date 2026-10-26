@@ -1,13 +1,13 @@
 name: Publish to Maven Central
 on:
-  push:
-    tags: ['v*']
   workflow_dispatch:
     inputs:
       tag:
         description: 'Existing release tag, for example v0.0.1'
         required: true
         type: string
+  push:
+    tags: ['v*']
 permissions:
   contents: read
 concurrency:
@@ -27,12 +27,7 @@ jobs:
           distribution: temurin
           java-version: '27'
           check-latest: true
-          cache: maven
-          server-id: central
-          server-username: MAVEN_CENTRAL_USERNAME
-          server-password: MAVEN_CENTRAL_PASSWORD
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+          cache: gradle
       - name: Check release version and credentials
         env:
           RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
@@ -45,14 +40,15 @@ jobs:
           for name in MAVEN_CENTRAL_USERNAME MAVEN_CENTRAL_PASSWORD MAVEN_GPG_PRIVATE_KEY MAVEN_GPG_PASSPHRASE; do
             if [ -z "${!name}" ]; then echo "Missing secret: $name"; exit 1; fi
           done
-          VERSION=$(./mvnw -q -DforceStdout help:evaluate -Dexpression=project.version)
+          VERSION=$(sed -n 's/^version=//p' gradle.properties)
           test "$RELEASE_TAG" = "v$VERSION"
           [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
           test "$(git rev-parse HEAD)" = "$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")"
           git merge-base --is-ancestor HEAD origin/main
       - name: Verify and publish signed artifacts
-        run: ./mvnw --batch-mode --no-transfer-progress -Prelease deploy
+        run: ./gradlew --no-daemon build publishAndReleaseToMavenCentral
         env:
-          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.MAVEN_GPG_PASSPHRASE }}

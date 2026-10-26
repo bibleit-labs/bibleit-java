@@ -5,10 +5,9 @@ commands, `OAuthClient` handles registered delegated OAuth, and `AuthClient`
 handles official CLI browser-code exchange. Constructors accept a `Transport`
 when applications need a trusted test or network adapter.
 
-Go `GetPersonalIdentity(ctx, options)` maps to Java
-`getPersonalIdentity(options)`; every REST wrapper also has an overload using
+`getPersonalIdentity(options)` calls the personal identity resource; every REST wrapper also has an overload using
 `Options.defaults()`. Path parameters retain URL order. Options follow path
-parameters. Use Java interruption and request timeouts in place of Go contexts.
+parameters. Use Java interruption and request timeouts to control request execution.
 Methods throw `IOException` and `InterruptedException`; HTTP errors are
 `ProblemException`, OAuth errors `OAuthException`, and SSH errors
 `ServerException`. Errors retain unknown server codes. Messages omit server detail.
@@ -62,16 +61,29 @@ metadata. `call(operationId, pathParameters, options)` is the equivalent generic
 entry point. The generated wrappers use exactly those operations.
 
 To update, replace `contract/openapi.json` with a reviewed server export, run
-`python3 scripts/generate.py`, review its diff, and run `./mvnw verify`.
+`python3 scripts/generate.py`, review its diff, and run `./gradlew build`.
 No sibling repository is needed for builds or regeneration.
 
 ## Pagination, polling and cancellation
 
-`readPersonalBookPages` and `readBookPages` return a stateful `BookPages` reader.
-`nextPage()` returns one `JsonNode` page or null at completion, with checked
-exceptions on failures. A reader cannot be resumed after failure. Each new reader
-starts an independent traversal. Options are copied, and cursor, count, rights,
-translation and ordered verse coordinates are checked before a page is returned.
+`readPersonalBookPages` and `readBookPages` return `BookPages`, an
+`Iterable<JsonNode>`. Each iterator starts an independent lazy traversal:
+
+```java
+for (var page : client.readPersonalBookPages(accountId, "web", "43", Options.defaults())) {
+    System.out.println(page.path("verses"));
+}
+```
+
+Repeated `hasNext()` calls cache the next page. No request is made until an
+iterator is advanced, and each response is closed before the page is returned.
+Breaking the loop stops fetching. A fresh enhanced `for` loop starts again from
+the original options. Cursor, count, rights, translation and ordered verse
+coordinates are validated before yielding each page.
+
+Iterator methods throw `UncheckedIOException` on I/O failures. Interruption is
+wrapped in an `InterruptedIOException`, and the thread's interrupt flag is
+restored. A failed iterator is exhausted; partial results are incomplete.
 
 `pollLiveEvents(liveId, after, waitSeconds)` accepts 0–25 seconds and returns one
 validated v1 snapshot, change or heartbeat. Cursors are opaque and are not ETags.

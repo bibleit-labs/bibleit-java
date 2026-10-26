@@ -30,6 +30,7 @@ printf 'Bibleit signing verification\n' | gpg --batch --yes --pinentry-mode loop
     --passphrase-fd 3 --local-user "$fingerprint" --detach-sign --output /dev/null \
     3< <(printf '%s\n' "$signing_passphrase")
 gpg --keyserver hkps://keyserver.ubuntu.com --send-keys "$fingerprint"
+gpg --keyserver hkps://keys.openpgp.org --send-keys "$fingerprint"
 gh api --method PUT "repos/$repo/environments/$environment" >/dev/null
 printf '%s' "$central_username" | gh secret set MAVEN_CENTRAL_USERNAME --repo "$repo" --env "$environment"
 printf '%s' "$central_password" | gh secret set MAVEN_CENTRAL_PASSWORD --repo "$repo" --env "$environment"

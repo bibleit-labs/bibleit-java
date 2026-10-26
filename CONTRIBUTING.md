@@ -1,6 +1,6 @@
 # Contributing
 
-Use Java 27 and the checked-in Maven Wrapper (`./mvnw verify`). Docker validation
+Use Java 27 and the checked-in Gradle Wrapper (`./gradlew build`). Docker validation
 runs `docker build -t bibleit-java:verify .`. Tests use synthetic responses and
 shared protocol fixtures; they make no production API requests.
 

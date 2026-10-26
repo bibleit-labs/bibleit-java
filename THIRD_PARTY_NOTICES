@@ -1,17 +1,17 @@
 Bibleit Java client is licensed under MIT; see LICENSE.
 
-The Maven Wrapper scripts (mvnw, mvnw.cmd) are from Apache Maven Wrapper 3.3.4
+The Gradle Wrapper scripts and wrapper JAR are from Gradle 9.8.2
 and are licensed under the Apache License, Version 2.0. Their original notices
 are retained in the scripts. License: LICENSES/Apache-2.0.txt (also https://www.apache.org/licenses/LICENSE-2.0)
 
 The pinned Bibleit contract and protocol fixtures originate from bibleit-go,
 Copyright (c) 2022 Felipe Mamud, MIT License (see LICENSE).
 
-Runtime dependencies are resolved separately by Maven and are not shaded into
+Runtime dependencies are resolved separately by Gradle and are not shaded into
 this project's JAR:
 - Jackson Databind, Core and Annotations: Apache License, Version 2.0.
   https://github.com/FasterXML/jackson-databind
 
 When redistributing dependencies or compiled applications, retain their packaged
-licenses and notices. JUnit and Maven build plugins are build/test tools and are
+licenses and notices. JUnit and Gradle build plugins are build/test tools and are
 not runtime dependencies of this SDK.
