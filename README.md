@@ -6,8 +6,7 @@ records for SSH results, and checked exceptions for I/O failures.
 
 ## Installation
 
-Coordinates reserved for the first release (publication is tracked in
-[the release guide](docs/releasing.md)):
+Maven coordinates: `app.bibleit:bibleit-java`.
 
 ```xml
 <dependency>

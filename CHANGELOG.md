@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.1 — unreleased
+## 0.0.1 — 2026-10-26
 
 - Initial Java 27 SDK with 95 REST operations and 105 schema models.
 - Streaming responses/uploads, problem metadata, conditional writes and options.
