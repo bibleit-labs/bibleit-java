@@ -1,0 +1,20 @@
+package app.bibleit;
+
+import java.util.*;
+
+/** Scripture reference. Zero chapter or verse means omitted. */
+public record Reference(String translation, String book, int chapter, int verse) {
+    public Reference {
+        Objects.requireNonNull(translation); Objects.requireNonNull(book);
+        if (chapter < 0 || chapter > 255 || verse < 0 || verse > 255 || verse != 0 && chapter == 0)
+            throw new IllegalArgumentException("Invalid chapter or verse");
+    }
+    List<String> arguments(boolean requireTranslation) {
+        var args = new ArrayList<String>();
+        if (requireTranslation || !translation.isEmpty()) args.add(translation);
+        args.add(book);
+        if (chapter != 0) args.add(Integer.toString(chapter));
+        if (verse != 0) args.add(Integer.toString(verse));
+        return args;
+    }
+}

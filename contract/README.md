@@ -1,0 +1,18 @@
+# Pinned Bibleit contract
+
+`openapi.json` and protocol fixtures were copied from the local bibleit-go
+checkout on 2026-10-26. They are build inputs checked into this repository;
+no sibling checkout or server is required to build the client.
+
+REST wrappers and Java schema beans are generated with `python3 scripts/generate.py`.
+The contract contains 95 operation IDs and 105 schemas. CI verifies regeneration
+and reflects over every generated method against the contract.
+
+`fixtures/responses-v1.json` exercises finite SSH response framing, quoting,
+control escapes, Unicode, opaque compound fields, error metadata and malformed
+data. The tests consume all shared response cases. `requests-v1.json` preserves
+the upstream request examples and server-side expectations; representative Java
+builder tests exercise its quoting rules. Serialized Erlang terms are never evaluated.
+
+The contract establishes client wire compatibility, not production deployment,
+provider correctness, account permissions or successful publication.
