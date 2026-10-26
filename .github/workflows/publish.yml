@@ -40,6 +40,7 @@ jobs:
           for name in MAVEN_CENTRAL_USERNAME MAVEN_CENTRAL_PASSWORD MAVEN_GPG_PRIVATE_KEY MAVEN_GPG_PASSPHRASE; do
             if [ -z "${!name}" ]; then echo "Missing secret: $name"; exit 1; fi
           done
+          bash scripts/verify-signing-key.sh
           VERSION=$(sed -n 's/^version=//p' gradle.properties)
           test "$RELEASE_TAG" = "v$VERSION"
           [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]

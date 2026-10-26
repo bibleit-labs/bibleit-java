@@ -34,9 +34,19 @@ and verify retrieval by its full fingerprint before releasing. Keyserver
 propagation can delay validation; a successful upload alone does not establish
 that Central can retrieve it. Never share the private key or passphrase publicly.
 
+The setup script and publishing workflow run a public-key preflight before
+uploading release artifacts. It derives the primary fingerprint from signing-key
+metadata through standard input, then requires an exact public fingerprint match
+from the supported Ubuntu keyserver. Private key material is neither printed nor
+written to a temporary file. To check an already-known public fingerprint:
+
+```sh
+bash scripts/verify-signing-key.sh "$PUBLIC_SIGNING_FINGERPRINT"
+```
+
 ## Release process
 
-1. Run `./gradlew clean build`, `python3 scripts/generate.py` and
+1. Run `./gradlew clean build`, `./gradlew generateCode` and
    `docker build -t bibleit-java:verify .`.
 2. Set `version` in `gradle.properties` and update `CHANGELOG.md`.
 3. Commit using Conventional Commits, merge to `main` and ensure CI passes.

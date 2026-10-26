@@ -31,6 +31,8 @@ printf 'Bibleit signing verification\n' | gpg --batch --yes --pinentry-mode loop
     3< <(printf '%s\n' "$signing_passphrase")
 gpg --keyserver hkps://keyserver.ubuntu.com --send-keys "$fingerprint"
 gpg --keyserver hkps://keys.openpgp.org --send-keys "$fingerprint"
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+bash "$script_dir/verify-signing-key.sh" "$fingerprint"
 gh api --method PUT "repos/$repo/environments/$environment" >/dev/null
 printf '%s' "$central_username" | gh secret set MAVEN_CENTRAL_USERNAME --repo "$repo" --env "$environment"
 printf '%s' "$central_password" | gh secret set MAVEN_CENTRAL_PASSWORD --repo "$repo" --env "$environment"
