@@ -3,6 +3,7 @@ import com.vanniktech.maven.publish.SourcesJar
 
 plugins {
     `java-library`
+    id("org.openapi.generator") version "7.26.0"
     id("com.vanniktech.maven.publish") version "0.37.0"
 }
 
@@ -33,7 +34,10 @@ tasks.test {
 }
 
 tasks.javadoc {
-    (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:all,-missing", "-quiet")
+    (options as StandardJavadocDocletOptions).apply {
+        addStringOption("Xdoclint:all", "-quiet")
+        addBooleanOption("Werror", true)
+    }
 }
 
 tasks.processResources {
@@ -95,4 +99,53 @@ tasks.named<Jar>("sourcesJar") {
 // Validate the Javadoc archive during the normal build as well as publication.
 tasks.named("build") {
     dependsOn("plainJavadocJar")
+}
+
+
+openApiGenerate {
+    generatorName.set("java")
+    library.set("native")
+    inputSpec.set(layout.projectDirectory.file("contract/openapi.json").asFile.path)
+    outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.path)
+    templateDir.set(layout.projectDirectory.dir("contract/templates").asFile.path)
+    configFile.set(layout.projectDirectory.file("contract/openapi-generator.yaml").asFile.path)
+    globalProperties.set(mapOf(
+        "apis" to "",
+        "supportingFiles" to "",
+        "apiTests" to "false",
+        "apiDocs" to "false"
+    ))
+    parameterNameMappings.set(mapOf("wait" to "waitSeconds", "q" to "query"))
+    configOptions.set(mapOf("hideGenerationTimestamp" to "true"))
+}
+
+tasks.register<Copy>("generateRestOperations") {
+    group = "code generation"
+    description = "Regenerates the REST directory and wrappers with OpenAPI Generator."
+    dependsOn(tasks.openApiGenerate)
+    from(layout.buildDirectory.dir("generated/openapi/src/main/java")) {
+        include("app/bibleit/Operations.java", "app/bibleit/BibleitClient.java", "app/bibleit/Queries.java")
+    }
+    into(layout.projectDirectory.dir("src/main/java"))
+}
+
+
+tasks.register<Exec>("generateModels") {
+    group = "code generation"
+    description = "Regenerates Jackson schema beans with explicit null and field-presence support."
+    commandLine("python3", "scripts/generate-models.py")
+}
+
+tasks.register("generateCode") {
+    group = "code generation"
+    description = "Regenerates the checked-in REST operations, queries, and schema models."
+    dependsOn("generateModels", "generateRestOperations")
+}
+
+tasks.compileJava {
+    mustRunAfter("generateRestOperations", "generateModels")
+}
+
+tasks.named("sourcesJar") {
+    mustRunAfter("generateRestOperations", "generateModels")
 }

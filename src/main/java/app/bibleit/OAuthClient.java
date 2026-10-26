@@ -2,16 +2,38 @@ package app.bibleit;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.*;
+import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-/** Registered delegated OAuth. Applications validate state and securely rotate stored tokens. */
+/**
+ * Registered delegated OAuth. Applications validate state and securely rotate stored tokens.
+ */
 public final class OAuthClient {
     private final Transport transport;
+    /**
+     * Creates a registered OAuth client on the fixed website origin.
+     */
     public OAuthClient() { this(Transport.standard()); }
+    /**
+     * Creates a registered OAuth client on the fixed website origin.
+     * @param transport the trusted application transport
+     */
     public OAuthClient(Transport transport) { this.transport = Objects.requireNonNull(transport); }
+    /**
+     * Builds a consent URI with S256 PKCE and explicit scopes; the application validates callback state.
+     * @param clientId the registered OAuth client identifier
+     * @param redirectUri the registered callback URI
+     * @param state the caller-generated callback state
+     * @param challenge the S256 PKCE challenge
+     * @param scopes the requested scope names
+     * @return the website consent URI
+     */
     public static URI authorizationUrl(String clientId, String redirectUri, String state, String challenge, List<String> scopes) {
         required(clientId, redirectUri, state);
         if (!challenge.matches("[A-Za-z0-9_-]{43}") || scopes.isEmpty() || scopes.stream().anyMatch(String::isBlank))
@@ -19,20 +41,52 @@ public final class OAuthClient {
         return URI.create(BibleitClient.SERVER_ENDPOINT + "/oauth/authorize?" + form(Map.of("response_type", "code", "client_id", clientId,
             "redirect_uri", redirectUri, "state", state, "code_challenge", challenge, "code_challenge_method", "S256", "scope", String.join(" ", scopes))));
     }
+    /**
+     * Reads the website’s OAuth authorization-server metadata.
+     * @return the authorization-server metadata
+     * @throws IOException if I/O or response processing fails
+     * @throws InterruptedException if execution is interrupted
+     */
     public Models.OAuthMetadata metadata() throws IOException, InterruptedException {
         try (var response = request("GET", "/.well-known/oauth-authorization-server", Map.of())) { return response.decode(Models.OAuthMetadata.class); }
     }
+    /**
+     * Exchanges a single-use authorization code without an SDK retry loop.
+     * @param clientId the registered OAuth client identifier
+     * @param code the single-use authorization or server error code
+     * @param redirectUri the registered callback URI
+     * @param verifier the private PKCE verifier
+     * @return the issued token values; the caller owns secure storage
+     * @throws IOException if I/O or response processing fails
+     * @throws InterruptedException if execution is interrupted
+     */
     public Models.OAuthToken exchangeCode(String clientId, String code, String redirectUri, String verifier) throws IOException, InterruptedException {
         required(clientId, code, redirectUri);
         if (!verifier.matches("[A-Za-z0-9._~-]{43,128}")) throw new IllegalArgumentException("Invalid PKCE verifier");
         return token(Map.of("grant_type", "authorization_code", "client_id", clientId, "code", code, "redirect_uri", redirectUri, "code_verifier", verifier));
     }
+    /**
+     * Rotates a single-use refresh token; the application must replace stored credentials atomically.
+     * @param clientId the registered OAuth client identifier
+     * @param refreshToken the single-use refresh token
+     * @param scopes the requested scope names
+     * @return the rotated tokens; replace stored credentials atomically
+     * @throws IOException if I/O or response processing fails
+     * @throws InterruptedException if execution is interrupted
+     */
     public Models.OAuthToken refresh(String clientId, String refreshToken, List<String> scopes) throws IOException, InterruptedException {
         required(clientId, refreshToken);
         var values = new LinkedHashMap<>(Map.of("grant_type", "refresh_token", "client_id", clientId, "refresh_token", refreshToken));
         if (!scopes.isEmpty()) values.put("scope", String.join(" ", scopes));
         return token(values);
     }
+    /**
+     * Revokes the supplied OAuth token.
+     * @param clientId the registered OAuth client identifier
+     * @param token the explicit bearer credential, or an empty string for public discovery
+     * @throws IOException if I/O or response processing fails
+     * @throws InterruptedException if execution is interrupted
+     */
     public void revoke(String clientId, String token) throws IOException, InterruptedException {
         required(clientId, token);
         try (var response = request("POST", "/oauth/revoke", Map.of("client_id", clientId, "token", token))) { /* closed */ }
@@ -57,7 +111,7 @@ public final class OAuthClient {
         return request.method(method, method.equals("GET") ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(encoded)).build();
     }
     static String form(Map<String, String> values) {
-        var query = new LinkedHashMap<String, List<String>>(); values.forEach((k, v) -> query.put(k, List.of(v)));
+        var query = new ArrayList<QueryParameter>(); values.forEach((k, v) -> query.add(new QueryParameter(k, v)));
         return BibleitClient.encodeQuery(query);
     }
     static void required(String... values) {

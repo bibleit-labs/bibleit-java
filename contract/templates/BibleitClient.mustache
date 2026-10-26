@@ -1,0 +1,295 @@
+package app.bibleit;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpRequest;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+/**
+ * Bibleit resource client. Credentials are explicit and service origins are fixed.
+ */
+public final class BibleitClient {
+    /**
+     * The fixed REST API origin and version prefix.
+     */
+    public static final String ENDPOINT = "https://api.bibleit.app/v1";
+    /**
+     * The fixed website origin for browser authentication and OAuth.
+     */
+    public static final String SERVER_ENDPOINT = "https://bibleit.app";
+    private final String token;
+    private final Transport transport;
+    /**
+     * Creates a resource client with explicit credentials and a fixed service origin.
+     * @param token the explicit bearer credential, or an empty string for public discovery
+     */
+    public BibleitClient(String token) { this(token, Transport.standard()); }
+    /**
+     * Creates a resource client with explicit credentials and a fixed service origin.
+     * @param token the explicit bearer credential, or an empty string for public discovery
+     * @param transport the trusted application transport
+     */
+    public BibleitClient(String token, Transport transport) {
+        this.token = Objects.requireNonNull(token);
+        if (!token.equals(token.strip()) || token.chars().anyMatch(c -> c < 32 || c == 127))
+            throw new IllegalArgumentException("Invalid bearer token");
+        this.transport = Objects.requireNonNull(transport);
+    }
+    /**
+     * Returns the immutable pinned REST operation directory.
+     * @return the immutable operation map
+     */
+    public static Map<String, Operation> operations() { return Operations.ALL; }
+    /**
+     * Returns the sorted REST operation IDs.
+     * @return the sorted immutable operation names
+     */
+    public static List<String> operationNames() { return Operations.ALL.keySet().stream().sorted().toList(); }
+    /**
+     * Invokes one REST operation from the pinned contract.
+     * @param operation the operation ID from the pinned contract
+     * @param parameters the named path identifiers
+     * @param options immutable request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if I/O or response processing fails
+     * @throws InterruptedException if execution is interrupted
+     */
+    public Response call(String operation, Map<String, String> parameters, Options options) throws IOException, InterruptedException {
+        return call(operation, parameters, QueryParameters.empty(), options);
+    }
+
+    /**
+     * Invokes a named REST operation with typed query parameters.
+     * @param operation the pinned operation ID
+     * @param parameters the named path identifiers
+     * @param query the operation-specific query object
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if I/O or response processing fails
+     * @throws InterruptedException if execution is interrupted
+     */
+    public Response call(String operation, Map<String, String> parameters, QueryParameters query, Options options) throws IOException, InterruptedException {
+        var op = Operations.ALL.get(operation);
+        if (op == null) throw new IllegalArgumentException("Unknown REST operation");
+        String path = op.path();
+        for (var entry : parameters.entrySet()) {
+            String placeholder = "{" + entry.getKey() + "}";
+            String value = Objects.requireNonNull(entry.getValue());
+            if (!path.contains(placeholder) || value.isEmpty() || value.equals(".") || value.equals("..")
+                || value.chars().anyMatch(c -> c < 32 || c == 127 || c == '/' || c == '\\'))
+                throw new IllegalArgumentException("Invalid path parameter");
+            path = path.replace(placeholder, encode(value));
+        }
+        if (path.contains("{") || path.contains("}")) throw new IllegalArgumentException("Missing path parameter");
+        var o = Objects.requireNonNull(options);
+        String encodedQuery = encodeQuery(Objects.requireNonNull(query).parameters());
+        var request = HttpRequest.newBuilder(URI.create(ENDPOINT + path + (encodedQuery.isEmpty() ? "" : "?" + encodedQuery)))
+            .timeout(o.timeout).header("Accept", "application/json");
+        if (!token.isEmpty()) request.header("Authorization", "Bearer " + token);
+        if (!o.ifMatch.isEmpty()) request.header("If-Match", o.ifMatch);
+        if (!o.idempotencyKey.isEmpty()) request.header("Idempotency-Key", o.idempotencyKey);
+        if (!o.destinationToken.isEmpty()) request.header("X-Destination-Service-Token", o.destinationToken);
+        if (!o.range.isEmpty()) request.header("Range", o.range);
+        var publisher = HttpRequest.BodyPublishers.noBody();
+        if (o.json != null) {
+            publisher = HttpRequest.BodyPublishers.ofByteArray(Json.MAPPER.writeValueAsBytes(o.json));
+            request.header("Content-Type", o.contentType.isEmpty() ? "application/json" : o.contentType);
+        } else if (o.body != null) {
+            publisher = o.contentLength == 0 ? HttpRequest.BodyPublishers.noBody()
+                : HttpRequest.BodyPublishers.fromPublisher(HttpRequest.BodyPublishers.ofInputStream(() -> o.body), o.contentLength);
+            request.header("Content-Type", o.contentType);
+        }
+        return checked(transport.send(request.method(op.method(), publisher).build()));
+    }
+    static String encode(String value) { return URLEncoder.encode(value, StandardCharsets.UTF_8).replace("+", "%20"); }
+    static String encodeQuery(List<QueryParameter> query) {
+        var pairs = new ArrayList<String>();
+        for (var parameter : query) pairs.add(encode(parameter.name()) + "=" + encode(parameter.value()));
+        return String.join("&", pairs);
+    }
+    static Response checked(Response response) throws IOException {
+        if (response.statusCode() >= 200 && response.statusCode() < 300) return response;
+        try (response) {
+            JsonNode fields;
+            try { fields = response.decode(); }
+            catch (IOException e) { fields = Json.MAPPER.createObjectNode(); }
+            throw new ProblemException(response.statusCode(), response.headers(), fields);
+        }
+    }
+    /**
+     * Revokes this client’s official CLI browser credential; only HTTP 204 acknowledges success.
+     * @throws IOException if I/O or response processing fails
+     * @throws InterruptedException if execution is interrupted
+     */
+    public void revokeCredential() throws IOException, InterruptedException {
+        if (token.isEmpty()) throw new IllegalStateException("Browser credential required");
+        var request = HttpRequest.newBuilder(URI.create(SERVER_ENDPOINT + "/api/cli/logout"))
+            .timeout(java.time.Duration.ofSeconds(40)).header("Authorization", "Bearer " + token)
+            .POST(HttpRequest.BodyPublishers.noBody()).build();
+        try (var response = checked(transport.send(request))) {
+            if (response.statusCode() != 204) throw new IOException("Invalid revocation acknowledgement");
+        }
+    }
+    /**
+     * Performs one bounded Live event poll and validates its version, resource and cursor.
+     * @param liveId the Live resource identifier
+     * @param after the opaque continuation cursor, or an empty string to start
+     * @param wait the bounded long-poll wait in seconds, from 0 through 25
+     * @return the validated event envelope
+     * @throws IOException if I/O or response processing fails
+     * @throws InterruptedException if execution is interrupted
+     */
+    public JsonNode pollLiveEvents(String liveId, String after, int wait) throws IOException, InterruptedException {
+        if (wait < 0 || wait > 25) throw new IllegalArgumentException("Wait must be 0..25 seconds");
+        var query = Queries.GetLiveEventsQuery.builder().waitSeconds(wait);
+        if (after != null && !after.isEmpty()) query.after(after);
+        try (var response = getLiveEvents(liveId, query.build())) {
+            var event = response.decode(); String type = event.path("type").asText();
+            boolean heartbeat = type.equals("stream.heartbeat");
+            boolean noData = !event.has("data") || event.path("data").isNull();
+            if (event.path("schema_version").asInt() != 1 || !Set.of("live.snapshot", "live.changed", "stream.heartbeat").contains(type)
+                || !event.path("resource_type").asText().equals("live") || !event.path("resource_id").asText().equals(liveId)
+                || !event.path("cursor").isTextual() || event.path("cursor").asText().isEmpty()
+                || heartbeat != noData || !heartbeat && !event.path("data").isObject())
+                throw new IOException("Invalid Live event");
+            return event;
+        }
+    }
+    /**
+     * Creates a lazy iterable of personal Scripture book pages.
+     * @param accountId the personal account or organization identifier
+     * @param slug the translation slug
+     * @param bookId the source book identifier
+     * @param options immutable HTTP request options
+     * @return a lazy, repeatable iterable of typed Scripture pages
+     */
+    public BookPages readPersonalBookPages(String accountId, String slug, String bookId, Options options) {
+        return readPersonalBookPages(accountId, slug, bookId, Queries.ReadPersonalBookQuery.builder().build(), options);
+    }
+    /**
+     * Creates a lazy iterable of personal Scripture book pages.
+     * @param accountId the personal account or organization identifier
+     * @param slug the translation slug
+     * @param bookId the source book identifier
+     * @param query the typed page limit and continuation cursor
+     * @return a lazy, repeatable iterable of typed Scripture pages
+     */
+    public BookPages readPersonalBookPages(String accountId, String slug, String bookId, Queries.ReadPersonalBookQuery query) {
+        return readPersonalBookPages(accountId, slug, bookId, query, Options.defaults());
+    }
+    /**
+     * Creates a lazy iterable of personal Scripture book pages.
+     * @param accountId the personal account or organization identifier
+     * @param slug the translation slug
+     * @param bookId the source book identifier
+     * @param query the typed page limit and continuation cursor
+     * @param options immutable HTTP request options
+     * @return a lazy, repeatable iterable of typed Scripture pages
+     */
+    public BookPages readPersonalBookPages(String accountId, String slug, String bookId, Queries.ReadPersonalBookQuery query, Options options) {
+        Objects.requireNonNull(query);
+        Objects.requireNonNull(options);
+        return new BookPages((limit, after) -> readPersonalBook(accountId, slug, bookId, query.toBuilder().limit(limit).after(after).build(), options), query.getLimit(), query.getAfter());
+    }
+    /**
+     * Creates a lazy iterable of organization Scripture book pages.
+     * @param organizationId the organization account or organization identifier
+     * @param slug the translation slug
+     * @param bookId the source book identifier
+     * @param options immutable HTTP request options
+     * @return a lazy, repeatable iterable of typed Scripture pages
+     */
+    public BookPages readBookPages(String organizationId, String slug, String bookId, Options options) {
+        return readBookPages(organizationId, slug, bookId, Queries.ReadBookQuery.builder().build(), options);
+    }
+    /**
+     * Creates a lazy iterable of organization Scripture book pages.
+     * @param organizationId the organization account or organization identifier
+     * @param slug the translation slug
+     * @param bookId the source book identifier
+     * @param query the typed page limit and continuation cursor
+     * @return a lazy, repeatable iterable of typed Scripture pages
+     */
+    public BookPages readBookPages(String organizationId, String slug, String bookId, Queries.ReadBookQuery query) {
+        return readBookPages(organizationId, slug, bookId, query, Options.defaults());
+    }
+    /**
+     * Creates a lazy iterable of organization Scripture book pages.
+     * @param organizationId the organization account or organization identifier
+     * @param slug the translation slug
+     * @param bookId the source book identifier
+     * @param query the typed page limit and continuation cursor
+     * @param options immutable HTTP request options
+     * @return a lazy, repeatable iterable of typed Scripture pages
+     */
+    public BookPages readBookPages(String organizationId, String slug, String bookId, Queries.ReadBookQuery query, Options options) {
+        Objects.requireNonNull(query);
+        Objects.requireNonNull(options);
+        return new BookPages((limit, after) -> readBook(organizationId, slug, bookId, query.toBuilder().limit(limit).after(after).build(), options), query.getLimit(), query.getAfter());
+    }
+{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}
+    /**
+     * {{summary}}.
+{{#pathParams}}
+     * @param {{paramName}} the {{baseName}} path identifier
+{{/pathParams}}{{#hasQueryParams}}
+     * @param query the operation-specific query values
+{{/hasQueryParams}}
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response {{operationId}}({{#pathParams}}String {{paramName}}, {{/pathParams}}{{#hasQueryParams}}Queries.{{operationIdCamelCase}}Query query, {{/hasQueryParams}}Options options) throws IOException, InterruptedException {
+        return call("{{operationId}}", Map.of({{#pathParams}}"{{baseName}}", {{paramName}}{{^-last}}, {{/-last}}{{/pathParams}}), {{#hasQueryParams}}query, {{/hasQueryParams}}options);
+    }
+{{#hasQueryParams}}
+    /**
+     * {{summary}}. Leaves query values unset for server defaults.
+{{#pathParams}}
+     * @param {{paramName}} the {{baseName}} path identifier
+{{/pathParams}}
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response {{operationId}}({{#pathParams}}String {{paramName}}, {{/pathParams}}Options options) throws IOException, InterruptedException {
+        return {{operationId}}({{#pathParams}}{{paramName}}, {{/pathParams}}Queries.{{operationIdCamelCase}}Query.builder().build(), options);
+    }
+
+    /**
+     * {{summary}}. Uses default HTTP request options.
+{{#pathParams}}
+     * @param {{paramName}} the {{baseName}} path identifier
+{{/pathParams}}
+     * @param query the operation-specific query values
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response {{operationId}}({{#pathParams}}String {{paramName}}, {{/pathParams}}Queries.{{operationIdCamelCase}}Query query) throws IOException, InterruptedException {
+        return {{operationId}}({{#pathParams}}{{paramName}}, {{/pathParams}}query, Options.defaults());
+    }
+{{/hasQueryParams}}
+    /**
+     * {{summary}}. Uses default request options.
+{{#pathParams}}
+     * @param {{paramName}} the {{baseName}} path identifier
+{{/pathParams}}
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response {{operationId}}({{#pathParams}}String {{paramName}}{{^-last}}, {{/-last}}{{/pathParams}}) throws IOException, InterruptedException {
+        return {{operationId}}({{#pathParams}}{{paramName}}, {{/pathParams}}Options.defaults());
+    }
+{{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
+}

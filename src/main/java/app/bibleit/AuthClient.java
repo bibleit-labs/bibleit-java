@@ -2,13 +2,33 @@ package app.bibleit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
-/** Official CLI browser-code exchange. Does not open a browser or store credentials. */
+/**
+ * Official CLI browser-code exchange. Does not open a browser or store credentials.
+ */
 public final class AuthClient {
     private final Transport transport;
+    /**
+     * Creates a browser-code exchange client on the fixed website origin.
+     */
     public AuthClient() { this(Transport.standard()); }
+    /**
+     * Creates a browser-code exchange client on the fixed website origin.
+     * @param transport the trusted application transport
+     */
     public AuthClient(Transport transport) { this.transport = Objects.requireNonNull(transport); }
+    /**
+     * Exchanges a single-use authorization code without an SDK retry loop.
+     * @param code the single-use authorization or server error code
+     * @param verifier the private PKCE verifier
+     * @param deviceName an optional display label for the device
+     * @return the original authorization object, including the secret access token
+     * @throws IOException if I/O or response processing fails
+     * @throws InterruptedException if execution is interrupted
+     */
     public JsonNode exchangeCode(String code, String verifier, String deviceName) throws IOException, InterruptedException {
         OAuthClient.required(code, verifier);
         var form = new LinkedHashMap<>(Map.of("code", code, "code_verifier", verifier));

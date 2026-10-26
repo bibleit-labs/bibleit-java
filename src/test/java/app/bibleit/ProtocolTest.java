@@ -1,13 +1,19 @@
 package app.bibleit;
 
-import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.DynamicTest;
-import java.io.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.stream.Stream;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ProtocolTest {
     static InputStream wire(String value) { return new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8)); }

@@ -1,0 +1,13 @@
+files:
+  Operations.mustache:
+    templateType: SupportingFiles
+    folder: src/main/java/app/bibleit
+    destinationFilename: Operations.java
+  BibleitClient.mustache:
+    templateType: SupportingFiles
+    folder: src/main/java/app/bibleit
+    destinationFilename: BibleitClient.java
+  Queries.mustache:
+    templateType: SupportingFiles
+    folder: src/main/java/app/bibleit
+    destinationFilename: Queries.java

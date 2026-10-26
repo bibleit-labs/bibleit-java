@@ -1,0 +1,18 @@
+package app.bibleit;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/** REST operation directory generated from the pinned OpenAPI contract. */
+final class Operations {
+    private Operations() {}
+    static final Map<String, Operation> ALL = directory();
+
+    private static Map<String, Operation> directory() {
+        var operations = new LinkedHashMap<String, Operation>();
+{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}
+        operations.put("{{operationId}}", new Operation("{{httpMethod}}", "{{{path}}}", "{{{summary}}}"));
+{{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
+        return Map.copyOf(operations);
+    }
+}

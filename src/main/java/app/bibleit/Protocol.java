@@ -1,14 +1,29 @@
 package app.bibleit;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.*;
-import java.util.*;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Set;
 
-/** Strict finite protocol v1 response decoding. Never evaluates opaque compound terms. */
+/**
+ * Strict finite protocol v1 response decoding. Never evaluates opaque compound terms.
+ */
 public final class Protocol {
     private Protocol() {}
     private static final class IncompleteTerm extends IOException {}
+    /**
+     * Parses response quoting and opaque compound fields without evaluating them.
+     * @param line one complete logical protocol record
+     * @return the parsed record, retaining field order and unknown fields
+     * @throws IOException if the input is malformed, incomplete or cannot be read
+     */
     public static ProtocolRecord parseRecord(String line) throws IOException {
         if (line.indexOf(0) >= 0) throw new IOException("Invalid protocol record");
         var words = new ArrayList<String>(); var word = new StringBuilder();
@@ -74,7 +89,20 @@ public final class Protocol {
         return new ProtocolRecord(words.getFirst().toLowerCase(Locale.ROOT), fields, new ArrayList<>(fields.keySet()));
     }
     private static char close(char open) { return switch (open) { case '{' -> '}'; case '[' -> ']'; default -> ')'; }; }
+    /**
+     * Decodes a finite protocol reply, requiring END for collection replies.
+     * @param input the UTF-8 response stream; ownership remains with the caller
+     * @return the parsed finite reply
+     * @throws IOException if the input is malformed, incomplete or cannot be read
+     */
     public static CommandResponse decodeResponse(InputStream input) throws IOException { return decode(input, false); }
+    /**
+     * Decodes a finite reply using the command-specific framing contract.
+     * @param command the validated command to execute or decode
+     * @param input the UTF-8 response stream; ownership remains with the caller
+     * @return the parsed finite reply
+     * @throws IOException if the input is malformed, incomplete or cannot be read
+     */
     public static CommandResponse decodeCommandResponse(Command command, InputStream input) throws IOException {
         if (command == null || command.streaming()) throw new IllegalArgumentException("Finite command required");
         return decode(input, command.wire().startsWith("ACCOUNT TRANSLATION "));

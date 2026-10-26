@@ -36,8 +36,9 @@ try (var response = client.getPersonalIdentity()) {
 }
 ```
 
-Use `Options.builder()` for JSON, query values, conditional writes, idempotency
-keys, ranges and streaming uploads. Always close responses with
+Use `Options.builder()` for JSON, conditional writes, idempotency keys, ranges
+and streaming uploads. Operation-specific `Queries` builders provide typed query
+parameters. Always close responses with
 try-with-resources, including after decoding. Binary bodies stay streamed;
 JSON decoding is limited to 4 MiB. `ProblemException` preserves HTTP status,
 code, request ID, headers and original problem fields.
@@ -50,11 +51,14 @@ there are no application retry loops. See [API and transport details](docs/api.m
 ## Whole-book reading and Live events
 
 ```java
-import app.bibleit.Options;
+import app.bibleit.Queries;
 
-var pages = client.readPersonalBookPages(accountId, "web", "43", Options.defaults());
+var query = Queries.ReadPersonalBookQuery.builder().limit(50).build();
+var pages = client.readPersonalBookPages(accountId, "web", "43", query);
 for (var page : pages) {
-    System.out.println(page.path("verses"));
+    for (var verse : page.getVerses()) {
+        System.out.println(verse.getText());
+    }
 }
 var event = client.pollLiveEvents(liveId, "", 25);
 ```
@@ -94,14 +98,15 @@ responses. `SshClient` adds typed discovery, reading, translations, token metada
 organization and Live results. Unknown fields remain in `raw()` or `fields()`.
 The executor owns authentication, host-key verification, cancellation and
 connection lifetime. Streaming subscriptions need a caller-owned connection.
-Wire commands and raw fields can contain secrets; their `toString()` is redacted.
+Command and result `toString()` methods redact their contents. Wire values and
+raw fields may contain credentials; handle them explicitly.
 
 ## Development
 
 ```sh
 sdk env                      # optional: selects the installed OpenJDK 27
 ./gradlew build              # tests, library, sources and Javadoc JARs
-python3 scripts/generate.py  # regenerate checked-in wrappers and models
+./gradlew generateCode       # regenerate checked-in wrappers and models
 # Linux validation using the official Java 27 image:
 docker build -t bibleit-java:verify .
 ```

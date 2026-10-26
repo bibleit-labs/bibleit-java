@@ -1,9 +1,24 @@
 package app.bibleit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-/** Scripture reference. Zero chapter or verse means omitted. */
+/**
+ * Scripture reference. Zero chapter or verse means omitted.
+ * @param translation the translation
+ * @param book the book
+ * @param chapter the chapter
+ * @param verse the verse
+ */
 public record Reference(String translation, String book, int chapter, int verse) {
+    /**
+     * Copies and validates the reference components.
+     * @param translation the translation
+     * @param book the book
+     * @param chapter the chapter
+     * @param verse the verse
+     */
     public Reference {
         Objects.requireNonNull(translation); Objects.requireNonNull(book);
         if (chapter < 0 || chapter > 255 || verse < 0 || verse > 255 || verse != 0 && chapter == 0)

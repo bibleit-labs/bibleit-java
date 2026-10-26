@@ -27,7 +27,6 @@ try (var response = client.createLive(organizationId,
 
 | Method | Meaning |
 | --- | --- |
-| `query(key, values...)` | Repeated query values, percent encoded |
 | `json(value)` | Jackson serializable body, including `NullNode` |
 | `body(stream, exactLength, mediaType)` | One-use raw upload stream |
 | `ifMatch(etag)` | Exact ETag for conditional writes |
@@ -41,6 +40,29 @@ JSON and raw bodies are mutually exclusive. Headers remain accessible through
 response. The caller owns upload streams. Options are immutable; their raw stream
 is still one-use. `Response.decode()` returns Jackson `JsonNode`, while
 `decode(Models.Schema.class)` returns a typed bean.
+
+## Typed queries
+
+Each operation with query parameters has a generated immutable query type and
+builder in `Queries`. Method overloads accept that operation's query type;
+`Options` contains only shared HTTP settings. Unknown query keys and mismatched
+query types are not accepted by those typed overloads.
+
+```java
+var query = Queries.SearchPersonalScriptureQuery.builder()
+    .query("love")
+    .limit(20)
+    .build();
+try (var response = client.searchPersonalScripture(accountId, "web", query)) {
+    var results = response.decode(Models.ScriptureSearch.class);
+}
+```
+
+Limits and wait durations use `Integer`; URI parameters use `URI`; constrained
+values use generated enums. Null leaves a value unset. Query builders validate
+scalar bounds, while the server enforces required fields and resource authority.
+Encoding uses ordered `QueryParameter` values, with no query maps. The low-level
+`call` overload accepts the `QueryParameters` interface for generic integrations.
 
 ## Models and contract
 
@@ -61,17 +83,21 @@ metadata. `call(operationId, pathParameters, options)` is the equivalent generic
 entry point. The generated wrappers use exactly those operations.
 
 To update, replace `contract/openapi.json` with a reviewed server export, run
-`python3 scripts/generate.py`, review its diff, and run `./gradlew build`.
+`./gradlew generateCode`, review its diff, and run `./gradlew build`.
 No sibling repository is needed for builds or regeneration.
 
 ## Pagination, polling and cancellation
 
 `readPersonalBookPages` and `readBookPages` return `BookPages`, an
-`Iterable<JsonNode>`. Each iterator starts an independent lazy traversal:
+`Iterable<Models.ScriptureBookRead>`. Jackson deserializes each page into its Java
+model, including typed `Models.Verse` entries. Each iterator starts an independent
+lazy traversal:
 
 ```java
 for (var page : client.readPersonalBookPages(accountId, "web", "43", Options.defaults())) {
-    System.out.println(page.path("verses"));
+    for (var verse : page.getVerses()) {
+        System.out.println(verse.getText());
+    }
 }
 ```
 

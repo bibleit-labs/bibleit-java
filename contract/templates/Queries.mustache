@@ -1,0 +1,105 @@
+package app.bibleit;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+/** Operation-specific query builders generated from the OpenAPI contract. */
+public final class Queries {
+    private Queries() {}
+{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}{{#hasQueryParams}}
+    /** Query parameters accepted by {@code {{operationId}}}. */
+    public static final class {{operationIdCamelCase}}Query implements QueryParameters {
+{{#queryParams}}
+        private final {{#isEnum}}{{#lambda.titlecase}}{{paramName}}{{/lambda.titlecase}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{/isEnum}} {{paramName}};
+{{/queryParams}}
+
+        private {{operationIdCamelCase}}Query(Builder builder) {
+{{#queryParams}}
+            {{paramName}} = builder.{{paramName}};
+{{#minimum}}
+            if ({{paramName}} != null && {{paramName}} < {{minimum}}) throw new IllegalArgumentException("{{baseName}} is below its minimum");
+{{/minimum}}{{#maximum}}
+            if ({{paramName}} != null && {{paramName}} > {{maximum}}) throw new IllegalArgumentException("{{baseName}} is above its maximum");
+{{/maximum}}{{#minLength}}
+            if ({{paramName}} != null && {{paramName}}.length() < {{minLength}}) throw new IllegalArgumentException("{{baseName}} is too short");
+{{/minLength}}{{#maxLength}}
+            if ({{paramName}} != null && {{paramName}}.length() > {{maxLength}}) throw new IllegalArgumentException("{{baseName}} is too long");
+{{/maxLength}}
+{{/queryParams}}
+        }
+
+        /**
+         * Creates a builder with all optional values unset.
+         * @return a new query builder
+         */
+        public static Builder builder() { return new Builder(); }
+
+        /**
+         * Copies this query into a new builder.
+         * @return a builder initialized from this query
+         */
+        public Builder toBuilder() {
+            var builder = new Builder();
+{{#queryParams}}
+            builder.{{paramName}} = {{paramName}};
+{{/queryParams}}
+            return builder;
+        }
+{{#queryParams}}
+        /**
+         * Returns the {{baseName}} query value.
+         * @return the typed value, or null when unset
+         */
+        public {{#isEnum}}{{#lambda.titlecase}}{{paramName}}{{/lambda.titlecase}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{/isEnum}} get{{#lambda.titlecase}}{{paramName}}{{/lambda.titlecase}}() { return {{paramName}}; }
+{{/queryParams}}
+
+        /** {@inheritDoc} */
+        @Override public List<QueryParameter> parameters() {
+            var parameters = new ArrayList<QueryParameter>();
+{{#queryParams}}
+            if ({{paramName}} != null) parameters.add(new QueryParameter("{{baseName}}", {{#isEnum}}{{paramName}}.wireValue(){{/isEnum}}{{^isEnum}}{{paramName}}.toString(){{/isEnum}}));
+{{/queryParams}}
+            return List.copyOf(parameters);
+        }
+{{#queryParams}}{{#isEnum}}
+        /** Supported values of the {{baseName}} parameter. */
+        public enum {{#lambda.titlecase}}{{paramName}}{{/lambda.titlecase}} {
+{{#allowableValues}}{{#enumVars}}
+            /** The {{name}} wire value. */
+            {{name}}({{{value}}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
+{{/enumVars}}{{/allowableValues}}
+            private final String value;
+            {{#lambda.titlecase}}{{paramName}}{{/lambda.titlecase}}(String value) { this.value = value; }
+            /**
+             * Returns the contract wire representation.
+             * @return the wire value
+             */
+            public String wireValue() { return value; }
+        }
+{{/isEnum}}{{/queryParams}}
+
+        /** Builder for {@link {{operationIdCamelCase}}Query}. */
+        public static final class Builder {
+{{#queryParams}}
+            private {{#isEnum}}{{#lambda.titlecase}}{{paramName}}{{/lambda.titlecase}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{/isEnum}} {{paramName}};
+{{/queryParams}}
+            private Builder() {}
+{{#queryParams}}
+            /**
+             * Sets the {{baseName}} parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder {{paramName}}({{#isEnum}}{{#lambda.titlecase}}{{paramName}}{{/lambda.titlecase}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{/isEnum}} value) { {{paramName}} = value; return this; }
+{{/queryParams}}
+            /**
+             * Creates an immutable query and checks scalar bounds.
+             * @return the operation-specific query
+             * @throws IllegalArgumentException if a scalar bound is violated
+             */
+            public {{operationIdCamelCase}}Query build() { return new {{operationIdCamelCase}}Query(this); }
+        }
+    }
+{{/hasQueryParams}}{{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
+}

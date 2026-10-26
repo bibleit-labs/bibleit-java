@@ -1,47 +1,50 @@
 package app.bibleit;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.io.UncheckedIOException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
-/** Lazy, repeatable whole-book traversal. Each iterator fetches and validates its own pages. */
-public final class BookPages implements Iterable<JsonNode> {
-    private final BibleitClient client;
-    private final String operation;
-    private final Map<String, String> parameters;
-    private final Options snapshot;
+/**
+ * Lazy, repeatable whole-book traversal. Each iterator fetches and validates its own pages.
+ */
+public final class BookPages implements Iterable<Models.ScriptureBookRead> {
+    /** Fetches one page using typed query values supplied by the client. */
+    @FunctionalInterface
+    interface PageFetcher {
+        Response fetch(int limit, String after) throws IOException, InterruptedException;
+    }
+
+    private final PageFetcher fetcher;
     private final int limit;
+    private final String initialAfter;
 
-    BookPages(BibleitClient client, String operation, Map<String, String> parameters, Options options) {
-        this.client = client;
-        this.operation = operation;
-        this.parameters = Map.copyOf(parameters);
-        var limits = options.query.getOrDefault("limit", List.of("50"));
-        if (limits.size() != 1 || !limits.getFirst().matches("[0-9]{1,3}"))
-            throw new IllegalArgumentException("Invalid book page limit");
-        limit = Integer.parseInt(limits.getFirst());
-        if (limit < 1 || limit > 500) throw new IllegalArgumentException("Book page limit must be 1..500");
-        var after = options.query.get("after");
-        if (after != null && (after.size() != 1 || after.getFirst().isEmpty()))
-            throw new IllegalArgumentException("Invalid cursor");
-        snapshot = options.toBuilder().query("limit", Integer.toString(limit)).build();
+    BookPages(PageFetcher fetcher, Integer limit, String after) {
+        this.fetcher = fetcher;
+        this.limit = limit == null ? 50 : limit;
+        if (this.limit < 1 || this.limit > 500) throw new IllegalArgumentException("Book page limit must be 1..500");
+        if (after != null && after.isEmpty()) throw new IllegalArgumentException("Invalid cursor");
+        initialAfter = after;
     }
 
     /** I/O failures throw UncheckedIOException; interruption restores the thread interrupt flag. */
-    @Override public Iterator<JsonNode> iterator() { return new PageIterator(); }
+    @Override public Iterator<Models.ScriptureBookRead> iterator() { return new PageIterator(); }
 
-    private final class PageIterator implements Iterator<JsonNode> {
+    private final class PageIterator implements Iterator<Models.ScriptureBookRead> {
         private final Set<String> seen = new HashSet<>();
-        private Options options = snapshot;
+        private String after = initialAfter;
         private boolean finished;
-        private JsonNode next;
+        private Models.ScriptureBookRead next;
         private String translation;
         private JsonNode rights;
         private int book, chapter, verse;
 
         private PageIterator() {
-            var after = snapshot.query.get("after");
-            if (after != null) seen.add(after.getFirst());
+            if (after != null) seen.add(after);
         }
 
         @Override public boolean hasNext() {
@@ -65,17 +68,21 @@ public final class BookPages implements Iterable<JsonNode> {
             }
         }
 
-        @Override public JsonNode next() {
+        @Override public Models.ScriptureBookRead next() {
             if (!hasNext()) throw new NoSuchElementException("Book traversal complete");
             var page = next;
             next = null;
             return page;
         }
 
-        private JsonNode fetch() throws IOException, InterruptedException {
+        private Models.ScriptureBookRead fetch() throws IOException, InterruptedException {
             if (Thread.currentThread().isInterrupted()) throw new InterruptedException("Book traversal interrupted");
-            JsonNode page;
-            try (var response = client.call(operation, parameters, options)) { page = response.decode(); }
+            Models.ScriptureBookRead result;
+            try (var response = fetcher.fetch(limit, after)) {
+                result = response.decode(Models.ScriptureBookRead.class);
+            }
+            if (result == null) throw invalid();
+            JsonNode page = result.toJson();
             var cursor = page.get("next_cursor");
             var verses = page.path("verses");
             if (!page.path("translation").isTextual() || page.path("translation").asText().isEmpty()
@@ -95,8 +102,8 @@ public final class BookPages implements Iterable<JsonNode> {
                 book = b; chapter = c; verse = n;
             }
             if (cursor.isNull()) finished = true;
-            else options = options.toBuilder().query("after", cursor.asText()).build();
-            return page;
+            else after = cursor.asText();
+            return result;
         }
     }
 

@@ -1,14 +1,30 @@
 package app.bibleit;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
-import java.io.*;
-import java.net.http.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.io.UncheckedIOException;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import java.util.*;
-import java.util.concurrent.atomic.*;
-import static org.junit.jupiter.api.Assertions.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ClientTest {
     static Response response(int status, String json, Map<String, List<String>> headers) {
@@ -38,8 +54,8 @@ class ClientTest {
     @Test void validatesAndEncodesPathsAndOptions() throws Exception {
         var captured = new AtomicReference<HttpRequest>();
         var client = new BibleitClient("", r -> { captured.set(r); return response(200, "{}", Map.of()); });
-        try (var res = client.getLive("space?#%", Options.builder().query("q", "a &b", "second").ifMatch("\"v1\"").destinationToken("svc_destination").build())) {
-            assertEquals("https://api.bibleit.app/v1/lives/space%3F%23%25?q=a%20%26b&q=second", captured.get().uri().toString());
+        try (var res = client.getLive("space?#%", Options.builder().ifMatch("\"v1\"").destinationToken("svc_destination").build())) {
+            assertEquals("https://api.bibleit.app/v1/lives/space%3F%23%25", captured.get().uri().toString());
             assertEquals("\"v1\"", captured.get().headers().firstValue("If-Match").orElseThrow());
             assertEquals("svc_destination", captured.get().headers().firstValue("X-Destination-Service-Token").orElseThrow());
             assertTrue(captured.get().headers().firstValue("Authorization").isEmpty());
@@ -48,6 +64,19 @@ class ClientTest {
         assertThrows(IllegalArgumentException.class, () -> new BibleitClient(" token"));
         assertThrows(IllegalArgumentException.class, () -> Options.builder().json(Map.of()).body(ProtocolTest.wire("x"),1,"text/plain").build());
         assertThrows(IllegalArgumentException.class, () -> Options.builder().body(ProtocolTest.wire("x"),-1,"text/plain").build());
+    }
+    @Test void typedQueriesEncodeAndValidateScalarValues() throws Exception {
+        var captured = new AtomicReference<HttpRequest>();
+        var client = new BibleitClient("", request -> { captured.set(request); return response(200,"{}",Map.of()); });
+        var query = Queries.SearchPersonalScriptureQuery.builder().query("a &b").limit(2).build();
+        try (var ignored = client.searchPersonalScripture("account","web",query)) {
+            assertEquals("q=a%20%26b&limit=2",captured.get().uri().getRawQuery());
+        }
+        assertEquals("a &b",query.getQuery());
+        assertThrows(IllegalArgumentException.class, () -> Queries.ReadPersonalBookQuery.builder().limit(501).build());
+        assertThrows(IllegalArgumentException.class, () -> Queries.GetLiveEventsQuery.builder().waitSeconds(26).build());
+        var upload = Queries.UploadPresentationAssetQuery.builder().kind(Queries.UploadPresentationAssetQuery.Kind.IMAGE).build();
+        assertEquals("image",upload.parameters().getFirst().value());
     }
     @Test void failuresCloseBodiesPreserveMetadataAndDoNotRetry() {
         var closed = new AtomicBoolean(); var calls = new AtomicInteger();
@@ -87,11 +116,12 @@ class ClientTest {
     @Test void bookPagesAreLazyBoundedAndCloseBeforeYield() throws Exception {
         var calls = new AtomicInteger();
         var client = new BibleitClient("", r -> response(200,page(calls.getAndIncrement()==0 ? "\"next\"" : "null",calls.get()),Map.of()));
-        var options = Options.builder().query("limit","1").build();
-        var pages = client.readPersonalBookPages("account","web","43",options).iterator();
+        var options = Options.defaults();
+        var query = Queries.ReadPersonalBookQuery.builder().limit(1).build();
+        var pages = client.readPersonalBookPages("account","web","43",query,options).iterator();
         assertEquals(0,calls.get()); assertNotNull(pages.next()); assertEquals(1,calls.get());
         assertNotNull(pages.next()); assertFalse(pages.hasNext()); assertEquals(2,calls.get());
-        assertFalse(options.query.containsKey("after"));
+        assertNull(query.getAfter());
     }
     @Test void paginationRejectsLoopsAndStopsAfterFailure() throws Exception {
         var client = new BibleitClient("",r -> response(200,page("\"same\"",1),Map.of()));
@@ -114,11 +144,13 @@ class ClientTest {
         assertEquals(0,calls.get());
         assertTrue(iterator.hasNext()); assertTrue(iterator.hasNext());
         assertEquals(1,calls.get()); assertEquals(1,closed.get());
-        assertNotNull(iterator.next());
+        var first = iterator.next();
+        assertEquals("web",first.getTranslation());
+        assertEquals(1,first.getVerses().getFirst().getVerse());
         for (var page : pages) { assertNotNull(page); break; }
         assertEquals(2,calls.get());
         int count = 0;
-        for (var page : pages) { count++; assertNotNull(page); }
+        for (var page : pages) { count++; assertEquals("web",page.getTranslation()); assertEquals(count,page.getVerses().getFirst().getVerse()); }
         assertEquals(2,count); assertEquals(4,calls.get()); assertEquals(4,closed.get());
         var empty = client.readPersonalBookPages("account","web","43",Options.defaults()).iterator();
         assertNotNull(empty.next()); assertNotNull(empty.next());
