@@ -1,6 +1,6 @@
 package app.bibleit;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.http.HttpHeaders;
@@ -39,22 +39,31 @@ public final class Response implements AutoCloseable {
      */
     public InputStream body() { return body; }
     /**
-     * Deserializes one bounded JSON response using Jackson and rejects trailing input.
-     * @return the deserialized JSON value
-     * @throws IOException if I/O or response processing fails
-     */
-    public JsonNode decode() throws IOException { return decode(JsonNode.class); }
-    /**
-     * Deserializes one bounded JSON response using Jackson and rejects trailing input.
+     * Deserializes one bounded JSON response into a Java object.
      * @param <T> the decoded Java type
      * @param type the Jackson target class
-     * @return the deserialized JSON value
-     * @throws IOException if I/O or response processing fails
+     * @return the decoded Java value
+     * @throws IOException if the response is invalid or exceeds the JSON size limit
      */
     public <T> T decode(Class<T> type) throws IOException {
+        return Json.MAPPER.readValue(readJsonBytes(), type);
+    }
+
+    /**
+     * Deserializes a parameterized Java type, such as a list of schema objects.
+     * @param <T> the decoded Java type
+     * @param type the Jackson generic type reference
+     * @return the decoded Java value
+     * @throws IOException if the response is invalid or exceeds the JSON size limit
+     */
+    public <T> T decode(TypeReference<T> type) throws IOException {
+        return Json.MAPPER.readValue(readJsonBytes(), type);
+    }
+
+    private byte[] readJsonBytes() throws IOException {
         byte[] bytes = body.readNBytes(MAX_JSON_BYTES + 1);
         if (bytes.length > MAX_JSON_BYTES) throw new IOException("JSON response exceeds 4 MiB");
-        return Json.MAPPER.readValue(bytes, type);
+        return bytes;
     }
     @Override public void close() throws IOException { body.close(); }
 }

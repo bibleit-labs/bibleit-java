@@ -1,6 +1,5 @@
 package app.bibleit;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -24,6 +23,8 @@ public final class BibleitClient {
      * The fixed website origin for browser authentication and OAuth.
      */
     public static final String SERVER_ENDPOINT = "https://bibleit.app";
+    /** Default bounded Live event wait in seconds. */
+    public static final int DEFAULT_EVENT_WAIT_SECONDS = 25;
     private final String token;
     private final Transport transport;
     /**
@@ -31,6 +32,8 @@ public final class BibleitClient {
      * @param token the explicit bearer credential, or an empty string for public discovery
      */
     public BibleitClient(String token) { this(token, Transport.standard()); }
+    /** Creates an unauthenticated client for public discovery resources. */
+    public BibleitClient() { this(""); }
     /**
      * Creates a resource client with explicit credentials and a fixed service origin.
      * @param token the explicit bearer credential, or an empty string for public discovery
@@ -98,7 +101,7 @@ public final class BibleitClient {
         if (!o.destinationToken.isEmpty()) request.header("X-Destination-Service-Token", o.destinationToken);
         if (!o.range.isEmpty()) request.header("Range", o.range);
         var publisher = HttpRequest.BodyPublishers.noBody();
-        if (o.json != null) {
+        if (o.hasJson) {
             publisher = HttpRequest.BodyPublishers.ofByteArray(Json.MAPPER.writeValueAsBytes(o.json));
             request.header("Content-Type", o.contentType.isEmpty() ? "application/json" : o.contentType);
         } else if (o.body != null) {
@@ -117,9 +120,10 @@ public final class BibleitClient {
     static Response checked(Response response) throws IOException {
         if (response.statusCode() >= 200 && response.statusCode() < 300) return response;
         try (response) {
-            JsonNode fields;
-            try { fields = response.decode(); }
-            catch (IOException e) { fields = Json.MAPPER.createObjectNode(); }
+            Models.Problem fields;
+            try { fields = response.decode(Models.Problem.class); }
+            catch (IOException e) { fields = new Models.Problem(); }
+            if (fields == null) fields = new Models.Problem();
             throw new ProblemException(response.statusCode(), response.headers(), fields);
         }
     }
@@ -140,27 +144,61 @@ public final class BibleitClient {
     /**
      * Performs one bounded Live event poll and validates its version, resource and cursor.
      * @param liveId the Live resource identifier
-     * @param after the opaque continuation cursor, or an empty string to start
-     * @param wait the bounded long-poll wait in seconds, from 0 through 25
-     * @return the validated event envelope
-     * @throws IOException if I/O or response processing fails
+     * @param after the optional opaque comparison cursor; null starts a fresh poll
+     * @param waitSeconds the bounded wait, from 0 through 25 seconds
+     * @return the typed event envelope and optional snapshot
+     * @throws IOException if I/O, deserialization or event validation fails
      * @throws InterruptedException if execution is interrupted
      */
-    public JsonNode pollLiveEvents(String liveId, String after, int wait) throws IOException, InterruptedException {
-        if (wait < 0 || wait > 25) throw new IllegalArgumentException("Wait must be 0..25 seconds");
-        var query = Queries.GetLiveEventsQuery.builder().waitSeconds(wait);
+    public Models.LiveEvent pollLiveEvents(String liveId, String after, int waitSeconds) throws IOException, InterruptedException {
+        if (waitSeconds < 0 || waitSeconds > 25) throw new IllegalArgumentException("Wait must be 0..25 seconds");
+        var query = Queries.GetLiveEventsQuery.builder().waitSeconds(waitSeconds);
         if (after != null && !after.isEmpty()) query.after(after);
         try (var response = getLiveEvents(liveId, query.build())) {
-            var event = response.decode(); String type = event.path("type").asText();
-            boolean heartbeat = type.equals("stream.heartbeat");
-            boolean noData = !event.has("data") || event.path("data").isNull();
-            if (event.path("schema_version").asInt() != 1 || !Set.of("live.snapshot", "live.changed", "stream.heartbeat").contains(type)
-                || !event.path("resource_type").asText().equals("live") || !event.path("resource_id").asText().equals(liveId)
-                || !event.path("cursor").isTextual() || event.path("cursor").asText().isEmpty()
-                || heartbeat != noData || !heartbeat && !event.path("data").isObject())
+            var event = response.decode(Models.LiveEvent.class);
+            if (event == null) throw new IOException("Missing Live event");
+            String type = event.getType();
+            boolean heartbeat = "stream.heartbeat".equals(type);
+            if (!Long.valueOf(1).equals(event.getSchemaVersion()) || type == null
+                || !Set.of("live.snapshot", "live.changed", "stream.heartbeat").contains(type)
+                || !"live".equals(event.getResourceType()) || !liveId.equals(event.getResourceId())
+                || event.getCursor() == null || event.getCursor().isEmpty()
+                || heartbeat != (event.getData() == null))
                 throw new IOException("Invalid Live event");
             return event;
         }
+    }
+    /**
+     * Starts a fresh Live poll using the default 25-second wait.
+     * @param liveId the Live resource identifier
+     * @return the typed event envelope and optional snapshot
+     * @throws IOException if I/O, deserialization or event validation fails
+     * @throws InterruptedException if execution is interrupted
+     */
+    public Models.LiveEvent pollLiveEvents(String liveId) throws IOException, InterruptedException {
+        return pollLiveEvents(liveId, null, DEFAULT_EVENT_WAIT_SECONDS);
+    }
+    /**
+     * Starts a fresh Live poll without a comparison cursor.
+     * @param liveId the Live resource identifier
+     * @param waitSeconds the bounded wait, from 0 through 25 seconds
+     * @return the typed event envelope and optional snapshot
+     * @throws IOException if I/O, deserialization or event validation fails
+     * @throws InterruptedException if execution is interrupted
+     */
+    public Models.LiveEvent pollLiveEvents(String liveId, int waitSeconds) throws IOException, InterruptedException {
+        return pollLiveEvents(liveId, null, waitSeconds);
+    }
+    /**
+     * Polls after a cursor using the default 25-second wait.
+     * @param liveId the Live resource identifier
+     * @param after the optional opaque comparison cursor
+     * @return the typed event envelope and optional snapshot
+     * @throws IOException if I/O, deserialization or event validation fails
+     * @throws InterruptedException if execution is interrupted
+     */
+    public Models.LiveEvent pollLiveEvents(String liveId, String after) throws IOException, InterruptedException {
+        return pollLiveEvents(liveId, after, DEFAULT_EVENT_WAIT_SECONDS);
     }
     /**
      * Creates a lazy iterable of personal Scripture book pages.
@@ -233,6 +271,26 @@ public final class BibleitClient {
         Objects.requireNonNull(query);
         Objects.requireNonNull(options);
         return new BookPages((limit, after) -> readBook(organizationId, slug, bookId, query.toBuilder().limit(limit).after(after).build(), options), query.getLimit(), query.getAfter());
+    }
+    /**
+     * Reads a whole Scripture book lazily using default paging and HTTP options.
+     * @param accountId the resource scope identifier
+     * @param slug the translation slug
+     * @param bookId the source book identifier
+     * @return an independent, repeatable typed page iterable
+     */
+    public BookPages readPersonalBookPages(String accountId, String slug, String bookId) {
+        return readPersonalBookPages(accountId, slug, bookId, Options.defaults());
+    }
+    /**
+     * Reads a whole Scripture book lazily using default paging and HTTP options.
+     * @param organizationId the resource scope identifier
+     * @param slug the translation slug
+     * @param bookId the source book identifier
+     * @return an independent, repeatable typed page iterable
+     */
+    public BookPages readBookPages(String organizationId, String slug, String bookId) {
+        return readBookPages(organizationId, slug, bookId, Options.defaults());
     }
 {{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}
     /**

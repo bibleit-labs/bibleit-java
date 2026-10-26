@@ -280,4 +280,34 @@ public final class SshClient {
      * @throws InterruptedException if execution is interrupted
      */
     public OrganizationApplicationResult getOrganizationApplicationStatus(String id) throws IOException, InterruptedException { return SshDecoders.application(execute(Commands.organizationApplicationStatusCommand(id))); }
+    /**
+     * Creates a Live with its default name.
+     * @return the typed result retaining the original finite reply
+     * @throws IOException if execution or decoding fails
+     * @throws InterruptedException if execution is interrupted
+     */
+    public LiveResult createLive() throws IOException, InterruptedException { return createLive(""); }
+    /**
+     * Reads root help.
+     * @return the typed result retaining the original finite reply
+     * @throws IOException if execution or decoding fails
+     * @throws InterruptedException if execution is interrupted
+     */
+    public HelpResult help() throws IOException, InterruptedException { return help(""); }
+    /**
+     * Reads the first organization-directory page.
+     * @return the typed result retaining the original finite reply
+     * @throws IOException if execution or decoding fails
+     * @throws InterruptedException if execution is interrupted
+     */
+    public OrganizationDirectory listOrganizations() throws IOException, InterruptedException { return listOrganizations(""); }
+    /**
+     * Pops the default number of stack entries.
+     * @param id the Live identifier
+     * @return the typed result retaining the original finite reply
+     * @throws IOException if execution or decoding fails
+     * @throws InterruptedException if execution is interrupted
+     */
+    public LiveVerseResult popLive(String id) throws IOException, InterruptedException { return popLive(id, 0); }
+
 }

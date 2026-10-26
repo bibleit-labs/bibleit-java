@@ -32,4 +32,18 @@ public record Reference(String translation, String book, int chapter, int verse)
         if (verse != 0) args.add(Integer.toString(verse));
         return args;
     }
+    /**
+     * Creates a whole-book Scripture reference.
+     * @param translation the translation slug
+     * @param book the source book identifier or name
+     */
+    public Reference(String translation, String book) { this(translation, book, 0, 0); }
+    /**
+     * Creates a whole-chapter Scripture reference.
+     * @param translation the translation slug
+     * @param book the source book identifier or name
+     * @param chapter the source chapter identifier
+     */
+    public Reference(String translation, String book, int chapter) { this(translation, book, chapter, 0); }
+
 }

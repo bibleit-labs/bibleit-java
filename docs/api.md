@@ -27,7 +27,7 @@ try (var response = client.createLive(organizationId,
 
 | Method | Meaning |
 | --- | --- |
-| `json(value)` | Jackson serializable body, including `NullNode` |
+| `json(value)` | Java request object; null explicitly sends JSON null |
 | `body(stream, exactLength, mediaType)` | One-use raw upload stream |
 | `ifMatch(etag)` | Exact ETag for conditional writes |
 | `idempotencyKey(key)` | Explicit operation-supported key |
@@ -38,8 +38,9 @@ try (var response = client.createLive(organizationId,
 JSON and raw bodies are mutually exclusive. Headers remain accessible through
 `response.headers()`; binary contents through `response.body()`. Always close the
 response. The caller owns upload streams. Options are immutable; their raw stream
-is still one-use. `Response.decode()` returns Jackson `JsonNode`, while
-`decode(Models.Schema.class)` returns a typed bean.
+is still one-use. `Response.decode(Models.Schema.class)` returns a typed Java bean. For
+parameterized collections, use `decode(new TypeReference<List<Models.Verse>>() {})`.
+The response decoder always requires an explicit Java target type.
 
 ## Typed queries
 
@@ -66,17 +67,28 @@ Encoding uses ordered `QueryParameter` values, with no query maps. The low-level
 
 ## Models and contract
 
-`Models` contains one nested class per OpenAPI schema. Object beans have Java
-`getName()` / `setName(value)` accessors. A new bean is an empty JSON object;
-setting a field to null serializes an explicit JSON null. Use `hasField`,
-`removeField`, `setField` and `toJson` for presence, future fields and wire values.
-Returned JSON is copied. Nested getters return decoded copies; modify a nested
-value and set it back on its parent to persist the change.
+`Models` contains typed Java beans for the OpenAPI schemas, plus the browser
+exchange result. Properties are ordinary Java fields with `getName()` /
+`setName(value)` accessors. Nested getters return the same Java objects, so changes
+to a nested object remain part of its parent object graph.
 
-Scalar and union schemas use a delegating `JsonNode` constructor and `value()`;
-there is no invented wrapper in the wire representation. Discriminators, enums
-and constraints remain in the bundled `/app/bibleit/openapi.json`. Models retain
-unknown fields and exact 64-bit integers. They do not replace server validation.
+A new bean serializes as an empty object. Calling a setter with null records an
+explicit JSON null. `hasField` distinguishes missing fields from explicit null;
+`removeField` clears a property and omits it from the wire. `setField` assigns a
+known typed field or retains a future extension value. `additionalProperties()`
+exposes unknown fields as ordinary Java values; `toMap()` provides an unmodifiable
+property snapshot with normal nested-object reference semantics.
+
+Scalar schemas have a typed Java scalar constructor and `value()` accessor.
+Object unions expose their known variant fields in a typed bean without invented
+wire wrapper fields. Nullable object and array variants use nullable Java model
+references and lists. The server validates variant-specific required fields.
+
+Jackson handles serialization and deserialization directly. Numeric precision is
+retained for unknown extension values; integer fields reject fractional values,
+and scalar values are not silently converted from strings or numbers of another
+kind. Enums and constraints remain in the bundled `/app/bibleit/openapi.json`.
+The schema beans do not replace server authorization or business validation.
 
 `BibleitClient.operations()` and `operationNames()` expose immutable operation
 metadata. `call(operationId, pathParameters, options)` is the equivalent generic
@@ -111,8 +123,13 @@ Iterator methods throw `UncheckedIOException` on I/O failures. Interruption is
 wrapped in an `InterruptedIOException`, and the thread's interrupt flag is
 restored. A failed iterator is exhausted; partial results are incomplete.
 
-`pollLiveEvents(liveId, after, waitSeconds)` accepts 0–25 seconds and returns one
-validated v1 snapshot, change or heartbeat. Cursors are opaque and are not ETags.
+`pollLiveEvents(liveId)` starts a fresh poll with the default 25-second wait.
+`pollLiveEvents(liveId, waitSeconds)` chooses a 0–25 second wait without a cursor.
+`pollLiveEvents(liveId, after)` resumes with the default wait; the three-argument
+overload specifies both values. Each returns a typed `Models.LiveEvent`, with a
+`Models.LiveEventSnapshot` from `getData()` or null for a heartbeat. Nested Live,
+display, queue, viewer settings, and design fields are Java model objects.
+Cursors are opaque and are not ETags.
 The SDK starts no polling task or retry loop.
 
 JDK `HttpClient` sends synchronous requests and honors interruption while sending.
@@ -153,3 +170,26 @@ requires END for collection replies; use `decodeCommandResponse` for
 command-specific single-record account-translation framing. Finite executors
 reject subscription commands. Typed decoders validate record kinds, counts,
 coordinates and duplicate identifiers without interpreting opaque terms.
+
+## Convenience defaults
+
+`new BibleitClient()` creates a public-discovery client. Whole-book methods accept
+just their account/organization, translation and book identifiers when the
+50-verse page size and standard HTTP settings are sufficient.
+
+`AuthClient.exchangeCode(code, verifier)` omits an optional device label and returns
+`Models.AuthorizationResult`. `OAuthClient.refresh(clientId, refreshToken)` retains
+the grant's existing scopes. Credentials and PKCE values remain explicit.
+
+SSH helpers provide no-argument root help, first-page organization listings and
+unnamed Live creation. Pop helpers omit the optional count, and secret management
+accepts an action without an unused secret value. `Reference` constructors accept
+a whole book or chapter without zero-valued trailing arguments.
+
+## Migrating from 0.0.1
+
+Decode responses into an explicit Java class or Jackson `TypeReference`. Use model
+getters for events and authorization results. Model fields now have ordinary Java
+object identity; `toMap()` replaces the old tree representation. Scalar model
+constructors take their Java scalar type, and object models use setters or Jackson
+deserialization. HTTP and OAuth exceptions expose typed problem objects.

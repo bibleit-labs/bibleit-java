@@ -2,8 +2,6 @@ package app.bibleit;
 
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -12,9 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SshClientTest {
     static SshClient client(String fixture) throws IOException {
-        var fixtures = Json.MAPPER.readTree(Files.readString(Path.of("contract/fixtures/responses-v1.json")));
-        for (var f : fixtures) if (f.path("name").asText().equals(fixture))
-            return new SshClient(command -> Protocol.decodeCommandResponse(command,ProtocolTest.wire(f.path("wire").asText())));
+        var fixtures = TestFixtures.responses();
+        for (var f : fixtures) if (f.name().equals(fixture))
+            return new SshClient(command -> Protocol.decodeCommandResponse(command,ProtocolTest.wire(f.wire())));
         throw new IllegalArgumentException(fixture);
     }
     @Test void typedIdentityAndReading() throws Exception {
@@ -35,7 +33,7 @@ class SshClientTest {
         assertFalse(client("account-quotas").listQuotas().quotas().isEmpty());
         assertTrue(client("token-empty").listTokens().tokens().isEmpty());
         assertFalse(client("token-metadata-client-contract").listTokens().tokens().isEmpty());
-        assertEquals(2,client("organization-directory-mixed").listOrganizations("").entries().size());
+        assertEquals(2,client("organization-directory-mixed").listOrganizations().entries().size());
         assertEquals("organization_deleted",client("organization-application-deleted-status").getOrganizationApplicationStatus("id").application().state());
     }
     @Test void typedLiveRepliesAndControlValidation() throws Exception {

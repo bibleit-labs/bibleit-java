@@ -81,6 +81,17 @@ public final class OAuthClient {
         return token(values);
     }
     /**
+     * Rotates a refresh token without narrowing its existing scopes.
+     * @param clientId the registered OAuth client identifier
+     * @param refreshToken the single-use refresh token
+     * @return the rotated token values
+     * @throws IOException if the request or response fails
+     * @throws InterruptedException if execution is interrupted
+     */
+    public Models.OAuthToken refresh(String clientId, String refreshToken) throws IOException, InterruptedException {
+        return refresh(clientId, refreshToken, List.of());
+    }
+    /**
      * Revokes the supplied OAuth token.
      * @param clientId the registered OAuth client identifier
      * @param token the explicit bearer credential, or an empty string for public discovery
@@ -98,8 +109,9 @@ public final class OAuthClient {
         var response = transport.send(formRequest(method, path, values));
         if (response.statusCode() >= 200 && response.statusCode() < 300) return response;
         try (response) {
-            com.fasterxml.jackson.databind.JsonNode fields;
-            try { fields = response.decode(); } catch (IOException e) { fields = Json.MAPPER.createObjectNode(); }
+            Models.OAuthError fields;
+            try { fields = response.decode(Models.OAuthError.class); } catch (IOException e) { fields = new Models.OAuthError(); }
+            if (fields == null) fields = new Models.OAuthError();
             throw new OAuthException(response.statusCode(), response.headers(), fields);
         }
     }

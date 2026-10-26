@@ -53,8 +53,8 @@ bash scripts/verify-signing-key.sh "$PUBLIC_SIGNING_FINGERPRINT"
 4. Create and push an annotated release tag matching that version:
 
    ```sh
-   git tag -a v0.0.1 -m 'chore(release): 0.0.1'
-   git push origin v0.0.1
+   git tag -a v0.0.2 -m 'chore(release): 0.0.2'
+   git push origin v0.0.2
    ```
 
 5. The publishing workflow validates credentials, the tag, version and ancestry,

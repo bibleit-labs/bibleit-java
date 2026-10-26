@@ -1,6 +1,5 @@
 package app.bibleit;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.UncheckedIOException;
@@ -40,7 +39,7 @@ public final class BookPages implements Iterable<Models.ScriptureBookRead> {
         private boolean finished;
         private Models.ScriptureBookRead next;
         private String translation;
-        private JsonNode rights;
+        private Models.TranslationRights rights;
         private int book, chapter, verse;
 
         private PageIterator() {
@@ -82,27 +81,25 @@ public final class BookPages implements Iterable<Models.ScriptureBookRead> {
                 result = response.decode(Models.ScriptureBookRead.class);
             }
             if (result == null) throw invalid();
-            JsonNode page = result.toJson();
-            var cursor = page.get("next_cursor");
-            var verses = page.path("verses");
-            if (!page.path("translation").isTextual() || page.path("translation").asText().isEmpty()
-                || !page.path("rights").isObject() || !verses.isArray() || verses.size() > limit || cursor == null
-                || !(cursor.isNull() || cursor.isTextual() && !cursor.asText().isEmpty())
-                || !cursor.isNull() && (verses.isEmpty() || !seen.add(cursor.asText()))) throw invalid();
+            String cursor = result.getNextCursor();
+            var verses = result.getVerses();
+            if (result.getTranslation() == null || result.getTranslation().isEmpty()
+                || result.getRights() == null || verses == null || verses.size() > limit
+                || !result.hasField("next_cursor") || cursor != null && cursor.isEmpty()
+                || cursor != null && (verses.isEmpty() || !seen.add(cursor))) throw invalid();
             if (translation == null) {
-                translation = page.path("translation").asText();
-                rights = page.get("rights").deepCopy();
-            } else if (!translation.equals(page.path("translation").asText()) || !rights.equals(page.get("rights"))) throw invalid();
-            for (var v : verses) {
-                if (!v.path("book_id").canConvertToInt() || !v.path("chapter").canConvertToInt() || !v.path("verse").canConvertToInt()
-                    || !v.path("book_id").isIntegralNumber() || !v.path("chapter").isIntegralNumber() || !v.path("verse").isIntegralNumber()) throw invalid();
-                int b = v.path("book_id").asInt(), c = v.path("chapter").asInt(), n = v.path("verse").asInt();
+                translation = result.getTranslation();
+                rights = Json.MAPPER.convertValue(result.getRights(), Models.TranslationRights.class);
+            } else if (!translation.equals(result.getTranslation()) || !rights.equals(result.getRights())) throw invalid();
+            for (var value : verses) {
+                if (value == null || value.getBookId() == null || value.getChapter() == null || value.getVerse() == null) throw invalid();
+                long b = value.getBookId(), c = value.getChapter(), n = value.getVerse();
                 if (b < 1 || b > 255 || c < 1 || c > 152 || n < 1 || n > 255
                     || book != 0 && (b != book || c < chapter || c == chapter && n <= verse)) throw invalid();
-                book = b; chapter = c; verse = n;
+                book = (int) b; chapter = (int) c; verse = (int) n;
             }
-            if (cursor.isNull()) finished = true;
-            else after = cursor.asText();
+            if (cursor == null) finished = true;
+            else after = cursor;
             return result;
         }
     }

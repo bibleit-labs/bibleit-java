@@ -7,10 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,23 +15,23 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ProtocolTest {
     static InputStream wire(String value) { return new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8)); }
     @TestFactory Stream<DynamicTest> sharedResponseFixtures() throws IOException {
-        var fixtures = Json.MAPPER.readTree(Files.readString(Path.of("contract/fixtures/responses-v1.json")));
+        var fixtures = TestFixtures.responses();
         var tests = new ArrayList<DynamicTest>();
-        for (var fixture : fixtures) tests.add(DynamicTest.dynamicTest(fixture.path("name").asText(), () -> {
-            String value = fixture.path("wire").asText();
-            if (fixture.path("invalid").asBoolean()) { assertThrows(IOException.class, () -> Protocol.decodeResponse(wire(value))); return; }
-            if (fixture.has("error_code")) {
+        for (var fixture : fixtures) tests.add(DynamicTest.dynamicTest(fixture.name(), () -> {
+            String value = fixture.wire();
+            if (fixture.invalid()) { assertThrows(IOException.class, () -> Protocol.decodeResponse(wire(value))); return; }
+            if (fixture.errorCode() != null) {
                 var error = assertThrows(ServerException.class, () -> Protocol.decodeResponse(wire(value)));
-                assertEquals(fixture.path("error_code").asText(), error.code());
-                fixture.path("error_fields").properties().forEach(entry -> assertEquals(entry.getValue().asText(), error.fields().get(entry.getKey())));
+                assertEquals(fixture.errorCode(), error.code());
+                if (fixture.errorFields() != null) assertEquals(fixture.errorFields(), error.fields());
                 return;
             }
             var result = Protocol.decodeResponse(wire(value));
-            assertEquals(fixture.path("records").size(), result.records().size());
+            assertEquals(fixture.records().size(), result.records().size());
             for (int i = 0; i < result.records().size(); i++) {
-                var expected = fixture.path("records").get(i); var record = result.records().get(i);
-                assertEquals(expected.path("type").asText(), record.type());
-                assertEquals(Json.MAPPER.convertValue(expected.path("fields"), Map.class), record.fields());
+                var expected = fixture.records().get(i); var record = result.records().get(i);
+                assertEquals(expected.type(), record.type());
+                assertEquals(expected.fields(), record.fields());
             }
         }));
         return tests.stream();

@@ -1,6 +1,5 @@
 package app.bibleit;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.net.http.HttpHeaders;
 
 /**
@@ -13,10 +12,18 @@ public final class OAuthException extends ProblemException {
      * @param headers the response headers
      * @param fields the original server fields
      */
-    public OAuthException(int status, HttpHeaders headers, JsonNode fields) { super(status, headers, fields); }
+    public OAuthException(int status, HttpHeaders headers, Models.OAuthError fields) { super(status, headers, Json.MAPPER.convertValue(fields, Models.Problem.class)); }
     /**
      * Returns the untrusted OAuth error description for deliberate application handling.
      * @return the description result
      */
-    public String description() { return fields().path("error_description").asText(""); }
+    public String description() {
+        var description = error().getErrorDescription();
+        return description == null ? "" : description;
+    }
+    /**
+     * Returns the typed OAuth protocol error.
+     * @return a defensive copy of the OAuth error
+     */
+    public Models.OAuthError error() { return Json.MAPPER.convertValue(fields(), Models.OAuthError.class); }
 }

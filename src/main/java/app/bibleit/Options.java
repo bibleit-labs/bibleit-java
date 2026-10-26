@@ -9,15 +9,16 @@ import java.util.Objects;
  */
 public final class Options {
     final Object json;
+    final boolean hasJson;
     final InputStream body;
     final long contentLength;
     final String contentType, ifMatch, idempotencyKey, destinationToken, range;
     final Duration timeout;
     private Options(Builder b) {
-        json = b.json; body = b.body; contentLength = b.contentLength;
+        json = b.json; hasJson = b.hasJson; body = b.body; contentLength = b.contentLength;
         contentType = b.contentType; ifMatch = b.ifMatch; idempotencyKey = b.idempotencyKey;
         destinationToken = b.destinationToken; range = b.range; timeout = b.timeout;
-        if (json != null && body != null) throw new IllegalArgumentException("JSON and raw body are mutually exclusive");
+        if (hasJson && body != null) throw new IllegalArgumentException("JSON and raw body are mutually exclusive");
         if (body != null && contentLength < 0) throw new IllegalArgumentException("Raw body requires exact content length");
         if (timeout.isNegative() || timeout.isZero()) throw new IllegalArgumentException("Timeout must be positive");
     }
@@ -36,7 +37,7 @@ public final class Options {
      * @return a new builder containing these option values
      */
     public Builder toBuilder() {
-        var b = new Builder(); b.json = json; b.body = body;
+        var b = new Builder(); b.json = json; b.hasJson = hasJson; b.body = body;
         b.contentLength = contentLength; b.contentType = contentType; b.ifMatch = ifMatch;
         b.idempotencyKey = idempotencyKey; b.destinationToken = destinationToken;
         b.range = range; b.timeout = timeout; return b;
@@ -50,16 +51,17 @@ public final class Options {
          */
         public Builder() {}
         private Object json;
+        private boolean hasJson;
         private InputStream body;
         private long contentLength = -1;
         private String contentType = "", ifMatch = "", idempotencyKey = "", destinationToken = "", range = "";
         private Duration timeout = Duration.ofSeconds(40);
         /**
-         * Sets a Jackson-serializable JSON body, including an explicit JSON null node.
-         * @param value the value to set
+         * Sets a Java request body for Jackson serialization.
+         * @param value the Java body; null writes an explicit JSON null
          * @return this builder
          */
-        public Builder json(Object value) { json = Objects.requireNonNull(value); return this; }
+        public Builder json(Object value) { json = value; hasJson = true; return this; }
         /**
          * Sets a one-use raw upload with its exact length and media type.
          * @param value the value to set

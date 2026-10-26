@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("app.bibleit:bibleit-java:0.0.1")
+    implementation("app.bibleit:bibleit-java:0.0.2")
 }
 ```
 
@@ -60,13 +60,16 @@ for (var page : pages) {
         System.out.println(verse.getText());
     }
 }
-var event = client.pollLiveEvents(liveId, "", 25);
+var event = client.pollLiveEvents(liveId);
+System.out.println(event.getCursor());
 ```
 
 Page traversal is lazy, defaults to 50 verses (1–500 configurable), closes each
 response before returning, and rejects cursor loops or inconsistent pages.
 Stopping calls stops fetching. Treat any failed traversal as incomplete.
-Event polling performs one request; run polling separately from mutations.
+Event polling returns a typed `Models.LiveEvent`, defaults to a 25-second wait,
+and performs one request. Use `pollLiveEvents(liveId, waitSeconds)` to choose a
+wait without supplying a cursor. Run polling separately from mutations.
 
 ## OAuth and browser login
 

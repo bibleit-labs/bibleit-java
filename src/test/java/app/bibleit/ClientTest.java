@@ -1,6 +1,7 @@
 package app.bibleit;
 
 import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -31,16 +32,16 @@ class ClientTest {
         return new Response(status, HttpHeaders.of(headers, (k,v) -> true), ProtocolTest.wire(json));
     }
     @Test void everyOperationHasMatchingMethodAndPath() throws Exception {
-        var spec = Json.MAPPER.readTree(Files.readString(Path.of("contract/openapi.json")));
+        var spec = Json.MAPPER.readValue(Files.readString(Path.of("contract/openapi.json")), TestFixtures.ApiDocument.class);
         var calls = new AtomicInteger();
         var client = new BibleitClient("bt_fixture", request -> {
             calls.incrementAndGet(); assertEquals("api.bibleit.app", request.uri().getHost());
             assertEquals("Bearer bt_fixture", request.headers().firstValue("Authorization").orElseThrow());
             return response(200, "{}", Map.of());
         });
-        for (var path : spec.path("paths").properties()) for (var verb : path.getValue().properties()) {
-            var op = verb.getValue(); if (!op.has("operationId")) continue;
-            String name = op.path("operationId").asText();
+        for (var path : spec.paths().entrySet()) for (var verb : path.getValue().operations().entrySet()) {
+            var op = verb.getValue(); if (op.operationId() == null) continue;
+            String name = op.operationId();
             var params = java.util.regex.Pattern.compile("\\{([^}]+)}").matcher(path.getKey());
             var values = new ArrayList<Object>(); var types = new ArrayList<Class<?>>();
             while (params.find()) { values.add("fixture"); types.add(String.class); }
@@ -93,21 +94,22 @@ class ClientTest {
         assertTrue(closed.get()); assertEquals(1,calls.get());
     }
     @Test void responseLimitsAndTrailingJson() {
-        assertThrows(IOException.class, () -> response(200,"{} {}",Map.of()).decode());
+        assertThrows(IOException.class, () -> response(200,"{} {}",Map.of()).decode(Models.EmptyObject.class));
         var body = new ByteArrayInputStream(new byte[Response.MAX_JSON_BYTES + 1]);
-        assertThrows(IOException.class, () -> new Response(200,HttpHeaders.of(Map.of(),(k,v)->true),body).decode());
+        assertThrows(IOException.class, () -> new Response(200,HttpHeaders.of(Map.of(),(k,v)->true),body).decode(Models.EmptyObject.class));
     }
     @Test void typedModelsPreservePresenceNullUnknownAndLargeIntegers() throws Exception {
         var json = "{\"id\":\"identity\",\"future\":9007199254740993,\"display_name\":null}";
         var identity = response(200,json,Map.of()).decode(Models.PersonalIdentity.class);
         assertEquals("identity",identity.getId());
         assertTrue(identity.hasField("display_name")); assertFalse(identity.hasField("missing"));
-        assertEquals("9007199254740993",identity.toJson().path("future").asText());
-        assertEquals(Json.MAPPER.readTree(json),Json.MAPPER.valueToTree(identity));
+        assertEquals("9007199254740993",identity.additionalProperties().get("future").toString());
+        assertEquals(Json.MAPPER.readValue(json, new TypeReference<Map<String, Object>>() {}),
+            Json.MAPPER.convertValue(identity, new TypeReference<Map<String, Object>>() {}));
         var create = new Models.CreateLive();
         assertEquals("{}",Json.MAPPER.writeValueAsString(create));
         create.setName("Service"); assertEquals("Service",create.getName());
-        create.setName(null); assertTrue(create.toJson().path("name").isNull());
+        create.setName(null); assertTrue(create.hasField("name")); assertNull(create.getName());
         assertFalse(create.toString().contains("Service"));
     }
     static String page(String cursor, int verse) {
@@ -179,7 +181,7 @@ class ClientTest {
     }
     @Test void eventValidation() throws Exception {
         var valid = "{\"schema_version\":1,\"type\":\"stream.heartbeat\",\"resource_type\":\"live\",\"resource_id\":\"live\",\"cursor\":\"opaque\",\"data\":null}";
-        assertEquals("opaque",new BibleitClient("",r -> response(200,valid,Map.of())).pollLiveEvents("live","",25).path("cursor").asText());
+        assertEquals("opaque",new BibleitClient("",r -> response(200,valid,Map.of())).pollLiveEvents("live").getCursor());
         assertThrows(IOException.class, () -> new BibleitClient("",r -> response(200,valid,Map.of())).pollLiveEvents("other","",0));
         assertThrows(IllegalArgumentException.class, () -> new BibleitClient("").pollLiveEvents("live","",26));
     }

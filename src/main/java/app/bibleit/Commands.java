@@ -252,4 +252,37 @@ public final class Commands {
      * @return the validated command; wire values may contain secrets
      */
     public static Command organizationApplicationStatusCommand(String id) { return command("ORGANIZATION APPLICATION", id, "STATUS"); }
+    /**
+     * Creates a Live using the server default name.
+     * @return the validated command
+     */
+    public static Command createLiveCommand() { return createLiveCommand(""); }
+    /**
+     * Builds the root help command.
+     * @return the validated command
+     */
+    public static Command helpCommand() { return helpCommand(""); }
+    /**
+     * Builds the first organization-directory page request.
+     * @return the validated command
+     */
+    public static Command organizationListCommand() { return organizationListCommand(""); }
+    /**
+     * Pops the default number of Live stack entries.
+     * @param id the Live identifier
+     * @return the validated command
+     */
+    public static Command popLiveCommand(String id) { return popLiveCommand(id, 0); }
+    /**
+     * Builds an audience-secret management command without an unused value argument.
+     * @param id the Live identifier
+     * @param action the management action
+     * @return the validated command
+     * @throws IllegalArgumentException if authentication requires a secret value
+     */
+    public static Command liveSecretCommand(String id, SecretAction action) {
+        if (action == SecretAction.AUTHENTICATE) throw new IllegalArgumentException("Authentication requires a secret value");
+        return liveSecretCommand(id, action, "");
+    }
+
 }

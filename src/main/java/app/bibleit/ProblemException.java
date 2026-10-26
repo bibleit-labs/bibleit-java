@@ -1,6 +1,5 @@
 package app.bibleit;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.http.HttpHeaders;
 import java.time.Duration;
@@ -20,16 +19,16 @@ public class ProblemException extends IOException {
     /** Original structured problem fields.
      * @serial Original structured problem fields.
      */
-    private final JsonNode fields;
+    private final Models.Problem fields;
     /**
      * Creates an HTTP problem retaining the original status, headers and server fields.
      * @param status the HTTP failure status
      * @param headers the response headers
      * @param fields the original server fields
      */
-    public ProblemException(int status, HttpHeaders headers, JsonNode fields) {
-        super("Bibleit HTTP " + status + ": " + fields.path("code").asText(fields.path("error").asText("unknown")));
-        this.status = status; this.headers = headers; this.fields = fields;
+    public ProblemException(int status, HttpHeaders headers, Models.Problem fields) {
+        super("Bibleit HTTP " + status + ": " + code(fields, "unknown"));
+        this.status = status; this.headers = headers; this.fields = Json.MAPPER.convertValue(fields, Models.Problem.class);
     }
     /**
      * Returns the HTTP failure status.
@@ -40,17 +39,22 @@ public class ProblemException extends IOException {
      * Returns the stable server error code, including unknown codes.
      * @return the code result
      */
-    public String code() { return fields.path("code").asText(fields.path("error").asText("")); }
+    public String code() { return code(fields, ""); }
+    private static String code(Models.Problem problem, String fallback) {
+        if (problem.getCode() != null) return problem.getCode();
+        var error = problem.additionalProperties().get("error");
+        return error instanceof String value ? value : fallback;
+    }
     /**
      * Returns the problem request ID, falling back to the HTTP response header.
      * @return the request id result
      */
-    public String requestId() { return fields.path("request_id").asText(headers.firstValue("X-Request-Id").orElse("")); }
+    public String requestId() { return fields.getRequestId() != null ? fields.getRequestId() : headers.firstValue("X-Request-Id").orElse(""); }
     /**
      * Returns the original server metadata.
-     * @return a defensive copy of the original JSON problem fields
+     * @return a defensive copy of the typed problem details
      */
-    public JsonNode fields() { return fields.deepCopy(); }
+    public Models.Problem fields() { return Json.MAPPER.convertValue(fields, Models.Problem.class); }
     /**
      * Returns the immutable HTTP response headers.
      * @return the response headers
