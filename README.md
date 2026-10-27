@@ -54,7 +54,7 @@ there are no application retry loops. See [API and transport details](docs/api.m
 import app.bibleit.Queries;
 
 var query = Queries.ReadPersonalBookQuery.builder().limit(50).build();
-var pages = client.readPersonalBookPages(accountId, "web", "43", query);
+var pages = client.readPersonalBookPages(accountId, "web", "John", query);
 for (var page : pages) {
     for (var verse : page.getVerses()) {
         System.out.println(verse.getText());
