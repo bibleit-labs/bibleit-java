@@ -63,6 +63,8 @@ final class Operations {
 
         operations.put("replaceLiveQueueOrder", new Operation("PUT", "/lives/{live_id}/queue-items/order", "Replace queue ordering"));
 
+        operations.put("stageLiveQueueItem", new Operation("POST", "/lives/{live_id}/queue-items/staged", "Stage a scripture queue item while stopped"));
+
         operations.put("updateLiveMetadata", new Operation("PATCH", "/lives/{live_id}", "Edit Live metadata"));
 
         operations.put("authorizeOAuth", new Operation("GET", "/oauth/authorize", "Start registered-client authorization"));

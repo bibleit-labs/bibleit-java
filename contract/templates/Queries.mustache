@@ -7,7 +7,7 @@ import java.util.List;
 /** Operation-specific query builders generated from the OpenAPI contract. */
 public final class Queries {
     private Queries() {}
-{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}{{#hasQueryParams}}
+{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}{{#vendorExtensions.x-java-client-operation}}{{#hasQueryParams}}
     /** Query parameters accepted by {@code {{operationId}}}. */
     public static final class {{operationIdCamelCase}}Query implements QueryParameters {
 {{#queryParams}}
@@ -101,5 +101,5 @@ public final class Queries {
             public {{operationIdCamelCase}}Query build() { return new {{operationIdCamelCase}}Query(this); }
         }
     }
-{{/hasQueryParams}}{{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
+{{/hasQueryParams}}{{/vendorExtensions.x-java-client-operation}}{{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
 }

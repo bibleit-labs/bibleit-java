@@ -6814,7 +6814,7 @@ public final class Models {
         private String id;
         private String clientId;
         private String clientName;
-        private List<OAuthScope> scopes;
+        private List<OAuthGrantedScope> scopes;
         private Long expiresAt;
         /**
          * Creates an object with all properties unset.
@@ -6854,12 +6854,12 @@ public final class Models {
          * Returns scopes.
          * @return the typed Java value, or null when absent or explicitly null
          */
-        @JsonProperty("scopes") public List<OAuthScope> getScopes() { return scopes; }
+        @JsonProperty("scopes") public List<OAuthGrantedScope> getScopes() { return scopes; }
         /**
          * Sets scopes.
          * @param value the Java value; null writes explicit JSON null
          */
-        @JsonProperty("scopes") public void setScopes(List<OAuthScope> value) { scopes = value; markField("scopes"); }
+        @JsonProperty("scopes") public void setScopes(List<OAuthGrantedScope> value) { scopes = value; markField("scopes"); }
         /**
          * Returns expires at.
          * @return the typed Java value, or null when absent or explicitly null
@@ -6882,7 +6882,7 @@ public final class Models {
                 case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
                 case "client_id" -> { setClientId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
                 case "client_name" -> { setClientName(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
-                case "scopes" -> { setScopes(Json.MAPPER.convertValue(value, new TypeReference<List<OAuthScope>>() {})); yield true; }
+                case "scopes" -> { setScopes(Json.MAPPER.convertValue(value, new TypeReference<List<OAuthGrantedScope>>() {})); yield true; }
                 case "expires_at" -> { setExpiresAt(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
                 default -> false;
             };
@@ -9258,6 +9258,426 @@ public final class Models {
         }
     }
     /**
+     * Issuer validation result for a valid identity.read MCP-audience token. No token secrets or email. Domain permissions are optional for compatibility with older issuer versions.
+     */
+    public static final class McpOAuthProbe extends Model {
+        private String id;
+        private String displayName;
+        private String handle;
+        private String personalAccountId;
+        private String clientId;
+        private List<String> scopes;
+        private Long expiresAt;
+        private String resource;
+        private List<String> permissions;
+        private List<String> domainPermissions;
+        private List<String> livePermissions;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public McpOAuthProbe() {}
+        /**
+         * Returns id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("id") public String getId() { return id; }
+        /**
+         * Sets id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("id") public void setId(String value) { id = value; markField("id"); }
+        /**
+         * Returns display name.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("display_name") public String getDisplayName() { return displayName; }
+        /**
+         * Sets display name.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("display_name") public void setDisplayName(String value) { displayName = value; markField("display_name"); }
+        /**
+         * Returns handle.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("handle") public String getHandle() { return handle; }
+        /**
+         * Sets handle.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("handle") public void setHandle(String value) { handle = value; markField("handle"); }
+        /**
+         * Returns personal account id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("personal_account_id") public String getPersonalAccountId() { return personalAccountId; }
+        /**
+         * Sets personal account id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("personal_account_id") public void setPersonalAccountId(String value) { personalAccountId = value; markField("personal_account_id"); }
+        /**
+         * Returns client id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("client_id") public String getClientId() { return clientId; }
+        /**
+         * Sets client id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("client_id") public void setClientId(String value) { clientId = value; markField("client_id"); }
+        /**
+         * Returns scopes.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("scopes") public List<String> getScopes() { return scopes; }
+        /**
+         * Sets scopes.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("scopes") public void setScopes(List<String> value) { scopes = value; markField("scopes"); }
+        /**
+         * Returns expires at.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("expires_at") public Long getExpiresAt() { return expiresAt; }
+        /**
+         * Sets expires at.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("expires_at") public void setExpiresAt(Long value) { expiresAt = value; markField("expires_at"); }
+        /**
+         * Returns resource.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("resource") public String getResource() { return resource; }
+        /**
+         * Sets resource.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("resource") public void setResource(String value) { resource = value; markField("resource"); }
+        /**
+         * Fresh actor MCP entitlement, separate from consented OAuth scopes. Missing mcp.get denies the request; list/call are enforced by the adapter.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("permissions") public List<String> getPermissions() { return permissions; }
+        /**
+         * Sets permissions.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("permissions") public void setPermissions(List<String> value) { permissions = value; markField("permissions"); }
+        /**
+         * Current Scripture authority intersected with the grant&#x27;s approved scopes. Absent in older issuer responses; clients must deny domain tools when absent. This never expands an existing grant.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("domain_permissions") public List<String> getDomainPermissions() { return domainPermissions; }
+        /**
+         * Sets domain permissions.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("domain_permissions") public void setDomainPermissions(List<String> value) { domainPermissions = value; markField("domain_permissions"); }
+        /**
+         * Current personal Reader Live authority intersected with the grant’s approved scopes, including separately consented stopped creation and quiet queue staging. Absent in older issuer responses; clients must deny Live tools when absent. Existing read-only grants never acquire write scopes automatically.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("live_permissions") public List<String> getLivePermissions() { return livePermissions; }
+        /**
+         * Sets live permissions.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("live_permissions") public void setLivePermissions(List<String> value) { livePermissions = value; markField("live_permissions"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("id")) fields.put("id", id);
+            if (hasField("display_name")) fields.put("display_name", displayName);
+            if (hasField("handle")) fields.put("handle", handle);
+            if (hasField("personal_account_id")) fields.put("personal_account_id", personalAccountId);
+            if (hasField("client_id")) fields.put("client_id", clientId);
+            if (hasField("scopes")) fields.put("scopes", scopes);
+            if (hasField("expires_at")) fields.put("expires_at", expiresAt);
+            if (hasField("resource")) fields.put("resource", resource);
+            if (hasField("permissions")) fields.put("permissions", permissions);
+            if (hasField("domain_permissions")) fields.put("domain_permissions", domainPermissions);
+            if (hasField("live_permissions")) fields.put("live_permissions", livePermissions);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "display_name" -> { setDisplayName(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "handle" -> { setHandle(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "personal_account_id" -> { setPersonalAccountId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "client_id" -> { setClientId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "scopes" -> { setScopes(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                case "expires_at" -> { setExpiresAt(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "resource" -> { setResource(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "permissions" -> { setPermissions(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                case "domain_permissions" -> { setDomainPermissions(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                case "live_permissions" -> { setLivePermissions(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "id" -> id = null;
+                case "display_name" -> displayName = null;
+                case "handle" -> handle = null;
+                case "personal_account_id" -> personalAccountId = null;
+                case "client_id" -> clientId = null;
+                case "scopes" -> scopes = null;
+                case "expires_at" -> expiresAt = null;
+                case "resource" -> resource = null;
+                case "permissions" -> permissions = null;
+                case "domain_permissions" -> domainPermissions = null;
+                case "live_permissions" -> livePermissions = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * OAuth errors for resource-aware authorization and token exchange. invalid_target applies to the opt-in MCP audience extension.
+     */
+    public static final class OAuthResourceError extends Model {
+        private String error;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public OAuthResourceError() {}
+        /**
+         * Returns error.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("error") public String getError() { return error; }
+        /**
+         * Sets error.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("error") public void setError(String value) { error = value; markField("error"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("error")) fields.put("error", error);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "error" -> { setError(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "error" -> error = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * MCP issuer probe error. Authentication failures are invalid_token; missing identity.read is insufficient_scope.
+     */
+    public static final class McpOAuthProbeError extends Model {
+        private String error;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public McpOAuthProbeError() {}
+        /**
+         * Returns error.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("error") public String getError() { return error; }
+        /**
+         * Sets error.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("error") public void setError(String value) { error = value; markField("error"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("error")) fields.put("error", error);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "error" -> { setError(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "error" -> error = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * MCP resource issuer capability metadata. Its advertised scope vocabulary can extend independently of ordinary REST issuer/request scopes; newly advertised write scopes require explicit consent and current domain authority.
+     */
+    public static final class McpOAuthMetadata extends Model {
+        private String issuer;
+        private String authorizationEndpoint;
+        private String tokenEndpoint;
+        private String revocationEndpoint;
+        private List<String> responseTypesSupported;
+        private List<String> grantTypesSupported;
+        private List<String> tokenEndpointAuthMethodsSupported;
+        private List<String> revocationEndpointAuthMethodsSupported;
+        private List<String> codeChallengeMethodsSupported;
+        private List<McpOAuthScope> scopesSupported;
+        private Boolean authorizationResponseIssParameterSupported;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public McpOAuthMetadata() {}
+        /**
+         * Returns issuer.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("issuer") public String getIssuer() { return issuer; }
+        /**
+         * Sets issuer.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("issuer") public void setIssuer(String value) { issuer = value; markField("issuer"); }
+        /**
+         * Returns authorization endpoint.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("authorization_endpoint") public String getAuthorizationEndpoint() { return authorizationEndpoint; }
+        /**
+         * Sets authorization endpoint.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("authorization_endpoint") public void setAuthorizationEndpoint(String value) { authorizationEndpoint = value; markField("authorization_endpoint"); }
+        /**
+         * Returns token endpoint.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("token_endpoint") public String getTokenEndpoint() { return tokenEndpoint; }
+        /**
+         * Sets token endpoint.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("token_endpoint") public void setTokenEndpoint(String value) { tokenEndpoint = value; markField("token_endpoint"); }
+        /**
+         * Returns revocation endpoint.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("revocation_endpoint") public String getRevocationEndpoint() { return revocationEndpoint; }
+        /**
+         * Sets revocation endpoint.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("revocation_endpoint") public void setRevocationEndpoint(String value) { revocationEndpoint = value; markField("revocation_endpoint"); }
+        /**
+         * Returns response types supported.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("response_types_supported") public List<String> getResponseTypesSupported() { return responseTypesSupported; }
+        /**
+         * Sets response types supported.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("response_types_supported") public void setResponseTypesSupported(List<String> value) { responseTypesSupported = value; markField("response_types_supported"); }
+        /**
+         * Returns grant types supported.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("grant_types_supported") public List<String> getGrantTypesSupported() { return grantTypesSupported; }
+        /**
+         * Sets grant types supported.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("grant_types_supported") public void setGrantTypesSupported(List<String> value) { grantTypesSupported = value; markField("grant_types_supported"); }
+        /**
+         * Returns token endpoint auth methods supported.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("token_endpoint_auth_methods_supported") public List<String> getTokenEndpointAuthMethodsSupported() { return tokenEndpointAuthMethodsSupported; }
+        /**
+         * Sets token endpoint auth methods supported.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("token_endpoint_auth_methods_supported") public void setTokenEndpointAuthMethodsSupported(List<String> value) { tokenEndpointAuthMethodsSupported = value; markField("token_endpoint_auth_methods_supported"); }
+        /**
+         * Returns revocation endpoint auth methods supported.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("revocation_endpoint_auth_methods_supported") public List<String> getRevocationEndpointAuthMethodsSupported() { return revocationEndpointAuthMethodsSupported; }
+        /**
+         * Sets revocation endpoint auth methods supported.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("revocation_endpoint_auth_methods_supported") public void setRevocationEndpointAuthMethodsSupported(List<String> value) { revocationEndpointAuthMethodsSupported = value; markField("revocation_endpoint_auth_methods_supported"); }
+        /**
+         * Returns code challenge methods supported.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("code_challenge_methods_supported") public List<String> getCodeChallengeMethodsSupported() { return codeChallengeMethodsSupported; }
+        /**
+         * Sets code challenge methods supported.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("code_challenge_methods_supported") public void setCodeChallengeMethodsSupported(List<String> value) { codeChallengeMethodsSupported = value; markField("code_challenge_methods_supported"); }
+        /**
+         * Returns scopes supported.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("scopes_supported") public List<McpOAuthScope> getScopesSupported() { return scopesSupported; }
+        /**
+         * Sets scopes supported.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("scopes_supported") public void setScopesSupported(List<McpOAuthScope> value) { scopesSupported = value; markField("scopes_supported"); }
+        /**
+         * Returns authorization response iss parameter supported.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("authorization_response_iss_parameter_supported") public Boolean getAuthorizationResponseIssParameterSupported() { return authorizationResponseIssParameterSupported; }
+        /**
+         * Sets authorization response iss parameter supported.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("authorization_response_iss_parameter_supported") public void setAuthorizationResponseIssParameterSupported(Boolean value) { authorizationResponseIssParameterSupported = value; markField("authorization_response_iss_parameter_supported"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("issuer")) fields.put("issuer", issuer);
+            if (hasField("authorization_endpoint")) fields.put("authorization_endpoint", authorizationEndpoint);
+            if (hasField("token_endpoint")) fields.put("token_endpoint", tokenEndpoint);
+            if (hasField("revocation_endpoint")) fields.put("revocation_endpoint", revocationEndpoint);
+            if (hasField("response_types_supported")) fields.put("response_types_supported", responseTypesSupported);
+            if (hasField("grant_types_supported")) fields.put("grant_types_supported", grantTypesSupported);
+            if (hasField("token_endpoint_auth_methods_supported")) fields.put("token_endpoint_auth_methods_supported", tokenEndpointAuthMethodsSupported);
+            if (hasField("revocation_endpoint_auth_methods_supported")) fields.put("revocation_endpoint_auth_methods_supported", revocationEndpointAuthMethodsSupported);
+            if (hasField("code_challenge_methods_supported")) fields.put("code_challenge_methods_supported", codeChallengeMethodsSupported);
+            if (hasField("scopes_supported")) fields.put("scopes_supported", scopesSupported);
+            if (hasField("authorization_response_iss_parameter_supported")) fields.put("authorization_response_iss_parameter_supported", authorizationResponseIssParameterSupported);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "issuer" -> { setIssuer(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "authorization_endpoint" -> { setAuthorizationEndpoint(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "token_endpoint" -> { setTokenEndpoint(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "revocation_endpoint" -> { setRevocationEndpoint(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "response_types_supported" -> { setResponseTypesSupported(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                case "grant_types_supported" -> { setGrantTypesSupported(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                case "token_endpoint_auth_methods_supported" -> { setTokenEndpointAuthMethodsSupported(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                case "revocation_endpoint_auth_methods_supported" -> { setRevocationEndpointAuthMethodsSupported(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                case "code_challenge_methods_supported" -> { setCodeChallengeMethodsSupported(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                case "scopes_supported" -> { setScopesSupported(Json.MAPPER.convertValue(value, new TypeReference<List<McpOAuthScope>>() {})); yield true; }
+                case "authorization_response_iss_parameter_supported" -> { setAuthorizationResponseIssParameterSupported(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "issuer" -> issuer = null;
+                case "authorization_endpoint" -> authorizationEndpoint = null;
+                case "token_endpoint" -> tokenEndpoint = null;
+                case "revocation_endpoint" -> revocationEndpoint = null;
+                case "response_types_supported" -> responseTypesSupported = null;
+                case "grant_types_supported" -> grantTypesSupported = null;
+                case "token_endpoint_auth_methods_supported" -> tokenEndpointAuthMethodsSupported = null;
+                case "revocation_endpoint_auth_methods_supported" -> revocationEndpointAuthMethodsSupported = null;
+                case "code_challenge_methods_supported" -> codeChallengeMethodsSupported = null;
+                case "scopes_supported" -> scopesSupported = null;
+                case "authorization_response_iss_parameter_supported" -> authorizationResponseIssParameterSupported = null;
+                default -> { }
+            }
+        }
+    }
+    /**
      * Approved browser-code authorization, including the secret access token. Applications own secure storage.
      */
     public static final class AuthorizationResult extends Model {
@@ -11303,5 +11723,43 @@ public final class Models {
         @Override public boolean equals(Object other) { return other instanceof OAuthScope scalar && value.equals(scalar.value); }
         @Override public int hashCode() { return value.hashCode(); }
         @Override public String toString() { return "OAuthScope[redacted]"; }
+    }
+    /**
+     * Scopes advertised by the MCP resource issuer. Preparation scopes require explicit client approval and new consent; existing grants remain unchanged. This is separate from ordinary REST authorization scopes.
+     */
+    public static final class McpOAuthScope {
+        private final String value;
+        /**
+         * Creates a typed scalar without introducing a wire wrapper.
+         * @param value the scalar Java value
+         */
+        @JsonCreator(mode = JsonCreator.Mode.DELEGATING) public McpOAuthScope(String value) { this.value = Objects.requireNonNull(value); }
+        /**
+         * Returns the scalar wire value.
+         * @return the Java scalar value
+         */
+        @JsonValue public String value() { return value; }
+        @Override public boolean equals(Object other) { return other instanceof McpOAuthScope scalar && value.equals(scalar.value); }
+        @Override public int hashCode() { return value.hashCode(); }
+        @Override public String toString() { return "McpOAuthScope[redacted]"; }
+    }
+    /**
+     * Response-only scope vocabulary for an owner inspecting existing REST or MCP grants. Does not allow MCP-only scopes in ordinary REST authorization requests.
+     */
+    public static final class OAuthGrantedScope {
+        private final String value;
+        /**
+         * Creates a typed scalar without introducing a wire wrapper.
+         * @param value the scalar Java value
+         */
+        @JsonCreator(mode = JsonCreator.Mode.DELEGATING) public OAuthGrantedScope(String value) { this.value = Objects.requireNonNull(value); }
+        /**
+         * Returns the scalar wire value.
+         * @return the Java scalar value
+         */
+        @JsonValue public String value() { return value; }
+        @Override public boolean equals(Object other) { return other instanceof OAuthGrantedScope scalar && value.equals(scalar.value); }
+        @Override public int hashCode() { return value.hashCode(); }
+        @Override public String toString() { return "OAuthGrantedScope[redacted]"; }
     }
 }

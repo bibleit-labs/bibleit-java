@@ -943,6 +943,28 @@ public final class BibleitClient {
     }
 
     /**
+     * Stage a scripture queue item while stopped.
+     * @param liveId the live_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response stageLiveQueueItem(String liveId, Options options) throws IOException, InterruptedException {
+        return call("stageLiveQueueItem", Map.of("live_id", liveId), options);
+    }
+    /**
+     * Stage a scripture queue item while stopped. Uses default request options.
+     * @param liveId the live_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response stageLiveQueueItem(String liveId) throws IOException, InterruptedException {
+        return stageLiveQueueItem(liveId, Options.defaults());
+    }
+
+    /**
      * Edit Live metadata.
      * @param liveId the live_id path identifier
      * @param options immutable HTTP request options
