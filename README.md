@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("app.bibleit:bibleit-java:0.0.2")
+    implementation("app.bibleit:bibleit-java:0.1.0")
 }
 ```
 
