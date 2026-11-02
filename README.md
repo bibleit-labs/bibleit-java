@@ -21,7 +21,9 @@ Java 27 or newer is required. The package is `app.bibleit`.
 
 ## REST resources
 
-All **95** operations and **105** schemas in the checked-in OpenAPI contract are
+The generated surface covers **89 REST operations**, retains seven legacy
+protocol wrappers and represents all **111 schemas**. New MCP/browser protocol
+operations use separate protocol clients. All schema models are
 available. Credentials are explicit: personal `bt_`, delegated `oa_`, organization
 `svc_`, or an empty string for public discovery. The server enforces permissions.
 

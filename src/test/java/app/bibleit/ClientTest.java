@@ -42,6 +42,7 @@ class ClientTest {
         for (var path : spec.paths().entrySet()) for (var verb : path.getValue().operations().entrySet()) {
             var op = verb.getValue(); if (op.operationId() == null) continue;
             String name = op.operationId();
+            if (!"rest".equals(op.server()) && !java.util.Set.of("getOAuthMetadata", "authorizeOAuth", "decideOAuthConsent", "exchangeOAuthToken", "revokeOAuthToken", "getConnectedAppsPage", "disconnectOAuthApp").contains(name)) continue;
             var params = java.util.regex.Pattern.compile("\\{([^}]+)}").matcher(path.getKey());
             var values = new ArrayList<Object>(); var types = new ArrayList<Class<?>>();
             while (params.find()) { values.add("fixture"); types.add(String.class); }
@@ -50,8 +51,18 @@ class ClientTest {
             try (var res = (Response) method.invoke(client, values.toArray())) { assertEquals(200, res.statusCode()); }
             assertEquals(verb.getKey().toUpperCase(Locale.ROOT), BibleitClient.operations().get(name).method());
         }
-        assertEquals(95, calls.get()); assertEquals(95, BibleitClient.operationNames().size());
+        assertEquals(96, calls.get()); assertEquals(96, BibleitClient.operationNames().size());
     }
+    @Test void protocolOnlyAdditionsDoNotBecomeOrdinaryRestWrappers() {
+        for (var name : List.of("probeMcpOAuth", "authorizeMcpOAuth", "decideMcpOAuth", "exchangeMcpOAuthToken", "getMcpOAuthMetadata", "getApplicationsSettingsPage", "disconnectSettingsApplication")) {
+            assertFalse(BibleitClient.operationNames().contains(name), name);
+        }
+        assertTrue(BibleitClient.operationNames().contains("stageLiveQueueItem"));
+        for (var name : List.of("getOAuthMetadata", "authorizeOAuth", "decideOAuthConsent", "exchangeOAuthToken", "revokeOAuthToken", "getConnectedAppsPage", "disconnectOAuthApp")) {
+            assertTrue(BibleitClient.operationNames().contains(name), name);
+        }
+    }
+
     @Test void validatesAndEncodesPathsAndOptions() throws Exception {
         var captured = new AtomicReference<HttpRequest>();
         var client = new BibleitClient("", r -> { captured.set(r); return response(200, "{}", Map.of()); });

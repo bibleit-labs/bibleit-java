@@ -10,9 +10,9 @@ final class Operations {
 
     private static Map<String, Operation> directory() {
         var operations = new LinkedHashMap<String, Operation>();
-{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}
+{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}{{#vendorExtensions.x-java-client-operation}}
         operations.put("{{operationId}}", new Operation("{{httpMethod}}", "{{{path}}}", "{{{summary}}}"));
-{{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
+{{/vendorExtensions.x-java-client-operation}}{{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
         return Map.copyOf(operations);
     }
 }
