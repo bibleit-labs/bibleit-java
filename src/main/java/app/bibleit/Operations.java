@@ -11,6 +11,48 @@ final class Operations {
     private static Map<String, Operation> directory() {
         var operations = new LinkedHashMap<String, Operation>();
 
+        operations.put("attachBroadcastEvent", new Operation("POST", "/organizations/{organization_id}/broadcast/events/attach", "attachBroadcastEvent"));
+
+        operations.put("createBroadcastEvent", new Operation("POST", "/organizations/{organization_id}/broadcast/events", "createBroadcastEvent"));
+
+        operations.put("createBroadcastSetup", new Operation("POST", "/organizations/{organization_id}/broadcast/setups", "createBroadcastSetup"));
+
+        operations.put("createBroadcastWriteRequest", new Operation("POST", "/organizations/{organization_id}/broadcast/write-requests", "createBroadcastWriteRequest"));
+
+        operations.put("deleteBroadcastSetup", new Operation("DELETE", "/organizations/{organization_id}/broadcast/setups/{setup_id}", "deleteBroadcastSetup"));
+
+        operations.put("duplicateBroadcastSetup", new Operation("POST", "/organizations/{organization_id}/broadcast/setups/{setup_id}/duplicate", "duplicateBroadcastSetup"));
+
+        operations.put("getBroadcastChannel", new Operation("GET", "/organizations/{organization_id}/broadcast/channel", "getBroadcastChannel"));
+
+        operations.put("getBroadcastEvent", new Operation("GET", "/organizations/{organization_id}/broadcast/events/{event_id}", "getBroadcastEvent"));
+
+        operations.put("getBroadcastOperation", new Operation("GET", "/organizations/{organization_id}/broadcast/operations/{operation_id}", "getBroadcastOperation"));
+
+        operations.put("getBroadcastPreflight", new Operation("GET", "/organizations/{organization_id}/broadcast/preflight", "getBroadcastPreflight"));
+
+        operations.put("getBroadcastPublisher", new Operation("GET", "/organizations/{organization_id}/broadcast/publishers/{publisher_id}", "getBroadcastPublisher"));
+
+        operations.put("getBroadcastSetup", new Operation("GET", "/organizations/{organization_id}/broadcast/setups/{setup_id}", "getBroadcastSetup"));
+
+        operations.put("getBroadcastWriteRequest", new Operation("GET", "/organizations/{organization_id}/broadcast/write-requests/{request_id}", "getBroadcastWriteRequest"));
+
+        operations.put("listBroadcastEvents", new Operation("GET", "/organizations/{organization_id}/broadcast/events", "listBroadcastEvents"));
+
+        operations.put("listBroadcastOutputProfiles", new Operation("GET", "/organizations/{organization_id}/broadcast/profiles", "listBroadcastOutputProfiles"));
+
+        operations.put("listBroadcastPublishers", new Operation("GET", "/organizations/{organization_id}/broadcast/publishers", "listBroadcastPublishers"));
+
+        operations.put("listBroadcastSetups", new Operation("GET", "/organizations/{organization_id}/broadcast/setups", "listBroadcastSetups"));
+
+        operations.put("replaceBroadcastSetup", new Operation("PUT", "/organizations/{organization_id}/broadcast/setups/{setup_id}", "replaceBroadcastSetup"));
+
+        operations.put("requestBroadcastTakeover", new Operation("POST", "/organizations/{organization_id}/broadcast/takeover", "requestBroadcastTakeover"));
+
+        operations.put("stopBroadcastPublisher", new Operation("POST", "/organizations/{organization_id}/broadcast/publishers/{publisher_id}/stop", "stopBroadcastPublisher"));
+
+        operations.put("transitionBroadcastEvent", new Operation("POST", "/organizations/{organization_id}/broadcast/events/{event_id}/transitions", "transitionBroadcastEvent"));
+
         operations.put("getOpenApi", new Operation("GET", "/openapi.json", "Download the OpenAPI contract"));
 
         operations.put("clearLiveStack", new Operation("DELETE", "/lives/{live_id}/stack", "Clear the retained scripture stack"));
@@ -63,19 +105,35 @@ final class Operations {
 
         operations.put("replaceLiveQueueOrder", new Operation("PUT", "/lives/{live_id}/queue-items/order", "Replace queue ordering"));
 
+        operations.put("stageLiveQueueItem", new Operation("POST", "/lives/{live_id}/queue-items/staged", "Stage a scripture queue item while stopped"));
+
         operations.put("updateLiveMetadata", new Operation("PATCH", "/lives/{live_id}", "Edit Live metadata"));
 
+        operations.put("authorizeMcpOAuth", new Operation("GET", "/oauth/mcp/authorize", "MCP: Start registered-client authorization"));
+
         operations.put("authorizeOAuth", new Operation("GET", "/oauth/authorize", "Start registered-client authorization"));
+
+        operations.put("decideMcpOAuth", new Operation("POST", "/oauth/mcp/authorize", "MCP: Approve or deny OAuth consent"));
 
         operations.put("decideOAuthConsent", new Operation("POST", "/oauth/authorize", "Approve or deny OAuth consent"));
 
         operations.put("disconnectOAuthApp", new Operation("POST", "/settings/connected-apps", "Disconnect an application"));
 
+        operations.put("disconnectSettingsApplication", new Operation("POST", "/settings/applications", "Disconnect an authorized application"));
+
+        operations.put("exchangeMcpOAuthToken", new Operation("POST", "/oauth/mcp/token", "MCP: Exchange a code or rotate a refresh token"));
+
         operations.put("exchangeOAuthToken", new Operation("POST", "/oauth/token", "Exchange a code or rotate a refresh token"));
+
+        operations.put("getApplicationsSettingsPage", new Operation("GET", "/settings/applications", "Review applications in Settings"));
 
         operations.put("getConnectedAppsPage", new Operation("GET", "/settings/connected-apps", "View connected applications"));
 
+        operations.put("getMcpOAuthMetadata", new Operation("GET", "/.well-known/oauth-authorization-server/oauth/mcp", "MCP: Read OAuth authorization-server metadata"));
+
         operations.put("getOAuthMetadata", new Operation("GET", "/.well-known/oauth-authorization-server", "Read OAuth authorization-server metadata"));
+
+        operations.put("probeMcpOAuth", new Operation("POST", "/oauth/mcp/probe", "Validate an MCP connection"));
 
         operations.put("revokeOAuthToken", new Operation("POST", "/oauth/revoke", "Revoke delegated access and refresh tokens"));
 

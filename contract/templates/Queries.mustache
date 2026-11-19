@@ -3,6 +3,7 @@ package app.bibleit;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /** Operation-specific query builders generated from the OpenAPI contract. */
 public final class Queries {
@@ -22,9 +23,9 @@ public final class Queries {
 {{/minimum}}{{#maximum}}
             if ({{paramName}} != null && {{paramName}} > {{maximum}}) throw new IllegalArgumentException("{{baseName}} is above its maximum");
 {{/maximum}}{{#minLength}}
-            if ({{paramName}} != null && {{paramName}}.length() < {{minLength}}) throw new IllegalArgumentException("{{baseName}} is too short");
+            if ({{paramName}} != null && {{paramName}}.toString().length() < {{minLength}}) throw new IllegalArgumentException("{{baseName}} is too short");
 {{/minLength}}{{#maxLength}}
-            if ({{paramName}} != null && {{paramName}}.length() > {{maxLength}}) throw new IllegalArgumentException("{{baseName}} is too long");
+            if ({{paramName}} != null && {{paramName}}.toString().length() > {{maxLength}}) throw new IllegalArgumentException("{{baseName}} is too long");
 {{/maxLength}}
 {{/queryParams}}
         }

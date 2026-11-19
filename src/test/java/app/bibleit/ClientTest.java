@@ -50,7 +50,7 @@ class ClientTest {
             try (var res = (Response) method.invoke(client, values.toArray())) { assertEquals(200, res.statusCode()); }
             assertEquals(verb.getKey().toUpperCase(Locale.ROOT), BibleitClient.operations().get(name).method());
         }
-        assertEquals(95, calls.get()); assertEquals(95, BibleitClient.operationNames().size());
+        assertEquals(124, calls.get()); assertEquals(124, BibleitClient.operationNames().size());
     }
     @Test void validatesAndEncodesPathsAndOptions() throws Exception {
         var captured = new AtomicReference<HttpRequest>();

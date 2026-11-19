@@ -106,6 +106,56 @@ connection lifetime. Streaming subscriptions need a caller-owned connection.
 Command and result `toString()` methods redact their contents. Wire values and
 raw fields may contain credentials; handle them explicitly.
 
+## Broadcast Studio control plane
+
+The same Setup, channel, output profile, preflight, event, operation and publisher
+models are available through REST and SSH. Workspace roles and approval remain
+server enforced. REST requires a personal `bt_` token with the appropriate
+`broadcast.get`, `broadcast.create`, `broadcast.manage` or `broadcast.publish`
+ceiling; service tokens and delegated OAuth credentials do not grant this access.
+
+```java
+import app.bibleit.BroadcastCommands;
+import app.bibleit.Models;
+import app.bibleit.Options;
+import java.io.ByteArrayInputStream;
+
+var preflight = ssh.broadcast().preflight(workspaceUuid).value();
+var setup = ssh.broadcast().getSetup(workspaceUuid, setupUuid).value();
+var event = ssh.broadcast().getEvent(workspaceUuid, eventUuid).value();
+
+// Keep the original signed ticket and exact bytes together in private storage.
+// The ticket is returned by createBroadcastWriteRequest (REST) or writeIntent (SSH).
+try (var response = client.replaceBroadcastSetup(workspaceUuid, setupUuid,
+        Options.builder().idempotencyKey(originalTicket).ifMatch("\"setup-4\"")
+            .body(new ByteArrayInputStream(exactJson), exactJson.length, "application/json")
+            .build())) {
+    var receipt = response.decode(Models.BroadcastWriteReceipt.class);
+}
+```
+
+Use `BroadcastCommands` for every bounded SSH upload step: `writeIntent`,
+`beginWrite`, `inspectWrite`, `writeChunk`, `commitWrite`, `writeStatus`, and
+`abortWrite`. Execute upload steps on the same persistent shell without a PTY.
+The application negotiates `broadcast.read.v1`, `broadcast.write.v1` and
+`broadcast.lifecycle.v1` from `ssh.getServerInfo()` before using them.
+Setup export verifies the fixed revision, byte count, contiguous chunks and
+SHA-256 before returning its document. Unknown fields remain available in the
+shared models and original wire response.
+
+Signed Setup writes hash the exact JSON bytes, including whitespace. Use
+`Options.body(...)` rather than reserializing a Java model after requesting an
+intent. Keep the same ticket and bytes after a lost reply; reconcile with
+`getBroadcastWriteRequest` or `ssh.broadcast().writeStatus`. Neither transport
+retries mutations or replaces uncertain requests automatically. Event creation,
+attachment and transitions use a retained UUID idempotency key; their replies
+acknowledge a durable operation, so poll that operation for completion.
+
+Capture, Google authorization and source takeover require the browser. Preflight
+reports this limitation, and takeover returns `browser_required`. Reconnecting a
+client never starts or resumes publishing. Poll publisher status after a stop to
+verify shutdown and resource cleanup.
+
 ## Development
 
 ```sh

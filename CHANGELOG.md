@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Add Broadcast Studio REST operations and shared typed Setup, channel, event, publisher and receipt models.
+- Add bounded SSH broadcast commands and typed control-plane helpers, with revision-bound, checksum-verified Setup export.
+- Preserve exact signed upload bytes, durable request identity, browser-required errors and caller-owned SSH connections.
+- Refresh the pinned REST contract and fix UUID/URI query generation.
+
 ## 0.0.2 — 2026-10-26
 
 - Replace tree-backed models with typed Java fields and direct Jackson binding.

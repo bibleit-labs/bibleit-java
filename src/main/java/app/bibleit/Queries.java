@@ -3,10 +3,86 @@ package app.bibleit;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /** Operation-specific query builders generated from the OpenAPI contract. */
 public final class Queries {
     private Queries() {}
+
+    /** Query parameters accepted by {@code listBroadcastSetups}. */
+    public static final class ListBroadcastSetupsQuery implements QueryParameters {
+        private final Integer limit;
+        private final UUID after;
+
+        private ListBroadcastSetupsQuery(Builder builder) {
+            limit = builder.limit;
+            if (limit != null && limit < 1) throw new IllegalArgumentException("limit is below its minimum");
+
+            if (limit != null && limit > 99) throw new IllegalArgumentException("limit is above its maximum");
+            after = builder.after;
+        }
+
+        /**
+         * Creates a builder with all optional values unset.
+         * @return a new query builder
+         */
+        public static Builder builder() { return new Builder(); }
+
+        /**
+         * Copies this query into a new builder.
+         * @return a builder initialized from this query
+         */
+        public Builder toBuilder() {
+            var builder = new Builder();
+            builder.limit = limit;
+            builder.after = after;
+            return builder;
+        }
+        /**
+         * Returns the limit query value.
+         * @return the typed value, or null when unset
+         */
+        public Integer getLimit() { return limit; }
+        /**
+         * Returns the after query value.
+         * @return the typed value, or null when unset
+         */
+        public UUID getAfter() { return after; }
+
+        /** {@inheritDoc} */
+        @Override public List<QueryParameter> parameters() {
+            var parameters = new ArrayList<QueryParameter>();
+            if (limit != null) parameters.add(new QueryParameter("limit", limit.toString()));
+            if (after != null) parameters.add(new QueryParameter("after", after.toString()));
+            return List.copyOf(parameters);
+        }
+
+
+        /** Builder for {@link ListBroadcastSetupsQuery}. */
+        public static final class Builder {
+            private Integer limit;
+            private UUID after;
+            private Builder() {}
+            /**
+             * Sets the limit parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder limit(Integer value) { limit = value; return this; }
+            /**
+             * Sets the after parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder after(UUID value) { after = value; return this; }
+            /**
+             * Creates an immutable query and checks scalar bounds.
+             * @return the operation-specific query
+             * @throws IllegalArgumentException if a scalar bound is violated
+             */
+            public ListBroadcastSetupsQuery build() { return new ListBroadcastSetupsQuery(this); }
+        }
+    }
 
     /** Query parameters accepted by {@code getLiveEvents}. */
     public static final class GetLiveEventsQuery implements QueryParameters {
@@ -95,7 +171,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -172,7 +248,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -237,6 +313,279 @@ public final class Queries {
         }
     }
 
+    /** Query parameters accepted by {@code authorizeMcpOAuth}. */
+    public static final class AuthorizeMcpOAuthQuery implements QueryParameters {
+        private final ResponseType responseType;
+        private final String clientId;
+        private final URI redirectUri;
+        private final String scope;
+        private final String state;
+        private final String codeChallenge;
+        private final CodeChallengeMethod codeChallengeMethod;
+        private final String request;
+        private final URI resource;
+        private final Prompt prompt;
+        private final String uiLocales;
+
+        private AuthorizeMcpOAuthQuery(Builder builder) {
+            responseType = builder.responseType;
+            clientId = builder.clientId;
+            redirectUri = builder.redirectUri;
+            scope = builder.scope;
+
+            if (scope != null && scope.toString().length() < 1) throw new IllegalArgumentException("scope is too short");
+
+            if (scope != null && scope.toString().length() > 512) throw new IllegalArgumentException("scope is too long");
+            state = builder.state;
+
+            if (state != null && state.toString().length() < 16) throw new IllegalArgumentException("state is too short");
+
+            if (state != null && state.toString().length() > 512) throw new IllegalArgumentException("state is too long");
+            codeChallenge = builder.codeChallenge;
+            codeChallengeMethod = builder.codeChallengeMethod;
+            request = builder.request;
+            resource = builder.resource;
+
+            if (resource != null && resource.toString().length() > 2048) throw new IllegalArgumentException("resource is too long");
+            prompt = builder.prompt;
+            uiLocales = builder.uiLocales;
+
+            if (uiLocales != null && uiLocales.toString().length() > 256) throw new IllegalArgumentException("ui_locales is too long");
+        }
+
+        /**
+         * Creates a builder with all optional values unset.
+         * @return a new query builder
+         */
+        public static Builder builder() { return new Builder(); }
+
+        /**
+         * Copies this query into a new builder.
+         * @return a builder initialized from this query
+         */
+        public Builder toBuilder() {
+            var builder = new Builder();
+            builder.responseType = responseType;
+            builder.clientId = clientId;
+            builder.redirectUri = redirectUri;
+            builder.scope = scope;
+            builder.state = state;
+            builder.codeChallenge = codeChallenge;
+            builder.codeChallengeMethod = codeChallengeMethod;
+            builder.request = request;
+            builder.resource = resource;
+            builder.prompt = prompt;
+            builder.uiLocales = uiLocales;
+            return builder;
+        }
+        /**
+         * Returns the response_type query value.
+         * @return the typed value, or null when unset
+         */
+        public ResponseType getResponseType() { return responseType; }
+        /**
+         * Returns the client_id query value.
+         * @return the typed value, or null when unset
+         */
+        public String getClientId() { return clientId; }
+        /**
+         * Returns the redirect_uri query value.
+         * @return the typed value, or null when unset
+         */
+        public URI getRedirectUri() { return redirectUri; }
+        /**
+         * Returns the scope query value.
+         * @return the typed value, or null when unset
+         */
+        public String getScope() { return scope; }
+        /**
+         * Returns the state query value.
+         * @return the typed value, or null when unset
+         */
+        public String getState() { return state; }
+        /**
+         * Returns the code_challenge query value.
+         * @return the typed value, or null when unset
+         */
+        public String getCodeChallenge() { return codeChallenge; }
+        /**
+         * Returns the code_challenge_method query value.
+         * @return the typed value, or null when unset
+         */
+        public CodeChallengeMethod getCodeChallengeMethod() { return codeChallengeMethod; }
+        /**
+         * Returns the request query value.
+         * @return the typed value, or null when unset
+         */
+        public String getRequest() { return request; }
+        /**
+         * Returns the resource query value.
+         * @return the typed value, or null when unset
+         */
+        public URI getResource() { return resource; }
+        /**
+         * Returns the prompt query value.
+         * @return the typed value, or null when unset
+         */
+        public Prompt getPrompt() { return prompt; }
+        /**
+         * Returns the ui_locales query value.
+         * @return the typed value, or null when unset
+         */
+        public String getUiLocales() { return uiLocales; }
+
+        /** {@inheritDoc} */
+        @Override public List<QueryParameter> parameters() {
+            var parameters = new ArrayList<QueryParameter>();
+            if (responseType != null) parameters.add(new QueryParameter("response_type", responseType.wireValue()));
+            if (clientId != null) parameters.add(new QueryParameter("client_id", clientId.toString()));
+            if (redirectUri != null) parameters.add(new QueryParameter("redirect_uri", redirectUri.toString()));
+            if (scope != null) parameters.add(new QueryParameter("scope", scope.toString()));
+            if (state != null) parameters.add(new QueryParameter("state", state.toString()));
+            if (codeChallenge != null) parameters.add(new QueryParameter("code_challenge", codeChallenge.toString()));
+            if (codeChallengeMethod != null) parameters.add(new QueryParameter("code_challenge_method", codeChallengeMethod.wireValue()));
+            if (request != null) parameters.add(new QueryParameter("request", request.toString()));
+            if (resource != null) parameters.add(new QueryParameter("resource", resource.toString()));
+            if (prompt != null) parameters.add(new QueryParameter("prompt", prompt.wireValue()));
+            if (uiLocales != null) parameters.add(new QueryParameter("ui_locales", uiLocales.toString()));
+            return List.copyOf(parameters);
+        }
+
+        /** Supported values of the response_type parameter. */
+        public enum ResponseType {
+
+            /** The CODE wire value. */
+            CODE("code");
+
+            private final String value;
+            ResponseType(String value) { this.value = value; }
+            /**
+             * Returns the contract wire representation.
+             * @return the wire value
+             */
+            public String wireValue() { return value; }
+        }
+
+        /** Supported values of the code_challenge_method parameter. */
+        public enum CodeChallengeMethod {
+
+            /** The S256 wire value. */
+            S256("S256");
+
+            private final String value;
+            CodeChallengeMethod(String value) { this.value = value; }
+            /**
+             * Returns the contract wire representation.
+             * @return the wire value
+             */
+            public String wireValue() { return value; }
+        }
+
+        /** Supported values of the prompt parameter. */
+        public enum Prompt {
+
+            /** The CONSENT wire value. */
+            CONSENT("consent");
+
+            private final String value;
+            Prompt(String value) { this.value = value; }
+            /**
+             * Returns the contract wire representation.
+             * @return the wire value
+             */
+            public String wireValue() { return value; }
+        }
+
+
+        /** Builder for {@link AuthorizeMcpOAuthQuery}. */
+        public static final class Builder {
+            private ResponseType responseType;
+            private String clientId;
+            private URI redirectUri;
+            private String scope;
+            private String state;
+            private String codeChallenge;
+            private CodeChallengeMethod codeChallengeMethod;
+            private String request;
+            private URI resource;
+            private Prompt prompt;
+            private String uiLocales;
+            private Builder() {}
+            /**
+             * Sets the response_type parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder responseType(ResponseType value) { responseType = value; return this; }
+            /**
+             * Sets the client_id parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder clientId(String value) { clientId = value; return this; }
+            /**
+             * Sets the redirect_uri parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder redirectUri(URI value) { redirectUri = value; return this; }
+            /**
+             * Sets the scope parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder scope(String value) { scope = value; return this; }
+            /**
+             * Sets the state parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder state(String value) { state = value; return this; }
+            /**
+             * Sets the code_challenge parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder codeChallenge(String value) { codeChallenge = value; return this; }
+            /**
+             * Sets the code_challenge_method parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder codeChallengeMethod(CodeChallengeMethod value) { codeChallengeMethod = value; return this; }
+            /**
+             * Sets the request parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder request(String value) { request = value; return this; }
+            /**
+             * Sets the resource parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder resource(URI value) { resource = value; return this; }
+            /**
+             * Sets the prompt parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder prompt(Prompt value) { prompt = value; return this; }
+            /**
+             * Sets the ui_locales parameter; null omits it from the request.
+             * @param value the typed parameter value
+             * @return this builder
+             */
+            public Builder uiLocales(String value) { uiLocales = value; return this; }
+            /**
+             * Creates an immutable query and checks scalar bounds.
+             * @return the operation-specific query
+             * @throws IllegalArgumentException if a scalar bound is violated
+             */
+            public AuthorizeMcpOAuthQuery build() { return new AuthorizeMcpOAuthQuery(this); }
+        }
+    }
+
     /** Query parameters accepted by {@code authorizeOAuth}. */
     public static final class AuthorizeOAuthQuery implements QueryParameters {
         private final ResponseType responseType;
@@ -254,14 +603,14 @@ public final class Queries {
             redirectUri = builder.redirectUri;
             scope = builder.scope;
 
-            if (scope != null && scope.length() < 1) throw new IllegalArgumentException("scope is too short");
+            if (scope != null && scope.toString().length() < 1) throw new IllegalArgumentException("scope is too short");
 
-            if (scope != null && scope.length() > 512) throw new IllegalArgumentException("scope is too long");
+            if (scope != null && scope.toString().length() > 512) throw new IllegalArgumentException("scope is too long");
             state = builder.state;
 
-            if (state != null && state.length() < 16) throw new IllegalArgumentException("state is too short");
+            if (state != null && state.toString().length() < 16) throw new IllegalArgumentException("state is too short");
 
-            if (state != null && state.length() > 512) throw new IllegalArgumentException("state is too long");
+            if (state != null && state.toString().length() > 512) throw new IllegalArgumentException("state is too long");
             codeChallenge = builder.codeChallenge;
             codeChallengeMethod = builder.codeChallengeMethod;
             request = builder.request;
@@ -455,7 +804,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -527,7 +876,7 @@ public final class Queries {
         private ListPersonalOrganizationsQuery(Builder builder) {
             after = builder.after;
 
-            if (after != null && after.length() > 80) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 80) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -590,9 +939,9 @@ public final class Queries {
             if (limit != null && limit > 500) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() < 1) throw new IllegalArgumentException("after is too short");
+            if (after != null && after.toString().length() < 1) throw new IllegalArgumentException("after is too short");
 
-            if (after != null && after.length() > 1024) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 1024) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -669,7 +1018,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -746,7 +1095,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -823,7 +1172,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -900,7 +1249,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -977,9 +1326,9 @@ public final class Queries {
             if (limit != null && limit > 500) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() < 1) throw new IllegalArgumentException("after is too short");
+            if (after != null && after.toString().length() < 1) throw new IllegalArgumentException("after is too short");
 
-            if (after != null && after.length() > 1024) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 1024) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -1052,9 +1401,9 @@ public final class Queries {
         private SearchPersonalScriptureQuery(Builder builder) {
             query = builder.query;
 
-            if (query != null && query.length() < 1) throw new IllegalArgumentException("q is too short");
+            if (query != null && query.toString().length() < 1) throw new IllegalArgumentException("q is too short");
 
-            if (query != null && query.length() > 256) throw new IllegalArgumentException("q is too long");
+            if (query != null && query.toString().length() > 256) throw new IllegalArgumentException("q is too long");
             limit = builder.limit;
             if (limit != null && limit < 1) throw new IllegalArgumentException("limit is below its minimum");
 
@@ -1209,7 +1558,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -1286,7 +1635,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -1359,9 +1708,9 @@ public final class Queries {
         private SearchScriptureQuery(Builder builder) {
             query = builder.query;
 
-            if (query != null && query.length() < 1) throw new IllegalArgumentException("q is too short");
+            if (query != null && query.toString().length() < 1) throw new IllegalArgumentException("q is too short");
 
-            if (query != null && query.length() > 256) throw new IllegalArgumentException("q is too long");
+            if (query != null && query.toString().length() > 256) throw new IllegalArgumentException("q is too long");
             limit = builder.limit;
             if (limit != null && limit < 1) throw new IllegalArgumentException("limit is below its minimum");
 
@@ -1442,7 +1791,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -1519,7 +1868,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -1596,7 +1945,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -1673,7 +2022,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
@@ -1750,7 +2099,7 @@ public final class Queries {
             if (limit != null && limit > 100) throw new IllegalArgumentException("limit is above its maximum");
             after = builder.after;
 
-            if (after != null && after.length() > 128) throw new IllegalArgumentException("after is too long");
+            if (after != null && after.toString().length() > 128) throw new IllegalArgumentException("after is too long");
         }
 
         /**
