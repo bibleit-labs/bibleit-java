@@ -1,5 +1,7 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.SourcesJar
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 
 plugins {
     `java-library`
@@ -102,10 +104,41 @@ tasks.named("build") {
 }
 
 
+// Preserve previously published protocol wrappers, but do not manufacture new
+// browser/MCP operations on the pinned REST origin. Those use dedicated clients.
+val legacyProtocolOperations = setOf(
+    "getOAuthMetadata", "authorizeOAuth", "decideOAuthConsent", "exchangeOAuthToken",
+    "revokeOAuthToken", "getConnectedAppsPage", "disconnectOAuthApp"
+)
+val generatorContract = layout.buildDirectory.file("generator-contract/openapi.json")
+val prepareGeneratorContract = tasks.register("prepareGeneratorContract") {
+    inputs.file(layout.projectDirectory.file("contract/openapi.json"))
+    inputs.property("legacyProtocolOperations", legacyProtocolOperations.sorted())
+    outputs.file(generatorContract)
+    doLast {
+        @Suppress("UNCHECKED_CAST")
+        val spec = JsonSlurper().parse(file("contract/openapi.json")) as Map<String, Any?>
+        @Suppress("UNCHECKED_CAST")
+        val paths = spec["paths"] as Map<String, Map<String, Any?>>
+        for (item in paths.values) for (value in item.values) {
+            if (value !is MutableMap<*, *>) continue
+            @Suppress("UNCHECKED_CAST")
+            val operation = value as MutableMap<String, Any?>
+            val id = operation["operationId"] as? String ?: continue
+            operation["x-java-client-operation"] = operation["x-fern-server-name"] == "rest" || id in legacyProtocolOperations
+        }
+        generatorContract.get().asFile.apply {
+            parentFile.mkdirs()
+            writeText(JsonOutput.prettyPrint(JsonOutput.toJson(spec)) + "\n")
+        }
+    }
+}
+tasks.named("openApiGenerate") { dependsOn(prepareGeneratorContract) }
+
 openApiGenerate {
     generatorName.set("java")
     library.set("native")
-    inputSpec.set(layout.projectDirectory.file("contract/openapi.json").asFile.path)
+    inputSpec.set(generatorContract.get().asFile.path)
     outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.path)
     templateDir.set(layout.projectDirectory.dir("contract/templates").asFile.path)
     configFile.set(layout.projectDirectory.file("contract/openapi-generator.yaml").asFile.path)

@@ -42,7 +42,7 @@ final class TestFixtures {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    record ApiOperation(String operationId) {}
+    record ApiOperation(String operationId, @JsonProperty("x-fern-server-name") String server) {}
 
     static List<ProtocolFixture> responses() throws IOException {
         return Json.MAPPER.readValue(Files.readString(Path.of("contract/fixtures/responses-v1.json")), new TypeReference<>() {});

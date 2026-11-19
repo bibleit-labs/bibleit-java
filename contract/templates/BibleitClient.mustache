@@ -292,7 +292,7 @@ public final class BibleitClient {
     public BookPages readBookPages(String organizationId, String slug, String bookId) {
         return readBookPages(organizationId, slug, bookId, Options.defaults());
     }
-{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}
+{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}{{#vendorExtensions.x-java-client-operation}}
     /**
      * {{summary}}.
 {{#pathParams}}
@@ -349,5 +349,5 @@ public final class BibleitClient {
     public Response {{operationId}}({{#pathParams}}String {{paramName}}{{^-last}}, {{/-last}}{{/pathParams}}) throws IOException, InterruptedException {
         return {{operationId}}({{#pathParams}}{{paramName}}, {{/pathParams}}Options.defaults());
     }
-{{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
+{{/vendorExtensions.x-java-client-operation}}{{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
 }

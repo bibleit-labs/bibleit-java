@@ -186,6 +186,15 @@ unnamed Live creation. Pop helpers omit the optional count, and secret managemen
 accepts an action without an unused secret value. `Reference` constructors accept
 a whole book or chapter without zero-valued trailing arguments.
 
+## Migrating to 0.1.0
+
+`OAuthGrant.getScopes()` and `setScopes()` use `List<Models.OAuthGrantedScope>`.
+Update grant construction, scope assignments and comparisons to the response-only
+type, and recompile dependent applications; old casts to `Models.OAuthScope` are
+not compatible. Grant JSON remains unchanged. `Models.OAuthScope` still describes
+ordinary authorization requests, while grant responses can also report MCP-only
+scopes. Those response values do not expand a token's consent or permissions.
+
 ## Migrating from 0.0.1
 
 Decode responses into an explicit Java class or Jackson `TypeReference`. Use model

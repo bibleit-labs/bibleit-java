@@ -1,8 +1,7 @@
 # Pinned Bibleit contract
 
-`openapi.json` was refreshed from the canonical bibleit-server contract on
-2026-11-19 for Broadcast Studio parity. Protocol fixtures retain the bibleit-go
-2026-10-26 baseline. They are build inputs checked into this repository;
+`openapi.json` is the canonical Bibleit v1 contract refreshed on 2026-11-19 for Broadcast Studio parity.
+Protocol fixtures retain the shared client baseline. All are checked-in inputs;
 no sibling checkout or server is required to build the client.
 
 REST wrappers, the operation directory, and typed query builders are generated
@@ -20,3 +19,18 @@ builder tests exercise its quoting rules. Serialized Erlang terms are never eval
 
 The contract establishes client wire compatibility, not production deployment,
 provider correctness, account permissions or successful publication.
+
+The generated REST profile contains 110 REST operations and preserves the seven
+protocol wrappers already public in this SDK. New browser/MCP protocol endpoints
+are excluded from the ordinary REST client; use a dedicated protocol client. The
+canonical contract remains unmodified; a build-only vendor marker selects the
+profile before the pinned generator runs.
+
+`OAuthGrant.getScopes()` and `setScopes()` now use `OAuthGrantedScope`, the
+response-only model that can represent MCP staging and rename grants. Migrate
+callers from `List<OAuthScope>` to `List<OAuthGrantedScope>` and recompile them;
+precompiled callers that cast scope elements to `OAuthScope` must also be upgraded.
+Wire JSON is unchanged, while ordinary authorization schema `OAuthScope` does not
+gain MCP-only values. Scalar decoders remain forward-compatible representations,
+not permission or enum validators. This change requires a separately reviewed SDK
+release; no version bump or publication is part of regeneration.

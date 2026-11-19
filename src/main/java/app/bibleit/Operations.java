@@ -109,31 +109,17 @@ final class Operations {
 
         operations.put("updateLiveMetadata", new Operation("PATCH", "/lives/{live_id}", "Edit Live metadata"));
 
-        operations.put("authorizeMcpOAuth", new Operation("GET", "/oauth/mcp/authorize", "MCP: Start registered-client authorization"));
-
         operations.put("authorizeOAuth", new Operation("GET", "/oauth/authorize", "Start registered-client authorization"));
-
-        operations.put("decideMcpOAuth", new Operation("POST", "/oauth/mcp/authorize", "MCP: Approve or deny OAuth consent"));
 
         operations.put("decideOAuthConsent", new Operation("POST", "/oauth/authorize", "Approve or deny OAuth consent"));
 
         operations.put("disconnectOAuthApp", new Operation("POST", "/settings/connected-apps", "Disconnect an application"));
 
-        operations.put("disconnectSettingsApplication", new Operation("POST", "/settings/applications", "Disconnect an authorized application"));
-
-        operations.put("exchangeMcpOAuthToken", new Operation("POST", "/oauth/mcp/token", "MCP: Exchange a code or rotate a refresh token"));
-
         operations.put("exchangeOAuthToken", new Operation("POST", "/oauth/token", "Exchange a code or rotate a refresh token"));
-
-        operations.put("getApplicationsSettingsPage", new Operation("GET", "/settings/applications", "Review applications in Settings"));
 
         operations.put("getConnectedAppsPage", new Operation("GET", "/settings/connected-apps", "View connected applications"));
 
-        operations.put("getMcpOAuthMetadata", new Operation("GET", "/.well-known/oauth-authorization-server/oauth/mcp", "MCP: Read OAuth authorization-server metadata"));
-
         operations.put("getOAuthMetadata", new Operation("GET", "/.well-known/oauth-authorization-server", "Read OAuth authorization-server metadata"));
-
-        operations.put("probeMcpOAuth", new Operation("POST", "/oauth/mcp/probe", "Validate an MCP connection"));
 
         operations.put("revokeOAuthToken", new Operation("POST", "/oauth/revoke", "Revoke delegated access and refresh tokens"));
 

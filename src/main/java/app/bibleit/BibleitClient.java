@@ -1494,49 +1494,6 @@ public final class BibleitClient {
     }
 
     /**
-     * MCP: Start registered-client authorization.
-
-     * @param query the operation-specific query values
-     * @param options immutable HTTP request options
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response authorizeMcpOAuth(Queries.AuthorizeMcpOAuthQuery query, Options options) throws IOException, InterruptedException {
-        return call("authorizeMcpOAuth", Map.of(), query, options);
-    }
-    /**
-     * MCP: Start registered-client authorization. Leaves query values unset for server defaults.
-     * @param options immutable HTTP request options
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response authorizeMcpOAuth(Options options) throws IOException, InterruptedException {
-        return authorizeMcpOAuth(Queries.AuthorizeMcpOAuthQuery.builder().build(), options);
-    }
-
-    /**
-     * MCP: Start registered-client authorization. Uses default HTTP request options.
-     * @param query the operation-specific query values
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response authorizeMcpOAuth(Queries.AuthorizeMcpOAuthQuery query) throws IOException, InterruptedException {
-        return authorizeMcpOAuth(query, Options.defaults());
-    }
-    /**
-     * MCP: Start registered-client authorization. Uses default request options.
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response authorizeMcpOAuth() throws IOException, InterruptedException {
-        return authorizeMcpOAuth(Options.defaults());
-    }
-
-    /**
      * Start registered-client authorization.
 
      * @param query the operation-specific query values
@@ -1580,26 +1537,6 @@ public final class BibleitClient {
     }
 
     /**
-     * MCP: Approve or deny OAuth consent.
-     * @param options immutable HTTP request options
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response decideMcpOAuth(Options options) throws IOException, InterruptedException {
-        return call("decideMcpOAuth", Map.of(), options);
-    }
-    /**
-     * MCP: Approve or deny OAuth consent. Uses default request options.
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response decideMcpOAuth() throws IOException, InterruptedException {
-        return decideMcpOAuth(Options.defaults());
-    }
-
-    /**
      * Approve or deny OAuth consent.
      * @param options immutable HTTP request options
      * @return the streaming response; the caller must close it
@@ -1640,46 +1577,6 @@ public final class BibleitClient {
     }
 
     /**
-     * Disconnect an authorized application.
-     * @param options immutable HTTP request options
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response disconnectSettingsApplication(Options options) throws IOException, InterruptedException {
-        return call("disconnectSettingsApplication", Map.of(), options);
-    }
-    /**
-     * Disconnect an authorized application. Uses default request options.
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response disconnectSettingsApplication() throws IOException, InterruptedException {
-        return disconnectSettingsApplication(Options.defaults());
-    }
-
-    /**
-     * MCP: Exchange a code or rotate a refresh token.
-     * @param options immutable HTTP request options
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response exchangeMcpOAuthToken(Options options) throws IOException, InterruptedException {
-        return call("exchangeMcpOAuthToken", Map.of(), options);
-    }
-    /**
-     * MCP: Exchange a code or rotate a refresh token. Uses default request options.
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response exchangeMcpOAuthToken() throws IOException, InterruptedException {
-        return exchangeMcpOAuthToken(Options.defaults());
-    }
-
-    /**
      * Exchange a code or rotate a refresh token.
      * @param options immutable HTTP request options
      * @return the streaming response; the caller must close it
@@ -1697,26 +1594,6 @@ public final class BibleitClient {
      */
     public Response exchangeOAuthToken() throws IOException, InterruptedException {
         return exchangeOAuthToken(Options.defaults());
-    }
-
-    /**
-     * Review applications in Settings.
-     * @param options immutable HTTP request options
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response getApplicationsSettingsPage(Options options) throws IOException, InterruptedException {
-        return call("getApplicationsSettingsPage", Map.of(), options);
-    }
-    /**
-     * Review applications in Settings. Uses default request options.
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response getApplicationsSettingsPage() throws IOException, InterruptedException {
-        return getApplicationsSettingsPage(Options.defaults());
     }
 
     /**
@@ -1740,26 +1617,6 @@ public final class BibleitClient {
     }
 
     /**
-     * MCP: Read OAuth authorization-server metadata.
-     * @param options immutable HTTP request options
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response getMcpOAuthMetadata(Options options) throws IOException, InterruptedException {
-        return call("getMcpOAuthMetadata", Map.of(), options);
-    }
-    /**
-     * MCP: Read OAuth authorization-server metadata. Uses default request options.
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response getMcpOAuthMetadata() throws IOException, InterruptedException {
-        return getMcpOAuthMetadata(Options.defaults());
-    }
-
-    /**
      * Read OAuth authorization-server metadata.
      * @param options immutable HTTP request options
      * @return the streaming response; the caller must close it
@@ -1777,26 +1634,6 @@ public final class BibleitClient {
      */
     public Response getOAuthMetadata() throws IOException, InterruptedException {
         return getOAuthMetadata(Options.defaults());
-    }
-
-    /**
-     * Validate an MCP connection.
-     * @param options immutable HTTP request options
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response probeMcpOAuth(Options options) throws IOException, InterruptedException {
-        return call("probeMcpOAuth", Map.of(), options);
-    }
-    /**
-     * Validate an MCP connection. Uses default request options.
-     * @return the streaming response; the caller must close it
-     * @throws IOException if transport or HTTP processing fails
-     * @throws InterruptedException if the request is interrupted
-     */
-    public Response probeMcpOAuth() throws IOException, InterruptedException {
-        return probeMcpOAuth(Options.defaults());
     }
 
     /**
