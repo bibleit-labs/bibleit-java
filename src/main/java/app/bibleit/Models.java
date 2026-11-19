@@ -9328,6 +9328,7 @@ public final class Models {
         private List<String> permissions;
         private List<String> domainPermissions;
         private List<String> livePermissions;
+        private List<McpWorkspacePermission> workspacePermissions;
         /**
          * Creates an object with all properties unset.
          */
@@ -9442,6 +9443,16 @@ public final class Models {
          * @param value the Java value; null writes explicit JSON null
          */
         @JsonProperty("live_permissions") public void setLivePermissions(List<String> value) { livePermissions = value; markField("live_permissions"); }
+        /**
+         * Optional fresh effective authority for the one explicitly consented workspace. Absent for unbound, revoked or unauthorized grants. Missing means no Broadcast tools. Stored OAuth scopes alone are not workspace authority.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("workspace_permissions") public List<McpWorkspacePermission> getWorkspacePermissions() { return workspacePermissions; }
+        /**
+         * Sets workspace permissions.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("workspace_permissions") public void setWorkspacePermissions(List<McpWorkspacePermission> value) { workspacePermissions = value; markField("workspace_permissions"); }
         @Override protected void appendFields(Map<String, Object> fields) {
             if (hasField("id")) fields.put("id", id);
             if (hasField("display_name")) fields.put("display_name", displayName);
@@ -9454,6 +9465,7 @@ public final class Models {
             if (hasField("permissions")) fields.put("permissions", permissions);
             if (hasField("domain_permissions")) fields.put("domain_permissions", domainPermissions);
             if (hasField("live_permissions")) fields.put("live_permissions", livePermissions);
+            if (hasField("workspace_permissions")) fields.put("workspace_permissions", workspacePermissions);
         }
         @Override protected boolean assignKnownField(String name, Object value) {
             return switch (name) {
@@ -9468,6 +9480,7 @@ public final class Models {
                 case "permissions" -> { setPermissions(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
                 case "domain_permissions" -> { setDomainPermissions(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
                 case "live_permissions" -> { setLivePermissions(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                case "workspace_permissions" -> { setWorkspacePermissions(Json.MAPPER.convertValue(value, new TypeReference<List<McpWorkspacePermission>>() {})); yield true; }
                 default -> false;
             };
         }
@@ -9484,6 +9497,7 @@ public final class Models {
                 case "permissions" -> permissions = null;
                 case "domain_permissions" -> domainPermissions = null;
                 case "live_permissions" -> livePermissions = null;
+                case "workspace_permissions" -> workspacePermissions = null;
                 default -> { }
             }
         }
@@ -11990,6 +12004,405 @@ public final class Models {
             switch (name) {
                 case "mode" -> mode = null;
                 case "assetId" -> assetId = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of mcp workspace permission.
+     */
+    public static final class McpWorkspacePermission extends Model {
+        private String organizationId;
+        private String name;
+        private List<String> scopes;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public McpWorkspacePermission() {}
+        /**
+         * Returns organization id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("organization_id") public String getOrganizationId() { return organizationId; }
+        /**
+         * Sets organization id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("organization_id") public void setOrganizationId(String value) { organizationId = value; markField("organization_id"); }
+        /**
+         * Returns name.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("name") public String getName() { return name; }
+        /**
+         * Sets name.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("name") public void setName(String value) { name = value; markField("name"); }
+        /**
+         * Returns scopes.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("scopes") public List<String> getScopes() { return scopes; }
+        /**
+         * Sets scopes.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("scopes") public void setScopes(List<String> value) { scopes = value; markField("scopes"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("organization_id")) fields.put("organization_id", organizationId);
+            if (hasField("name")) fields.put("name", name);
+            if (hasField("scopes")) fields.put("scopes", scopes);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "organization_id" -> { setOrganizationId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "name" -> { setName(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "scopes" -> { setScopes(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "organization_id" -> organizationId = null;
+                case "name" -> name = null;
+                case "scopes" -> scopes = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of mcp workspace.
+     */
+    public static final class McpWorkspace extends Model {
+        private String id;
+        private String name;
+        private List<String> scopes;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public McpWorkspace() {}
+        /**
+         * Returns id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("id") public String getId() { return id; }
+        /**
+         * Sets id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("id") public void setId(String value) { id = value; markField("id"); }
+        /**
+         * Returns name.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("name") public String getName() { return name; }
+        /**
+         * Sets name.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("name") public void setName(String value) { name = value; markField("name"); }
+        /**
+         * Returns scopes.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("scopes") public List<String> getScopes() { return scopes; }
+        /**
+         * Sets scopes.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("scopes") public void setScopes(List<String> value) { scopes = value; markField("scopes"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("id")) fields.put("id", id);
+            if (hasField("name")) fields.put("name", name);
+            if (hasField("scopes")) fields.put("scopes", scopes);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "name" -> { setName(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "scopes" -> { setScopes(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "id" -> id = null;
+                case "name" -> name = null;
+                case "scopes" -> scopes = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of mcp workspace list.
+     */
+    public static final class McpWorkspaceList extends Model {
+        private List<McpWorkspace> workspaces;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public McpWorkspaceList() {}
+        /**
+         * Returns workspaces.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("workspaces") public List<McpWorkspace> getWorkspaces() { return workspaces; }
+        /**
+         * Sets workspaces.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("workspaces") public void setWorkspaces(List<McpWorkspace> value) { workspaces = value; markField("workspaces"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("workspaces")) fields.put("workspaces", workspaces);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "workspaces" -> { setWorkspaces(Json.MAPPER.convertValue(value, new TypeReference<List<McpWorkspace>>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "workspaces" -> workspaces = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of mcp broadcast channel.
+     */
+    public static final class McpBroadcastChannel extends Model {
+        private BroadcastChannel channel;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public McpBroadcastChannel() {}
+        /**
+         * Returns channel.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("channel") public BroadcastChannel getChannel() { return channel; }
+        /**
+         * Sets channel.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("channel") public void setChannel(BroadcastChannel value) { channel = value; markField("channel"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("channel")) fields.put("channel", channel);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "channel" -> { setChannel(Json.MAPPER.convertValue(value, new TypeReference<BroadcastChannel>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "channel" -> channel = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of mcp broadcast setup summary.
+     */
+    public static final class McpBroadcastSetupSummary extends Model {
+        private String id;
+        private String organizationId;
+        private String name;
+        private Long revision;
+        private Long documentBytes;
+        private String documentSha256;
+        private Long sourceCount;
+        private Long sceneCount;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public McpBroadcastSetupSummary() {}
+        /**
+         * Returns id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("id") public String getId() { return id; }
+        /**
+         * Sets id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("id") public void setId(String value) { id = value; markField("id"); }
+        /**
+         * Returns organization id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("organization_id") public String getOrganizationId() { return organizationId; }
+        /**
+         * Sets organization id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("organization_id") public void setOrganizationId(String value) { organizationId = value; markField("organization_id"); }
+        /**
+         * Returns name.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("name") public String getName() { return name; }
+        /**
+         * Sets name.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("name") public void setName(String value) { name = value; markField("name"); }
+        /**
+         * Returns revision.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("revision") public Long getRevision() { return revision; }
+        /**
+         * Sets revision.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("revision") public void setRevision(Long value) { revision = value; markField("revision"); }
+        /**
+         * Returns document bytes.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("document_bytes") public Long getDocumentBytes() { return documentBytes; }
+        /**
+         * Sets document bytes.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("document_bytes") public void setDocumentBytes(Long value) { documentBytes = value; markField("document_bytes"); }
+        /**
+         * Returns document sha256.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("document_sha256") public String getDocumentSha256() { return documentSha256; }
+        /**
+         * Sets document sha256.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("document_sha256") public void setDocumentSha256(String value) { documentSha256 = value; markField("document_sha256"); }
+        /**
+         * Returns source count.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("source_count") public Long getSourceCount() { return sourceCount; }
+        /**
+         * Sets source count.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("source_count") public void setSourceCount(Long value) { sourceCount = value; markField("source_count"); }
+        /**
+         * Returns scene count.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("scene_count") public Long getSceneCount() { return sceneCount; }
+        /**
+         * Sets scene count.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("scene_count") public void setSceneCount(Long value) { sceneCount = value; markField("scene_count"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("id")) fields.put("id", id);
+            if (hasField("organization_id")) fields.put("organization_id", organizationId);
+            if (hasField("name")) fields.put("name", name);
+            if (hasField("revision")) fields.put("revision", revision);
+            if (hasField("document_bytes")) fields.put("document_bytes", documentBytes);
+            if (hasField("document_sha256")) fields.put("document_sha256", documentSha256);
+            if (hasField("source_count")) fields.put("source_count", sourceCount);
+            if (hasField("scene_count")) fields.put("scene_count", sceneCount);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "organization_id" -> { setOrganizationId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "name" -> { setName(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "revision" -> { setRevision(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "document_bytes" -> { setDocumentBytes(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "document_sha256" -> { setDocumentSha256(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "source_count" -> { setSourceCount(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "scene_count" -> { setSceneCount(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "id" -> id = null;
+                case "organization_id" -> organizationId = null;
+                case "name" -> name = null;
+                case "revision" -> revision = null;
+                case "document_bytes" -> documentBytes = null;
+                case "document_sha256" -> documentSha256 = null;
+                case "source_count" -> sourceCount = null;
+                case "scene_count" -> sceneCount = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of mcp broadcast error.
+     */
+    public static final class McpBroadcastError extends Model {
+        private String error;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public McpBroadcastError() {}
+        /**
+         * Returns error.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("error") public String getError() { return error; }
+        /**
+         * Sets error.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("error") public void setError(String value) { error = value; markField("error"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("error")) fields.put("error", error);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "error" -> { setError(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "error" -> error = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Closed workspace-consent error; disabled routes return not_found without changing existing issuer errors.
+     */
+    public static final class McpWorkspaceConsentError extends Model {
+        private String error;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public McpWorkspaceConsentError() {}
+        /**
+         * Returns error.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("error") public String getError() { return error; }
+        /**
+         * Sets error.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("error") public void setError(String value) { error = value; markField("error"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("error")) fields.put("error", error);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "error" -> { setError(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "error" -> error = null;
                 default -> { }
             }
         }
