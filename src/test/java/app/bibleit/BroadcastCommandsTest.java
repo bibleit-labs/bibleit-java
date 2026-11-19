@@ -45,6 +45,7 @@ class BroadcastCommandsTest {
         assertEquals(wire("WRITE CHUNK " + ID + " 3072 " + Base64.getEncoder().encodeToString(data)),chunk);
         assertTrue(chunk.getBytes(StandardCharsets.UTF_8).length <= 8192);
         assertFalse(BroadcastCommands.beginWrite(ORG,"ticket").streaming());
+        assertEquals(wire("WRITE STATUS " + "a".repeat(768)),BroadcastCommands.writeStatus(ORG,"a".repeat(768)).wire());
         assertFalse(BroadcastCommands.beginWrite(ORG,"private-ticket").toString().contains("private-ticket"));
     }
 
@@ -74,6 +75,11 @@ class BroadcastCommandsTest {
         assertThrows(IllegalArgumentException.class, () -> BroadcastCommands.writeIntent(ORG,BroadcastCommands.WriteOperation.CREATE,"new",0,2,HASH.toUpperCase()));
         assertThrows(IllegalArgumentException.class, () -> BroadcastCommands.beginWrite(ORG,"a".repeat(769)));
         assertThrows(IllegalArgumentException.class, () -> BroadcastCommands.beginWrite(ORG,"ticket\nPING"));
+        for (String ticket : new String[]{"", "$(command)", "`command`", "ticket;command", "ticket=value", "ticket/value", "ticket+value", "tïcket"}) {
+            assertThrows(IllegalArgumentException.class, () -> BroadcastCommands.beginWrite(ORG,ticket));
+            assertThrows(IllegalArgumentException.class, () -> BroadcastCommands.writeStatus(ORG,ticket));
+            assertThrows(IllegalArgumentException.class, () -> BroadcastCommands.commitWrite(ORG,ticket,ID));
+        }
         assertThrows(IllegalArgumentException.class, () -> BroadcastCommands.writeChunk(ORG,ID,0,new byte[3073]));
         assertThrows(IllegalArgumentException.class, () -> BroadcastCommands.writeChunk(ORG,ID,1048576,new byte[1]));
         assertThrows(IllegalArgumentException.class, () -> BroadcastCommands.setupDocument(ORG,ID,1,-1));

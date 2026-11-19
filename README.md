@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("app.bibleit:bibleit-java:0.1.0")
+    implementation("app.bibleit:bibleit-java:0.2.0")
 }
 ```
 
@@ -21,8 +21,8 @@ Java 27 or newer is required. The package is `app.bibleit`.
 
 ## REST resources
 
-The generated surface covers **89 REST operations**, retains seven legacy
-protocol wrappers and represents all **111 schemas**. New MCP/browser protocol
+The generated surface covers **110 REST operations**, retains seven legacy
+protocol wrappers and represents all **139 schemas**. New MCP/browser protocol
 operations use separate protocol clients. All schema models are
 available. Credentials are explicit: personal `bt_`, delegated `oa_`, organization
 `svc_`, or an empty string for public discovery. The server enforces permissions.

@@ -1,11 +1,12 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 — 2026-11-19
 
 - Add Broadcast Studio REST operations and shared typed Setup, channel, event, publisher and receipt models.
 - Add bounded SSH broadcast commands and typed control-plane helpers, with revision-bound, checksum-verified Setup export.
 - Preserve exact signed upload bytes, durable request identity, browser-required errors and caller-owned SSH connections.
 - Refresh the pinned REST contract and fix UUID/URI query generation.
+- Require canonical base64url write tickets before SSH transport execution.
 
 ## 0.1.0 — 2026-11-02
 

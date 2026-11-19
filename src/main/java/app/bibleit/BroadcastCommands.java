@@ -1,6 +1,5 @@
 package app.bibleit;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Objects;
 
@@ -35,8 +34,7 @@ public final class BroadcastCommands {
         return value;
     }
     private static String ticket(String value) {
-        if (value == null || value.isEmpty() || value.getBytes(StandardCharsets.UTF_8).length > 768 ||
-            value.chars().anyMatch(c -> c <= 32 || c == 127 || c == '"'))
+        if (value == null || value.length() > 768 || !value.matches("[A-Za-z0-9_-]+"))
             throw new IllegalArgumentException("Bounded single-token server ticket required");
         return value;
     }
