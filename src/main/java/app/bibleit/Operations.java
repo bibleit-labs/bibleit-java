@@ -11,6 +11,48 @@ final class Operations {
     private static Map<String, Operation> directory() {
         var operations = new LinkedHashMap<String, Operation>();
 
+        operations.put("attachBroadcastEvent", new Operation("POST", "/organizations/{organization_id}/broadcast/events/attach", "attachBroadcastEvent"));
+
+        operations.put("createBroadcastEvent", new Operation("POST", "/organizations/{organization_id}/broadcast/events", "createBroadcastEvent"));
+
+        operations.put("createBroadcastSetup", new Operation("POST", "/organizations/{organization_id}/broadcast/setups", "createBroadcastSetup"));
+
+        operations.put("createBroadcastWriteRequest", new Operation("POST", "/organizations/{organization_id}/broadcast/write-requests", "createBroadcastWriteRequest"));
+
+        operations.put("deleteBroadcastSetup", new Operation("DELETE", "/organizations/{organization_id}/broadcast/setups/{setup_id}", "deleteBroadcastSetup"));
+
+        operations.put("duplicateBroadcastSetup", new Operation("POST", "/organizations/{organization_id}/broadcast/setups/{setup_id}/duplicate", "duplicateBroadcastSetup"));
+
+        operations.put("getBroadcastChannel", new Operation("GET", "/organizations/{organization_id}/broadcast/channel", "getBroadcastChannel"));
+
+        operations.put("getBroadcastEvent", new Operation("GET", "/organizations/{organization_id}/broadcast/events/{event_id}", "getBroadcastEvent"));
+
+        operations.put("getBroadcastOperation", new Operation("GET", "/organizations/{organization_id}/broadcast/operations/{operation_id}", "getBroadcastOperation"));
+
+        operations.put("getBroadcastPreflight", new Operation("GET", "/organizations/{organization_id}/broadcast/preflight", "getBroadcastPreflight"));
+
+        operations.put("getBroadcastPublisher", new Operation("GET", "/organizations/{organization_id}/broadcast/publishers/{publisher_id}", "getBroadcastPublisher"));
+
+        operations.put("getBroadcastSetup", new Operation("GET", "/organizations/{organization_id}/broadcast/setups/{setup_id}", "getBroadcastSetup"));
+
+        operations.put("getBroadcastWriteRequest", new Operation("GET", "/organizations/{organization_id}/broadcast/write-requests/{request_id}", "getBroadcastWriteRequest"));
+
+        operations.put("listBroadcastEvents", new Operation("GET", "/organizations/{organization_id}/broadcast/events", "listBroadcastEvents"));
+
+        operations.put("listBroadcastOutputProfiles", new Operation("GET", "/organizations/{organization_id}/broadcast/profiles", "listBroadcastOutputProfiles"));
+
+        operations.put("listBroadcastPublishers", new Operation("GET", "/organizations/{organization_id}/broadcast/publishers", "listBroadcastPublishers"));
+
+        operations.put("listBroadcastSetups", new Operation("GET", "/organizations/{organization_id}/broadcast/setups", "listBroadcastSetups"));
+
+        operations.put("replaceBroadcastSetup", new Operation("PUT", "/organizations/{organization_id}/broadcast/setups/{setup_id}", "replaceBroadcastSetup"));
+
+        operations.put("requestBroadcastTakeover", new Operation("POST", "/organizations/{organization_id}/broadcast/takeover", "requestBroadcastTakeover"));
+
+        operations.put("stopBroadcastPublisher", new Operation("POST", "/organizations/{organization_id}/broadcast/publishers/{publisher_id}/stop", "stopBroadcastPublisher"));
+
+        operations.put("transitionBroadcastEvent", new Operation("POST", "/organizations/{organization_id}/broadcast/events/{event_id}/transitions", "transitionBroadcastEvent"));
+
         operations.put("getOpenApi", new Operation("GET", "/openapi.json", "Download the OpenAPI contract"));
 
         operations.put("clearLiveStack", new Operation("DELETE", "/lives/{live_id}/stack", "Clear the retained scripture stack"));

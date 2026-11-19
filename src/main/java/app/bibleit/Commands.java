@@ -237,7 +237,7 @@ public final class Commands {
     public static Command helpCommand(String topic) {
         if (topic.isEmpty()) return command("HELP");
         String upper = topic.toUpperCase(Locale.ROOT);
-        if (!Set.of("ROOT", "SERVER", "ACCOUNT", "AUTH", "TRANSLATION", "LIVE", "ORGANIZATION").contains(upper)) throw new IllegalArgumentException("Invalid help topic");
+        if (!Set.of("ROOT", "SERVER", "ACCOUNT", "AUTH", "TRANSLATION", "LIVE", "ORGANIZATION", "BROADCAST").contains(upper)) throw new IllegalArgumentException("Invalid help topic");
         return command("HELP", upper);
     }
     /**

@@ -2979,10 +2979,11 @@ public final class Models {
         }
     }
     /**
-     * Java representation of live studio settings.
+     * REST v1 returns the serif, sans, or mono family in each base element&#x27;s font field. Named fonts remain saved for Studio rendering.
      */
     public static final class LiveStudioSettings extends Model {
         private Long version;
+        private Long autoHideSeconds;
         private Boolean showLogo;
         private String preset;
         private String transition;
@@ -2991,6 +2992,7 @@ public final class Models {
         private LiveStudioSettingsContainer container;
         private LiveStudioSettingsElements elements;
         private List<String> order;
+        private List<LiveStudioOverlayNode> overlays;
         /**
          * Creates an object with all properties unset.
          */
@@ -3005,6 +3007,16 @@ public final class Models {
          * @param value the Java value; null writes explicit JSON null
          */
         @JsonProperty("version") public void setVersion(Long value) { version = value; markField("version"); }
+        /**
+         * Seconds before Broadcast Studio hides Translation. Set to zero to keep it visible.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("autoHideSeconds") public Long getAutoHideSeconds() { return autoHideSeconds; }
+        /**
+         * Sets auto hide seconds.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("autoHideSeconds") public void setAutoHideSeconds(Long value) { autoHideSeconds = value; markField("autoHideSeconds"); }
         /**
          * Returns show logo.
          * @return the typed Java value, or null when absent or explicitly null
@@ -3085,8 +3097,19 @@ public final class Models {
          * @param value the Java value; null writes explicit JSON null
          */
         @JsonProperty("order") public void setOrder(List<String> value) { order = value; markField("order"); }
+        /**
+         * Optional explicit composition. Omit to retain the legacy Live layout. An empty array explicitly hides all overlay elements.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("overlays") public List<LiveStudioOverlayNode> getOverlays() { return overlays; }
+        /**
+         * Sets overlays.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("overlays") public void setOverlays(List<LiveStudioOverlayNode> value) { overlays = value; markField("overlays"); }
         @Override protected void appendFields(Map<String, Object> fields) {
             if (hasField("version")) fields.put("version", version);
+            if (hasField("autoHideSeconds")) fields.put("autoHideSeconds", autoHideSeconds);
             if (hasField("showLogo")) fields.put("showLogo", showLogo);
             if (hasField("preset")) fields.put("preset", preset);
             if (hasField("transition")) fields.put("transition", transition);
@@ -3095,10 +3118,12 @@ public final class Models {
             if (hasField("container")) fields.put("container", container);
             if (hasField("elements")) fields.put("elements", elements);
             if (hasField("order")) fields.put("order", order);
+            if (hasField("overlays")) fields.put("overlays", overlays);
         }
         @Override protected boolean assignKnownField(String name, Object value) {
             return switch (name) {
                 case "version" -> { setVersion(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "autoHideSeconds" -> { setAutoHideSeconds(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
                 case "showLogo" -> { setShowLogo(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
                 case "preset" -> { setPreset(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
                 case "transition" -> { setTransition(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
@@ -3107,12 +3132,14 @@ public final class Models {
                 case "container" -> { setContainer(Json.MAPPER.convertValue(value, new TypeReference<LiveStudioSettingsContainer>() {})); yield true; }
                 case "elements" -> { setElements(Json.MAPPER.convertValue(value, new TypeReference<LiveStudioSettingsElements>() {})); yield true; }
                 case "order" -> { setOrder(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                case "overlays" -> { setOverlays(Json.MAPPER.convertValue(value, new TypeReference<List<LiveStudioOverlayNode>>() {})); yield true; }
                 default -> false;
             };
         }
         @Override protected void clearKnownField(String name) {
             switch (name) {
                 case "version" -> version = null;
+                case "autoHideSeconds" -> autoHideSeconds = null;
                 case "showLogo" -> showLogo = null;
                 case "preset" -> preset = null;
                 case "transition" -> transition = null;
@@ -3121,6 +3148,7 @@ public final class Models {
                 case "container" -> container = null;
                 case "elements" -> elements = null;
                 case "order" -> order = null;
+                case "overlays" -> overlays = null;
                 default -> { }
             }
         }
@@ -3130,6 +3158,7 @@ public final class Models {
      */
     public static final class LiveStudioSettingsInput extends Model {
         private Long version;
+        private Long autoHideSeconds;
         private Boolean showLogo;
         private String preset;
         private String transition;
@@ -3138,6 +3167,7 @@ public final class Models {
         private LiveStudioSettingsInputContainer container;
         private LiveStudioSettingsInputElements elements;
         private List<String> order;
+        private List<LiveStudioOverlayNode> overlays;
         /**
          * Creates an object with all properties unset.
          */
@@ -3152,6 +3182,16 @@ public final class Models {
          * @param value the Java value; null writes explicit JSON null
          */
         @JsonProperty("version") public void setVersion(Long value) { version = value; markField("version"); }
+        /**
+         * Seconds before Broadcast Studio hides Translation. Set to zero to keep it visible.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("autoHideSeconds") public Long getAutoHideSeconds() { return autoHideSeconds; }
+        /**
+         * Sets auto hide seconds.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("autoHideSeconds") public void setAutoHideSeconds(Long value) { autoHideSeconds = value; markField("autoHideSeconds"); }
         /**
          * Returns show logo.
          * @return the typed Java value, or null when absent or explicitly null
@@ -3232,8 +3272,19 @@ public final class Models {
          * @param value the Java value; null writes explicit JSON null
          */
         @JsonProperty("order") public void setOrder(List<String> value) { order = value; markField("order"); }
+        /**
+         * Optional explicit composition. Omit to retain the legacy Live layout. An empty array explicitly hides all overlay elements.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("overlays") public List<LiveStudioOverlayNode> getOverlays() { return overlays; }
+        /**
+         * Sets overlays.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("overlays") public void setOverlays(List<LiveStudioOverlayNode> value) { overlays = value; markField("overlays"); }
         @Override protected void appendFields(Map<String, Object> fields) {
             if (hasField("version")) fields.put("version", version);
+            if (hasField("autoHideSeconds")) fields.put("autoHideSeconds", autoHideSeconds);
             if (hasField("showLogo")) fields.put("showLogo", showLogo);
             if (hasField("preset")) fields.put("preset", preset);
             if (hasField("transition")) fields.put("transition", transition);
@@ -3242,10 +3293,12 @@ public final class Models {
             if (hasField("container")) fields.put("container", container);
             if (hasField("elements")) fields.put("elements", elements);
             if (hasField("order")) fields.put("order", order);
+            if (hasField("overlays")) fields.put("overlays", overlays);
         }
         @Override protected boolean assignKnownField(String name, Object value) {
             return switch (name) {
                 case "version" -> { setVersion(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "autoHideSeconds" -> { setAutoHideSeconds(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
                 case "showLogo" -> { setShowLogo(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
                 case "preset" -> { setPreset(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
                 case "transition" -> { setTransition(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
@@ -3254,12 +3307,14 @@ public final class Models {
                 case "container" -> { setContainer(Json.MAPPER.convertValue(value, new TypeReference<LiveStudioSettingsInputContainer>() {})); yield true; }
                 case "elements" -> { setElements(Json.MAPPER.convertValue(value, new TypeReference<LiveStudioSettingsInputElements>() {})); yield true; }
                 case "order" -> { setOrder(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                case "overlays" -> { setOverlays(Json.MAPPER.convertValue(value, new TypeReference<List<LiveStudioOverlayNode>>() {})); yield true; }
                 default -> false;
             };
         }
         @Override protected void clearKnownField(String name) {
             switch (name) {
                 case "version" -> version = null;
+                case "autoHideSeconds" -> autoHideSeconds = null;
                 case "showLogo" -> showLogo = null;
                 case "preset" -> preset = null;
                 case "transition" -> transition = null;
@@ -3268,6 +3323,7 @@ public final class Models {
                 case "container" -> container = null;
                 case "elements" -> elements = null;
                 case "order" -> order = null;
+                case "overlays" -> overlays = null;
                 default -> { }
             }
         }
@@ -9678,6 +9734,2267 @@ public final class Models {
         }
     }
     /**
+     * Ordered Live overlay element. Coordinates use basis points; x + width and y + height must not exceed 10000. IDs are unique; logo, verse and viewer-controls each occur at most once. The full node array is limited to 64 KiB. Viewer controls remain interactive and are not rendered into broadcast video. The optional live-badge element is unique within each design, defaults absent, and appears in broadcast video only after fresh provider-confirmed LIVE status. Its red rounded appearance is previewed in Live Studio; public Reader views never assert YouTube LIVE status. Known variant fields share one wire object; the server validates variant-specific requirements.
+     */
+    public static final class LiveStudioOverlayNode extends Model {
+        private String id;
+        private String kind;
+        private Boolean visible;
+        private Long x;
+        private Long y;
+        private Long width;
+        private Long height;
+        private Long rotation;
+        private LiveStudioOverlayNodeStyle style;
+        private String variable;
+        private String text;
+        private String assetId;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public LiveStudioOverlayNode() {}
+        /**
+         * Returns id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("id") public String getId() { return id; }
+        /**
+         * Sets id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("id") public void setId(String value) { id = value; markField("id"); }
+        /**
+         * Returns kind.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("kind") public String getKind() { return kind; }
+        /**
+         * Sets kind.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("kind") public void setKind(String value) { kind = value; markField("kind"); }
+        /**
+         * Returns visible.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("visible") public Boolean getVisible() { return visible; }
+        /**
+         * Sets visible.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("visible") public void setVisible(Boolean value) { visible = value; markField("visible"); }
+        /**
+         * Returns x.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("x") public Long getX() { return x; }
+        /**
+         * Sets x.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("x") public void setX(Long value) { x = value; markField("x"); }
+        /**
+         * Returns y.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("y") public Long getY() { return y; }
+        /**
+         * Sets y.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("y") public void setY(Long value) { y = value; markField("y"); }
+        /**
+         * Returns width.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("width") public Long getWidth() { return width; }
+        /**
+         * Sets width.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("width") public void setWidth(Long value) { width = value; markField("width"); }
+        /**
+         * Returns height.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("height") public Long getHeight() { return height; }
+        /**
+         * Sets height.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("height") public void setHeight(Long value) { height = value; markField("height"); }
+        /**
+         * Clockwise degrees about the center. Omission means zero.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("rotation") public Long getRotation() { return rotation; }
+        /**
+         * Sets rotation.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("rotation") public void setRotation(Long value) { rotation = value; markField("rotation"); }
+        /**
+         * Returns style.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("style") public LiveStudioOverlayNodeStyle getStyle() { return style; }
+        /**
+         * Sets style.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("style") public void setStyle(LiveStudioOverlayNodeStyle value) { style = value; markField("style"); }
+        /**
+         * Optional prompt label. The design keeps its authored text for editing and preview. The operator supplies the value for each broadcast copy.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("variable") public String getVariable() { return variable; }
+        /**
+         * Sets variable.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("variable") public void setVariable(String value) { variable = value; markField("variable"); }
+        /**
+         * Returns text.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("text") public String getText() { return text; }
+        /**
+         * Sets text.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("text") public void setText(String value) { text = value; markField("text"); }
+        /**
+         * Eligible image owned by the same organization.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("assetId") public String getAssetId() { return assetId; }
+        /**
+         * Sets asset id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("assetId") public void setAssetId(String value) { assetId = value; markField("assetId"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("id")) fields.put("id", id);
+            if (hasField("kind")) fields.put("kind", kind);
+            if (hasField("visible")) fields.put("visible", visible);
+            if (hasField("x")) fields.put("x", x);
+            if (hasField("y")) fields.put("y", y);
+            if (hasField("width")) fields.put("width", width);
+            if (hasField("height")) fields.put("height", height);
+            if (hasField("rotation")) fields.put("rotation", rotation);
+            if (hasField("style")) fields.put("style", style);
+            if (hasField("variable")) fields.put("variable", variable);
+            if (hasField("text")) fields.put("text", text);
+            if (hasField("assetId")) fields.put("assetId", assetId);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "kind" -> { setKind(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "visible" -> { setVisible(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "x" -> { setX(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "y" -> { setY(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "width" -> { setWidth(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "height" -> { setHeight(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "rotation" -> { setRotation(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "style" -> { setStyle(Json.MAPPER.convertValue(value, new TypeReference<LiveStudioOverlayNodeStyle>() {})); yield true; }
+                case "variable" -> { setVariable(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "text" -> { setText(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "assetId" -> { setAssetId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "id" -> id = null;
+                case "kind" -> kind = null;
+                case "visible" -> visible = null;
+                case "x" -> x = null;
+                case "y" -> y = null;
+                case "width" -> width = null;
+                case "height" -> height = null;
+                case "rotation" -> rotation = null;
+                case "style" -> style = null;
+                case "variable" -> variable = null;
+                case "text" -> text = null;
+                case "assetId" -> assetId = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Versioned Studio Source object, validated by the shared Broadcast Studio document contract.
+     */
+    public static final class BroadcastSource extends Model {
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastSource() {}
+        @Override protected void appendFields(Map<String, Object> fields) {
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Versioned Studio Scene object, validated by the shared Broadcast Studio document contract.
+     */
+    public static final class BroadcastScene extends Model {
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastScene() {}
+        @Override protected void appendFields(Map<String, Object> fields) {
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Versioned Studio Mixer object, validated by the shared Broadcast Studio document contract.
+     */
+    public static final class BroadcastMixer extends Model {
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastMixer() {}
+        @Override protected void appendFields(Map<String, Object> fields) {
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Versioned Studio OutputProfileSelection object, validated by the shared Broadcast Studio document contract.
+     */
+    public static final class BroadcastOutputProfileSelection extends Model {
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastOutputProfileSelection() {}
+        @Override protected void appendFields(Map<String, Object> fields) {
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast setup document.
+     */
+    public static final class BroadcastSetupDocument extends Model {
+        private Long version;
+        private String name;
+        private BroadcastOutputProfileSelection outputProfile;
+        private List<BroadcastSource> sources;
+        private List<BroadcastScene> scenes;
+        private String defaultSceneId;
+        private BroadcastMixer mixer;
+        private Map<String, Object> branding;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastSetupDocument() {}
+        /**
+         * Returns version.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("version") public Long getVersion() { return version; }
+        /**
+         * Sets version.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("version") public void setVersion(Long value) { version = value; markField("version"); }
+        /**
+         * Returns name.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("name") public String getName() { return name; }
+        /**
+         * Sets name.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("name") public void setName(String value) { name = value; markField("name"); }
+        /**
+         * Returns output profile.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("outputProfile") public BroadcastOutputProfileSelection getOutputProfile() { return outputProfile; }
+        /**
+         * Sets output profile.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("outputProfile") public void setOutputProfile(BroadcastOutputProfileSelection value) { outputProfile = value; markField("outputProfile"); }
+        /**
+         * Returns sources.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("sources") public List<BroadcastSource> getSources() { return sources; }
+        /**
+         * Sets sources.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("sources") public void setSources(List<BroadcastSource> value) { sources = value; markField("sources"); }
+        /**
+         * Returns scenes.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("scenes") public List<BroadcastScene> getScenes() { return scenes; }
+        /**
+         * Sets scenes.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("scenes") public void setScenes(List<BroadcastScene> value) { scenes = value; markField("scenes"); }
+        /**
+         * Returns default scene id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("defaultSceneId") public String getDefaultSceneId() { return defaultSceneId; }
+        /**
+         * Sets default scene id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("defaultSceneId") public void setDefaultSceneId(String value) { defaultSceneId = value; markField("defaultSceneId"); }
+        /**
+         * Returns mixer.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("mixer") public BroadcastMixer getMixer() { return mixer; }
+        /**
+         * Sets mixer.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("mixer") public void setMixer(BroadcastMixer value) { mixer = value; markField("mixer"); }
+        /**
+         * Returns branding.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("branding") public Map<String, Object> getBranding() { return branding; }
+        /**
+         * Sets branding.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("branding") public void setBranding(Map<String, Object> value) { branding = value; markField("branding"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("version")) fields.put("version", version);
+            if (hasField("name")) fields.put("name", name);
+            if (hasField("outputProfile")) fields.put("outputProfile", outputProfile);
+            if (hasField("sources")) fields.put("sources", sources);
+            if (hasField("scenes")) fields.put("scenes", scenes);
+            if (hasField("defaultSceneId")) fields.put("defaultSceneId", defaultSceneId);
+            if (hasField("mixer")) fields.put("mixer", mixer);
+            if (hasField("branding")) fields.put("branding", branding);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "version" -> { setVersion(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "name" -> { setName(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "outputProfile" -> { setOutputProfile(Json.MAPPER.convertValue(value, new TypeReference<BroadcastOutputProfileSelection>() {})); yield true; }
+                case "sources" -> { setSources(Json.MAPPER.convertValue(value, new TypeReference<List<BroadcastSource>>() {})); yield true; }
+                case "scenes" -> { setScenes(Json.MAPPER.convertValue(value, new TypeReference<List<BroadcastScene>>() {})); yield true; }
+                case "defaultSceneId" -> { setDefaultSceneId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "mixer" -> { setMixer(Json.MAPPER.convertValue(value, new TypeReference<BroadcastMixer>() {})); yield true; }
+                case "branding" -> { setBranding(Json.MAPPER.convertValue(value, new TypeReference<Map<String, Object>>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "version" -> version = null;
+                case "name" -> name = null;
+                case "outputProfile" -> outputProfile = null;
+                case "sources" -> sources = null;
+                case "scenes" -> scenes = null;
+                case "defaultSceneId" -> defaultSceneId = null;
+                case "mixer" -> mixer = null;
+                case "branding" -> branding = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast setup summary.
+     */
+    public static final class BroadcastSetupSummary extends Model {
+        private String id;
+        private String organizationId;
+        private String name;
+        private Long revision;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastSetupSummary() {}
+        /**
+         * Returns id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("id") public String getId() { return id; }
+        /**
+         * Sets id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("id") public void setId(String value) { id = value; markField("id"); }
+        /**
+         * Returns organization id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("organization_id") public String getOrganizationId() { return organizationId; }
+        /**
+         * Sets organization id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("organization_id") public void setOrganizationId(String value) { organizationId = value; markField("organization_id"); }
+        /**
+         * Returns name.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("name") public String getName() { return name; }
+        /**
+         * Sets name.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("name") public void setName(String value) { name = value; markField("name"); }
+        /**
+         * Returns revision.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("revision") public Long getRevision() { return revision; }
+        /**
+         * Sets revision.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("revision") public void setRevision(Long value) { revision = value; markField("revision"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("id")) fields.put("id", id);
+            if (hasField("organization_id")) fields.put("organization_id", organizationId);
+            if (hasField("name")) fields.put("name", name);
+            if (hasField("revision")) fields.put("revision", revision);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "organization_id" -> { setOrganizationId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "name" -> { setName(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "revision" -> { setRevision(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "id" -> id = null;
+                case "organization_id" -> organizationId = null;
+                case "name" -> name = null;
+                case "revision" -> revision = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast setup.
+     */
+    public static final class BroadcastSetup extends Model {
+        private String id;
+        private String organizationId;
+        private Long revision;
+        private BroadcastSetupDocument document;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastSetup() {}
+        /**
+         * Returns id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("id") public String getId() { return id; }
+        /**
+         * Sets id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("id") public void setId(String value) { id = value; markField("id"); }
+        /**
+         * Returns organization id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("organization_id") public String getOrganizationId() { return organizationId; }
+        /**
+         * Sets organization id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("organization_id") public void setOrganizationId(String value) { organizationId = value; markField("organization_id"); }
+        /**
+         * Returns revision.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("revision") public Long getRevision() { return revision; }
+        /**
+         * Sets revision.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("revision") public void setRevision(Long value) { revision = value; markField("revision"); }
+        /**
+         * Returns document.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("document") public BroadcastSetupDocument getDocument() { return document; }
+        /**
+         * Sets document.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("document") public void setDocument(BroadcastSetupDocument value) { document = value; markField("document"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("id")) fields.put("id", id);
+            if (hasField("organization_id")) fields.put("organization_id", organizationId);
+            if (hasField("revision")) fields.put("revision", revision);
+            if (hasField("document")) fields.put("document", document);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "organization_id" -> { setOrganizationId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "revision" -> { setRevision(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "document" -> { setDocument(Json.MAPPER.convertValue(value, new TypeReference<BroadcastSetupDocument>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "id" -> id = null;
+                case "organization_id" -> organizationId = null;
+                case "revision" -> revision = null;
+                case "document" -> document = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast setup page.
+     */
+    public static final class BroadcastSetupPage extends Model {
+        private List<BroadcastSetupSummary> data;
+        private String nextCursor;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastSetupPage() {}
+        /**
+         * Returns data.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("data") public List<BroadcastSetupSummary> getData() { return data; }
+        /**
+         * Sets data.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("data") public void setData(List<BroadcastSetupSummary> value) { data = value; markField("data"); }
+        /**
+         * Returns next cursor.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("next_cursor") public String getNextCursor() { return nextCursor; }
+        /**
+         * Sets next cursor.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("next_cursor") public void setNextCursor(String value) { nextCursor = value; markField("next_cursor"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("data")) fields.put("data", data);
+            if (hasField("next_cursor")) fields.put("next_cursor", nextCursor);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "data" -> { setData(Json.MAPPER.convertValue(value, new TypeReference<List<BroadcastSetupSummary>>() {})); yield true; }
+                case "next_cursor" -> { setNextCursor(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "data" -> data = null;
+                case "next_cursor" -> nextCursor = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast write intent input.
+     */
+    public static final class BroadcastWriteIntentInput extends Model {
+        private String operation;
+        private String targetId;
+        private Long expectedRevision;
+        private Long payloadBytes;
+        private String payloadSha256;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastWriteIntentInput() {}
+        /**
+         * Returns operation.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("operation") public String getOperation() { return operation; }
+        /**
+         * Sets operation.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("operation") public void setOperation(String value) { operation = value; markField("operation"); }
+        /**
+         * Use new for create; otherwise the Setup UUID.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("target_id") public String getTargetId() { return targetId; }
+        /**
+         * Sets target id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("target_id") public void setTargetId(String value) { targetId = value; markField("target_id"); }
+        /**
+         * Returns expected revision.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("expected_revision") public Long getExpectedRevision() { return expectedRevision; }
+        /**
+         * Sets expected revision.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("expected_revision") public void setExpectedRevision(Long value) { expectedRevision = value; markField("expected_revision"); }
+        /**
+         * Returns payload bytes.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("payload_bytes") public Long getPayloadBytes() { return payloadBytes; }
+        /**
+         * Sets payload bytes.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("payload_bytes") public void setPayloadBytes(Long value) { payloadBytes = value; markField("payload_bytes"); }
+        /**
+         * Returns payload sha256.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("payload_sha256") public String getPayloadSha256() { return payloadSha256; }
+        /**
+         * Sets payload sha256.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("payload_sha256") public void setPayloadSha256(String value) { payloadSha256 = value; markField("payload_sha256"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("operation")) fields.put("operation", operation);
+            if (hasField("target_id")) fields.put("target_id", targetId);
+            if (hasField("expected_revision")) fields.put("expected_revision", expectedRevision);
+            if (hasField("payload_bytes")) fields.put("payload_bytes", payloadBytes);
+            if (hasField("payload_sha256")) fields.put("payload_sha256", payloadSha256);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "operation" -> { setOperation(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "target_id" -> { setTargetId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "expected_revision" -> { setExpectedRevision(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "payload_bytes" -> { setPayloadBytes(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "payload_sha256" -> { setPayloadSha256(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "operation" -> operation = null;
+                case "target_id" -> targetId = null;
+                case "expected_revision" -> expectedRevision = null;
+                case "payload_bytes" -> payloadBytes = null;
+                case "payload_sha256" -> payloadSha256 = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast write intent.
+     */
+    public static final class BroadcastWriteIntent extends Model {
+        private String requestId;
+        private String inputHash;
+        private String actorId;
+        private Long expiresAt;
+        private Long chunkBytes;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastWriteIntent() {}
+        /**
+         * Immutable signed request ticket. Retain privately to reconcile ambiguous writes; never replace it automatically.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("request_id") public String getRequestId() { return requestId; }
+        /**
+         * Sets request id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("request_id") public void setRequestId(String value) { requestId = value; markField("request_id"); }
+        /**
+         * Returns input hash.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("input_hash") public String getInputHash() { return inputHash; }
+        /**
+         * Sets input hash.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("input_hash") public void setInputHash(String value) { inputHash = value; markField("input_hash"); }
+        /**
+         * Returns actor id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("actor_id") public String getActorId() { return actorId; }
+        /**
+         * Sets actor id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("actor_id") public void setActorId(String value) { actorId = value; markField("actor_id"); }
+        /**
+         * Returns expires at.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("expires_at") public Long getExpiresAt() { return expiresAt; }
+        /**
+         * Sets expires at.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("expires_at") public void setExpiresAt(Long value) { expiresAt = value; markField("expires_at"); }
+        /**
+         * Returns chunk bytes.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("chunk_bytes") public Long getChunkBytes() { return chunkBytes; }
+        /**
+         * Sets chunk bytes.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("chunk_bytes") public void setChunkBytes(Long value) { chunkBytes = value; markField("chunk_bytes"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("request_id")) fields.put("request_id", requestId);
+            if (hasField("input_hash")) fields.put("input_hash", inputHash);
+            if (hasField("actor_id")) fields.put("actor_id", actorId);
+            if (hasField("expires_at")) fields.put("expires_at", expiresAt);
+            if (hasField("chunk_bytes")) fields.put("chunk_bytes", chunkBytes);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "request_id" -> { setRequestId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "input_hash" -> { setInputHash(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "actor_id" -> { setActorId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "expires_at" -> { setExpiresAt(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "chunk_bytes" -> { setChunkBytes(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "request_id" -> requestId = null;
+                case "input_hash" -> inputHash = null;
+                case "actor_id" -> actorId = null;
+                case "expires_at" -> expiresAt = null;
+                case "chunk_bytes" -> chunkBytes = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast write receipt.
+     */
+    public static final class BroadcastWriteReceipt extends Model {
+        private String requestId;
+        private String resultState;
+        private Boolean applied;
+        private Boolean terminal;
+        private Boolean replay;
+        private String id;
+        private Long revision;
+        private Long deletedRevision;
+        private String documentSha256;
+        private String errorCode;
+        private String operation;
+        private String inputHash;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastWriteReceipt() {}
+        /**
+         * Immutable signed request ticket. Retain privately to reconcile ambiguous writes; never replace it automatically.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("request_id") public String getRequestId() { return requestId; }
+        /**
+         * Sets request id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("request_id") public void setRequestId(String value) { requestId = value; markField("request_id"); }
+        /**
+         * Returns result state.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("result_state") public String getResultState() { return resultState; }
+        /**
+         * Sets result state.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("result_state") public void setResultState(String value) { resultState = value; markField("result_state"); }
+        /**
+         * Returns applied.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("applied") public Boolean getApplied() { return applied; }
+        /**
+         * Sets applied.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("applied") public void setApplied(Boolean value) { applied = value; markField("applied"); }
+        /**
+         * Returns terminal.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("terminal") public Boolean getTerminal() { return terminal; }
+        /**
+         * Sets terminal.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("terminal") public void setTerminal(Boolean value) { terminal = value; markField("terminal"); }
+        /**
+         * Returns replay.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("replay") public Boolean getReplay() { return replay; }
+        /**
+         * Sets replay.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("replay") public void setReplay(Boolean value) { replay = value; markField("replay"); }
+        /**
+         * Returns id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("id") public String getId() { return id; }
+        /**
+         * Sets id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("id") public void setId(String value) { id = value; markField("id"); }
+        /**
+         * Returns revision.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("revision") public Long getRevision() { return revision; }
+        /**
+         * Sets revision.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("revision") public void setRevision(Long value) { revision = value; markField("revision"); }
+        /**
+         * Returns deleted revision.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("deleted_revision") public Long getDeletedRevision() { return deletedRevision; }
+        /**
+         * Sets deleted revision.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("deleted_revision") public void setDeletedRevision(Long value) { deletedRevision = value; markField("deleted_revision"); }
+        /**
+         * Returns document sha256.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("document_sha256") public String getDocumentSha256() { return documentSha256; }
+        /**
+         * Sets document sha256.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("document_sha256") public void setDocumentSha256(String value) { documentSha256 = value; markField("document_sha256"); }
+        /**
+         * Returns error code.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("error_code") public String getErrorCode() { return errorCode; }
+        /**
+         * Sets error code.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("error_code") public void setErrorCode(String value) { errorCode = value; markField("error_code"); }
+        /**
+         * Returns operation.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("operation") public String getOperation() { return operation; }
+        /**
+         * Sets operation.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("operation") public void setOperation(String value) { operation = value; markField("operation"); }
+        /**
+         * Returns input hash.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("input_hash") public String getInputHash() { return inputHash; }
+        /**
+         * Sets input hash.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("input_hash") public void setInputHash(String value) { inputHash = value; markField("input_hash"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("request_id")) fields.put("request_id", requestId);
+            if (hasField("result_state")) fields.put("result_state", resultState);
+            if (hasField("applied")) fields.put("applied", applied);
+            if (hasField("terminal")) fields.put("terminal", terminal);
+            if (hasField("replay")) fields.put("replay", replay);
+            if (hasField("id")) fields.put("id", id);
+            if (hasField("revision")) fields.put("revision", revision);
+            if (hasField("deleted_revision")) fields.put("deleted_revision", deletedRevision);
+            if (hasField("document_sha256")) fields.put("document_sha256", documentSha256);
+            if (hasField("error_code")) fields.put("error_code", errorCode);
+            if (hasField("operation")) fields.put("operation", operation);
+            if (hasField("input_hash")) fields.put("input_hash", inputHash);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "request_id" -> { setRequestId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "result_state" -> { setResultState(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "applied" -> { setApplied(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "terminal" -> { setTerminal(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "replay" -> { setReplay(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "revision" -> { setRevision(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "deleted_revision" -> { setDeletedRevision(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "document_sha256" -> { setDocumentSha256(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "error_code" -> { setErrorCode(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "operation" -> { setOperation(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "input_hash" -> { setInputHash(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "request_id" -> requestId = null;
+                case "result_state" -> resultState = null;
+                case "applied" -> applied = null;
+                case "terminal" -> terminal = null;
+                case "replay" -> replay = null;
+                case "id" -> id = null;
+                case "revision" -> revision = null;
+                case "deleted_revision" -> deletedRevision = null;
+                case "document_sha256" -> documentSha256 = null;
+                case "error_code" -> errorCode = null;
+                case "operation" -> operation = null;
+                case "input_hash" -> inputHash = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast duplicate input.
+     */
+    public static final class BroadcastDuplicateInput extends Model {
+        private String name;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastDuplicateInput() {}
+        /**
+         * Returns name.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("name") public String getName() { return name; }
+        /**
+         * Sets name.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("name") public void setName(String value) { name = value; markField("name"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("name")) fields.put("name", name);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "name" -> { setName(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "name" -> name = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast empty input.
+     */
+    public static final class BroadcastEmptyInput extends Model {
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastEmptyInput() {}
+        @Override protected void appendFields(Map<String, Object> fields) {
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast output profile.
+     */
+    public static final class BroadcastOutputProfile extends Model {
+        private String id;
+        private Long version;
+        private Long width;
+        private Long height;
+        private Long fps;
+        private Long sampleRate;
+        private Long channels;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastOutputProfile() {}
+        /**
+         * Returns id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("id") public String getId() { return id; }
+        /**
+         * Sets id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("id") public void setId(String value) { id = value; markField("id"); }
+        /**
+         * Returns version.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("version") public Long getVersion() { return version; }
+        /**
+         * Sets version.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("version") public void setVersion(Long value) { version = value; markField("version"); }
+        /**
+         * Returns width.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("width") public Long getWidth() { return width; }
+        /**
+         * Sets width.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("width") public void setWidth(Long value) { width = value; markField("width"); }
+        /**
+         * Returns height.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("height") public Long getHeight() { return height; }
+        /**
+         * Sets height.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("height") public void setHeight(Long value) { height = value; markField("height"); }
+        /**
+         * Returns fps.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("fps") public Long getFps() { return fps; }
+        /**
+         * Sets fps.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("fps") public void setFps(Long value) { fps = value; markField("fps"); }
+        /**
+         * Returns sample rate.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("sampleRate") public Long getSampleRate() { return sampleRate; }
+        /**
+         * Sets sample rate.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("sampleRate") public void setSampleRate(Long value) { sampleRate = value; markField("sampleRate"); }
+        /**
+         * Returns channels.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("channels") public Long getChannels() { return channels; }
+        /**
+         * Sets channels.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("channels") public void setChannels(Long value) { channels = value; markField("channels"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("id")) fields.put("id", id);
+            if (hasField("version")) fields.put("version", version);
+            if (hasField("width")) fields.put("width", width);
+            if (hasField("height")) fields.put("height", height);
+            if (hasField("fps")) fields.put("fps", fps);
+            if (hasField("sampleRate")) fields.put("sampleRate", sampleRate);
+            if (hasField("channels")) fields.put("channels", channels);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "version" -> { setVersion(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "width" -> { setWidth(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "height" -> { setHeight(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "fps" -> { setFps(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "sampleRate" -> { setSampleRate(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "channels" -> { setChannels(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "id" -> id = null;
+                case "version" -> version = null;
+                case "width" -> width = null;
+                case "height" -> height = null;
+                case "fps" -> fps = null;
+                case "sampleRate" -> sampleRate = null;
+                case "channels" -> channels = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast output profile list.
+     */
+    public static final class BroadcastOutputProfileList extends Model {
+        private List<BroadcastOutputProfile> data;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastOutputProfileList() {}
+        /**
+         * Returns data.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("data") public List<BroadcastOutputProfile> getData() { return data; }
+        /**
+         * Sets data.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("data") public void setData(List<BroadcastOutputProfile> value) { data = value; markField("data"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("data")) fields.put("data", data);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "data" -> { setData(Json.MAPPER.convertValue(value, new TypeReference<List<BroadcastOutputProfile>>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "data" -> data = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast preflight.
+     */
+    public static final class BroadcastPreflight extends Model {
+        private Boolean channelConnected;
+        private Long activePublishers;
+        private Boolean browserCaptureRequired;
+        private Boolean automaticRestart;
+        private BroadcastOutputProfile outputProfile;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastPreflight() {}
+        /**
+         * Returns channel connected.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("channel_connected") public Boolean getChannelConnected() { return channelConnected; }
+        /**
+         * Sets channel connected.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("channel_connected") public void setChannelConnected(Boolean value) { channelConnected = value; markField("channel_connected"); }
+        /**
+         * Returns active publishers.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("active_publishers") public Long getActivePublishers() { return activePublishers; }
+        /**
+         * Sets active publishers.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("active_publishers") public void setActivePublishers(Long value) { activePublishers = value; markField("active_publishers"); }
+        /**
+         * Returns browser capture required.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("browser_capture_required") public Boolean getBrowserCaptureRequired() { return browserCaptureRequired; }
+        /**
+         * Sets browser capture required.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("browser_capture_required") public void setBrowserCaptureRequired(Boolean value) { browserCaptureRequired = value; markField("browser_capture_required"); }
+        /**
+         * Returns automatic restart.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("automatic_restart") public Boolean getAutomaticRestart() { return automaticRestart; }
+        /**
+         * Sets automatic restart.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("automatic_restart") public void setAutomaticRestart(Boolean value) { automaticRestart = value; markField("automatic_restart"); }
+        /**
+         * Returns output profile.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("output_profile") public BroadcastOutputProfile getOutputProfile() { return outputProfile; }
+        /**
+         * Sets output profile.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("output_profile") public void setOutputProfile(BroadcastOutputProfile value) { outputProfile = value; markField("output_profile"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("channel_connected")) fields.put("channel_connected", channelConnected);
+            if (hasField("active_publishers")) fields.put("active_publishers", activePublishers);
+            if (hasField("browser_capture_required")) fields.put("browser_capture_required", browserCaptureRequired);
+            if (hasField("automatic_restart")) fields.put("automatic_restart", automaticRestart);
+            if (hasField("output_profile")) fields.put("output_profile", outputProfile);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "channel_connected" -> { setChannelConnected(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "active_publishers" -> { setActivePublishers(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "browser_capture_required" -> { setBrowserCaptureRequired(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "automatic_restart" -> { setAutomaticRestart(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "output_profile" -> { setOutputProfile(Json.MAPPER.convertValue(value, new TypeReference<BroadcastOutputProfile>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "channel_connected" -> channelConnected = null;
+                case "active_publishers" -> activePublishers = null;
+                case "browser_capture_required" -> browserCaptureRequired = null;
+                case "automatic_restart" -> automaticRestart = null;
+                case "output_profile" -> outputProfile = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast channel.
+     */
+    public static final class BroadcastChannel extends Model {
+        private String id;
+        private String channelId;
+        private String title;
+        private String state;
+        private Long revision;
+        private String lastError;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastChannel() {}
+        /**
+         * Returns id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("id") public String getId() { return id; }
+        /**
+         * Sets id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("id") public void setId(String value) { id = value; markField("id"); }
+        /**
+         * Returns channel id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("channel_id") public String getChannelId() { return channelId; }
+        /**
+         * Sets channel id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("channel_id") public void setChannelId(String value) { channelId = value; markField("channel_id"); }
+        /**
+         * Returns title.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("title") public String getTitle() { return title; }
+        /**
+         * Sets title.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("title") public void setTitle(String value) { title = value; markField("title"); }
+        /**
+         * Returns state.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("state") public String getState() { return state; }
+        /**
+         * Sets state.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("state") public void setState(String value) { state = value; markField("state"); }
+        /**
+         * Returns revision.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("revision") public Long getRevision() { return revision; }
+        /**
+         * Sets revision.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("revision") public void setRevision(Long value) { revision = value; markField("revision"); }
+        /**
+         * Returns last error.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("last_error") public String getLastError() { return lastError; }
+        /**
+         * Sets last error.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("last_error") public void setLastError(String value) { lastError = value; markField("last_error"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("id")) fields.put("id", id);
+            if (hasField("channel_id")) fields.put("channel_id", channelId);
+            if (hasField("title")) fields.put("title", title);
+            if (hasField("state")) fields.put("state", state);
+            if (hasField("revision")) fields.put("revision", revision);
+            if (hasField("last_error")) fields.put("last_error", lastError);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "channel_id" -> { setChannelId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "title" -> { setTitle(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "state" -> { setState(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "revision" -> { setRevision(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "last_error" -> { setLastError(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "id" -> id = null;
+                case "channel_id" -> channelId = null;
+                case "title" -> title = null;
+                case "state" -> state = null;
+                case "revision" -> revision = null;
+                case "last_error" -> lastError = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast event.
+     */
+    public static final class BroadcastEvent extends Model {
+        private String id;
+        private String organizationId;
+        private String channelId;
+        private String providerBroadcastId;
+        private String title;
+        private String description;
+        private String scheduledStart;
+        private String privacy;
+        private Boolean madeForKids;
+        private String state;
+        private String providerState;
+        private String streamState;
+        private String desired;
+        private String health;
+        private Long revision;
+        private String lastError;
+        private Long providerObservedAt;
+        private Long providerObservationAgeMs;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastEvent() {}
+        /**
+         * Returns id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("id") public String getId() { return id; }
+        /**
+         * Sets id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("id") public void setId(String value) { id = value; markField("id"); }
+        /**
+         * Returns organization id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("organization_id") public String getOrganizationId() { return organizationId; }
+        /**
+         * Sets organization id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("organization_id") public void setOrganizationId(String value) { organizationId = value; markField("organization_id"); }
+        /**
+         * Returns channel id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("channel_id") public String getChannelId() { return channelId; }
+        /**
+         * Sets channel id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("channel_id") public void setChannelId(String value) { channelId = value; markField("channel_id"); }
+        /**
+         * Returns provider broadcast id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("provider_broadcast_id") public String getProviderBroadcastId() { return providerBroadcastId; }
+        /**
+         * Sets provider broadcast id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("provider_broadcast_id") public void setProviderBroadcastId(String value) { providerBroadcastId = value; markField("provider_broadcast_id"); }
+        /**
+         * Returns title.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("title") public String getTitle() { return title; }
+        /**
+         * Sets title.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("title") public void setTitle(String value) { title = value; markField("title"); }
+        /**
+         * Returns description.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("description") public String getDescription() { return description; }
+        /**
+         * Sets description.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("description") public void setDescription(String value) { description = value; markField("description"); }
+        /**
+         * Returns scheduled start.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("scheduled_start") public String getScheduledStart() { return scheduledStart; }
+        /**
+         * Sets scheduled start.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("scheduled_start") public void setScheduledStart(String value) { scheduledStart = value; markField("scheduled_start"); }
+        /**
+         * Returns privacy.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("privacy") public String getPrivacy() { return privacy; }
+        /**
+         * Sets privacy.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("privacy") public void setPrivacy(String value) { privacy = value; markField("privacy"); }
+        /**
+         * Returns made for kids.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("made_for_kids") public Boolean getMadeForKids() { return madeForKids; }
+        /**
+         * Sets made for kids.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("made_for_kids") public void setMadeForKids(Boolean value) { madeForKids = value; markField("made_for_kids"); }
+        /**
+         * Returns state.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("state") public String getState() { return state; }
+        /**
+         * Sets state.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("state") public void setState(String value) { state = value; markField("state"); }
+        /**
+         * Returns provider state.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("provider_state") public String getProviderState() { return providerState; }
+        /**
+         * Sets provider state.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("provider_state") public void setProviderState(String value) { providerState = value; markField("provider_state"); }
+        /**
+         * Returns stream state.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("stream_state") public String getStreamState() { return streamState; }
+        /**
+         * Sets stream state.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("stream_state") public void setStreamState(String value) { streamState = value; markField("stream_state"); }
+        /**
+         * Returns desired.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("desired") public String getDesired() { return desired; }
+        /**
+         * Sets desired.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("desired") public void setDesired(String value) { desired = value; markField("desired"); }
+        /**
+         * Returns health.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("health") public String getHealth() { return health; }
+        /**
+         * Sets health.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("health") public void setHealth(String value) { health = value; markField("health"); }
+        /**
+         * Returns revision.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("revision") public Long getRevision() { return revision; }
+        /**
+         * Sets revision.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("revision") public void setRevision(Long value) { revision = value; markField("revision"); }
+        /**
+         * Returns last error.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("last_error") public String getLastError() { return lastError; }
+        /**
+         * Sets last error.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("last_error") public void setLastError(String value) { lastError = value; markField("last_error"); }
+        /**
+         * Returns provider observed at.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("provider_observed_at") public Long getProviderObservedAt() { return providerObservedAt; }
+        /**
+         * Sets provider observed at.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("provider_observed_at") public void setProviderObservedAt(Long value) { providerObservedAt = value; markField("provider_observed_at"); }
+        /**
+         * Returns provider observation age ms.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("provider_observation_age_ms") public Long getProviderObservationAgeMs() { return providerObservationAgeMs; }
+        /**
+         * Sets provider observation age ms.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("provider_observation_age_ms") public void setProviderObservationAgeMs(Long value) { providerObservationAgeMs = value; markField("provider_observation_age_ms"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("id")) fields.put("id", id);
+            if (hasField("organization_id")) fields.put("organization_id", organizationId);
+            if (hasField("channel_id")) fields.put("channel_id", channelId);
+            if (hasField("provider_broadcast_id")) fields.put("provider_broadcast_id", providerBroadcastId);
+            if (hasField("title")) fields.put("title", title);
+            if (hasField("description")) fields.put("description", description);
+            if (hasField("scheduled_start")) fields.put("scheduled_start", scheduledStart);
+            if (hasField("privacy")) fields.put("privacy", privacy);
+            if (hasField("made_for_kids")) fields.put("made_for_kids", madeForKids);
+            if (hasField("state")) fields.put("state", state);
+            if (hasField("provider_state")) fields.put("provider_state", providerState);
+            if (hasField("stream_state")) fields.put("stream_state", streamState);
+            if (hasField("desired")) fields.put("desired", desired);
+            if (hasField("health")) fields.put("health", health);
+            if (hasField("revision")) fields.put("revision", revision);
+            if (hasField("last_error")) fields.put("last_error", lastError);
+            if (hasField("provider_observed_at")) fields.put("provider_observed_at", providerObservedAt);
+            if (hasField("provider_observation_age_ms")) fields.put("provider_observation_age_ms", providerObservationAgeMs);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "organization_id" -> { setOrganizationId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "channel_id" -> { setChannelId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "provider_broadcast_id" -> { setProviderBroadcastId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "title" -> { setTitle(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "description" -> { setDescription(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "scheduled_start" -> { setScheduledStart(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "privacy" -> { setPrivacy(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "made_for_kids" -> { setMadeForKids(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "state" -> { setState(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "provider_state" -> { setProviderState(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "stream_state" -> { setStreamState(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "desired" -> { setDesired(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "health" -> { setHealth(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "revision" -> { setRevision(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "last_error" -> { setLastError(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "provider_observed_at" -> { setProviderObservedAt(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "provider_observation_age_ms" -> { setProviderObservationAgeMs(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "id" -> id = null;
+                case "organization_id" -> organizationId = null;
+                case "channel_id" -> channelId = null;
+                case "provider_broadcast_id" -> providerBroadcastId = null;
+                case "title" -> title = null;
+                case "description" -> description = null;
+                case "scheduled_start" -> scheduledStart = null;
+                case "privacy" -> privacy = null;
+                case "made_for_kids" -> madeForKids = null;
+                case "state" -> state = null;
+                case "provider_state" -> providerState = null;
+                case "stream_state" -> streamState = null;
+                case "desired" -> desired = null;
+                case "health" -> health = null;
+                case "revision" -> revision = null;
+                case "last_error" -> lastError = null;
+                case "provider_observed_at" -> providerObservedAt = null;
+                case "provider_observation_age_ms" -> providerObservationAgeMs = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast event list.
+     */
+    public static final class BroadcastEventList extends Model {
+        private List<BroadcastEvent> data;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastEventList() {}
+        /**
+         * Returns data.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("data") public List<BroadcastEvent> getData() { return data; }
+        /**
+         * Sets data.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("data") public void setData(List<BroadcastEvent> value) { data = value; markField("data"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("data")) fields.put("data", data);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "data" -> { setData(Json.MAPPER.convertValue(value, new TypeReference<List<BroadcastEvent>>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "data" -> data = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast event input.
+     */
+    public static final class BroadcastEventInput extends Model {
+        private String title;
+        private String description;
+        private String scheduledStart;
+        private String privacy;
+        private Boolean madeForKids;
+        private BroadcastThumbnailInput thumbnail;
+        private List<String> tags;
+        private String categoryId;
+        private String language;
+        private String license;
+        private Boolean embeddable;
+        private Boolean publicStatsViewable;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastEventInput() {}
+        /**
+         * Returns title.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("title") public String getTitle() { return title; }
+        /**
+         * Sets title.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("title") public void setTitle(String value) { title = value; markField("title"); }
+        /**
+         * Returns description.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("description") public String getDescription() { return description; }
+        /**
+         * Sets description.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("description") public void setDescription(String value) { description = value; markField("description"); }
+        /**
+         * Returns scheduled start.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("scheduledStart") public String getScheduledStart() { return scheduledStart; }
+        /**
+         * Sets scheduled start.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("scheduledStart") public void setScheduledStart(String value) { scheduledStart = value; markField("scheduledStart"); }
+        /**
+         * Returns privacy.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("privacy") public String getPrivacy() { return privacy; }
+        /**
+         * Sets privacy.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("privacy") public void setPrivacy(String value) { privacy = value; markField("privacy"); }
+        /**
+         * Returns made for kids.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("madeForKids") public Boolean getMadeForKids() { return madeForKids; }
+        /**
+         * Sets made for kids.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("madeForKids") public void setMadeForKids(Boolean value) { madeForKids = value; markField("madeForKids"); }
+        /**
+         * Returns thumbnail.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("thumbnail") public BroadcastThumbnailInput getThumbnail() { return thumbnail; }
+        /**
+         * Sets thumbnail.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("thumbnail") public void setThumbnail(BroadcastThumbnailInput value) { thumbnail = value; markField("thumbnail"); }
+        /**
+         * Returns tags.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("tags") public List<String> getTags() { return tags; }
+        /**
+         * Sets tags.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("tags") public void setTags(List<String> value) { tags = value; markField("tags"); }
+        /**
+         * Returns category id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("categoryId") public String getCategoryId() { return categoryId; }
+        /**
+         * Sets category id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("categoryId") public void setCategoryId(String value) { categoryId = value; markField("categoryId"); }
+        /**
+         * Returns language.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("language") public String getLanguage() { return language; }
+        /**
+         * Sets language.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("language") public void setLanguage(String value) { language = value; markField("language"); }
+        /**
+         * Returns license.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("license") public String getLicense() { return license; }
+        /**
+         * Sets license.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("license") public void setLicense(String value) { license = value; markField("license"); }
+        /**
+         * Returns embeddable.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("embeddable") public Boolean getEmbeddable() { return embeddable; }
+        /**
+         * Sets embeddable.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("embeddable") public void setEmbeddable(Boolean value) { embeddable = value; markField("embeddable"); }
+        /**
+         * Returns public stats viewable.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("publicStatsViewable") public Boolean getPublicStatsViewable() { return publicStatsViewable; }
+        /**
+         * Sets public stats viewable.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("publicStatsViewable") public void setPublicStatsViewable(Boolean value) { publicStatsViewable = value; markField("publicStatsViewable"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("title")) fields.put("title", title);
+            if (hasField("description")) fields.put("description", description);
+            if (hasField("scheduledStart")) fields.put("scheduledStart", scheduledStart);
+            if (hasField("privacy")) fields.put("privacy", privacy);
+            if (hasField("madeForKids")) fields.put("madeForKids", madeForKids);
+            if (hasField("thumbnail")) fields.put("thumbnail", thumbnail);
+            if (hasField("tags")) fields.put("tags", tags);
+            if (hasField("categoryId")) fields.put("categoryId", categoryId);
+            if (hasField("language")) fields.put("language", language);
+            if (hasField("license")) fields.put("license", license);
+            if (hasField("embeddable")) fields.put("embeddable", embeddable);
+            if (hasField("publicStatsViewable")) fields.put("publicStatsViewable", publicStatsViewable);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "title" -> { setTitle(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "description" -> { setDescription(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "scheduledStart" -> { setScheduledStart(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "privacy" -> { setPrivacy(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "madeForKids" -> { setMadeForKids(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "thumbnail" -> { setThumbnail(Json.MAPPER.convertValue(value, new TypeReference<BroadcastThumbnailInput>() {})); yield true; }
+                case "tags" -> { setTags(Json.MAPPER.convertValue(value, new TypeReference<List<String>>() {})); yield true; }
+                case "categoryId" -> { setCategoryId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "language" -> { setLanguage(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "license" -> { setLicense(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "embeddable" -> { setEmbeddable(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "publicStatsViewable" -> { setPublicStatsViewable(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "title" -> title = null;
+                case "description" -> description = null;
+                case "scheduledStart" -> scheduledStart = null;
+                case "privacy" -> privacy = null;
+                case "madeForKids" -> madeForKids = null;
+                case "thumbnail" -> thumbnail = null;
+                case "tags" -> tags = null;
+                case "categoryId" -> categoryId = null;
+                case "language" -> language = null;
+                case "license" -> license = null;
+                case "embeddable" -> embeddable = null;
+                case "publicStatsViewable" -> publicStatsViewable = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast attach input.
+     */
+    public static final class BroadcastAttachInput extends Model {
+        private String providerBroadcastId;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastAttachInput() {}
+        /**
+         * Returns provider broadcast id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("provider_broadcast_id") public String getProviderBroadcastId() { return providerBroadcastId; }
+        /**
+         * Sets provider broadcast id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("provider_broadcast_id") public void setProviderBroadcastId(String value) { providerBroadcastId = value; markField("provider_broadcast_id"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("provider_broadcast_id")) fields.put("provider_broadcast_id", providerBroadcastId);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "provider_broadcast_id" -> { setProviderBroadcastId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "provider_broadcast_id" -> providerBroadcastId = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast transition input.
+     */
+    public static final class BroadcastTransitionInput extends Model {
+        private String state;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastTransitionInput() {}
+        /**
+         * Returns state.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("state") public String getState() { return state; }
+        /**
+         * Sets state.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("state") public void setState(String value) { state = value; markField("state"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("state")) fields.put("state", state);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "state" -> { setState(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "state" -> state = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast operation.
+     */
+    public static final class BroadcastOperation extends Model {
+        private String id;
+        private String eventId;
+        private String kind;
+        private String phase;
+        private String state;
+        private String lastError;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastOperation() {}
+        /**
+         * Returns id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("id") public String getId() { return id; }
+        /**
+         * Sets id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("id") public void setId(String value) { id = value; markField("id"); }
+        /**
+         * Returns event id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("event_id") public String getEventId() { return eventId; }
+        /**
+         * Sets event id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("event_id") public void setEventId(String value) { eventId = value; markField("event_id"); }
+        /**
+         * Returns kind.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("kind") public String getKind() { return kind; }
+        /**
+         * Sets kind.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("kind") public void setKind(String value) { kind = value; markField("kind"); }
+        /**
+         * Returns phase.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("phase") public String getPhase() { return phase; }
+        /**
+         * Sets phase.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("phase") public void setPhase(String value) { phase = value; markField("phase"); }
+        /**
+         * Returns state.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("state") public String getState() { return state; }
+        /**
+         * Sets state.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("state") public void setState(String value) { state = value; markField("state"); }
+        /**
+         * Returns last error.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("last_error") public String getLastError() { return lastError; }
+        /**
+         * Sets last error.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("last_error") public void setLastError(String value) { lastError = value; markField("last_error"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("id")) fields.put("id", id);
+            if (hasField("event_id")) fields.put("event_id", eventId);
+            if (hasField("kind")) fields.put("kind", kind);
+            if (hasField("phase")) fields.put("phase", phase);
+            if (hasField("state")) fields.put("state", state);
+            if (hasField("last_error")) fields.put("last_error", lastError);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "event_id" -> { setEventId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "kind" -> { setKind(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "phase" -> { setPhase(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "state" -> { setState(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "last_error" -> { setLastError(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "id" -> id = null;
+                case "event_id" -> eventId = null;
+                case "kind" -> kind = null;
+                case "phase" -> phase = null;
+                case "state" -> state = null;
+                case "last_error" -> lastError = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast publisher.
+     */
+    public static final class BroadcastPublisher extends Model {
+        private String id;
+        private String organizationId;
+        private String snapshotId;
+        private String state;
+        private Long revision;
+        private String controlStatus;
+        private String shutdownStage;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastPublisher() {}
+        /**
+         * Returns id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("id") public String getId() { return id; }
+        /**
+         * Sets id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("id") public void setId(String value) { id = value; markField("id"); }
+        /**
+         * Returns organization id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("organization_id") public String getOrganizationId() { return organizationId; }
+        /**
+         * Sets organization id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("organization_id") public void setOrganizationId(String value) { organizationId = value; markField("organization_id"); }
+        /**
+         * Returns snapshot id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("snapshot_id") public String getSnapshotId() { return snapshotId; }
+        /**
+         * Sets snapshot id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("snapshot_id") public void setSnapshotId(String value) { snapshotId = value; markField("snapshot_id"); }
+        /**
+         * Returns state.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("state") public String getState() { return state; }
+        /**
+         * Sets state.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("state") public void setState(String value) { state = value; markField("state"); }
+        /**
+         * Returns revision.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("revision") public Long getRevision() { return revision; }
+        /**
+         * Sets revision.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("revision") public void setRevision(Long value) { revision = value; markField("revision"); }
+        /**
+         * Returns control status.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("control_status") public String getControlStatus() { return controlStatus; }
+        /**
+         * Sets control status.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("control_status") public void setControlStatus(String value) { controlStatus = value; markField("control_status"); }
+        /**
+         * Returns shutdown stage.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("shutdown_stage") public String getShutdownStage() { return shutdownStage; }
+        /**
+         * Sets shutdown stage.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("shutdown_stage") public void setShutdownStage(String value) { shutdownStage = value; markField("shutdown_stage"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("id")) fields.put("id", id);
+            if (hasField("organization_id")) fields.put("organization_id", organizationId);
+            if (hasField("snapshot_id")) fields.put("snapshot_id", snapshotId);
+            if (hasField("state")) fields.put("state", state);
+            if (hasField("revision")) fields.put("revision", revision);
+            if (hasField("control_status")) fields.put("control_status", controlStatus);
+            if (hasField("shutdown_stage")) fields.put("shutdown_stage", shutdownStage);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "id" -> { setId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "organization_id" -> { setOrganizationId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "snapshot_id" -> { setSnapshotId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "state" -> { setState(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "revision" -> { setRevision(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "control_status" -> { setControlStatus(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "shutdown_stage" -> { setShutdownStage(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "id" -> id = null;
+                case "organization_id" -> organizationId = null;
+                case "snapshot_id" -> snapshotId = null;
+                case "state" -> state = null;
+                case "revision" -> revision = null;
+                case "control_status" -> controlStatus = null;
+                case "shutdown_stage" -> shutdownStage = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of broadcast publisher list.
+     */
+    public static final class BroadcastPublisherList extends Model {
+        private List<BroadcastPublisher> data;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastPublisherList() {}
+        /**
+         * Returns data.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("data") public List<BroadcastPublisher> getData() { return data; }
+        /**
+         * Sets data.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("data") public void setData(List<BroadcastPublisher> value) { data = value; markField("data"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("data")) fields.put("data", data);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "data" -> { setData(Json.MAPPER.convertValue(value, new TypeReference<List<BroadcastPublisher>>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "data" -> data = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * default uses the connected channel image; asset requires an organization-owned image assetId.
+     */
+    public static final class BroadcastThumbnailInput extends Model {
+        private String mode;
+        private String assetId;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public BroadcastThumbnailInput() {}
+        /**
+         * Returns mode.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("mode") public String getMode() { return mode; }
+        /**
+         * Sets mode.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("mode") public void setMode(String value) { mode = value; markField("mode"); }
+        /**
+         * Returns asset id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("assetId") public String getAssetId() { return assetId; }
+        /**
+         * Sets asset id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("assetId") public void setAssetId(String value) { assetId = value; markField("assetId"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("mode")) fields.put("mode", mode);
+            if (hasField("assetId")) fields.put("assetId", assetId);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "mode" -> { setMode(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "assetId" -> { setAssetId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "mode" -> mode = null;
+                case "assetId" -> assetId = null;
+                default -> { }
+            }
+        }
+    }
+    /**
      * Approved browser-code authorization, including the secret access token. Applications own secure storage.
      */
     public static final class AuthorizationResult extends Model {
@@ -10693,6 +13010,41 @@ public final class Models {
         }
     }
     /**
+     * Java representation of live studio overlay node style.
+     */
+    public static final class LiveStudioOverlayNodeStyle extends Model {
+        private LiveStudioOverlayNodeStyleElements elements;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public LiveStudioOverlayNodeStyle() {}
+        /**
+         * Returns elements.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("elements") public LiveStudioOverlayNodeStyleElements getElements() { return elements; }
+        /**
+         * Sets elements.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("elements") public void setElements(LiveStudioOverlayNodeStyleElements value) { elements = value; markField("elements"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("elements")) fields.put("elements", elements);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "elements" -> { setElements(Json.MAPPER.convertValue(value, new TypeReference<LiveStudioOverlayNodeStyleElements>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "elements" -> elements = null;
+                default -> { }
+            }
+        }
+    }
+    /**
      * Java representation of live studio settings palettes dark.
      */
     public static final class LiveStudioSettingsPalettesDark extends Model {
@@ -11687,6 +14039,384 @@ public final class Models {
         }
     }
     /**
+     * Java representation of live studio overlay node style elements.
+     */
+    public static final class LiveStudioOverlayNodeStyleElements extends Model {
+        private LiveStudioOverlayNodeStyleElementsTranslation translation;
+        private LiveStudioOverlayNodeStyleElementsReference reference;
+        private LiveStudioOverlayNodeStyleElementsText text;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public LiveStudioOverlayNodeStyleElements() {}
+        /**
+         * Returns translation.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("translation") public LiveStudioOverlayNodeStyleElementsTranslation getTranslation() { return translation; }
+        /**
+         * Sets translation.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("translation") public void setTranslation(LiveStudioOverlayNodeStyleElementsTranslation value) { translation = value; markField("translation"); }
+        /**
+         * Returns reference.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("reference") public LiveStudioOverlayNodeStyleElementsReference getReference() { return reference; }
+        /**
+         * Sets reference.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("reference") public void setReference(LiveStudioOverlayNodeStyleElementsReference value) { reference = value; markField("reference"); }
+        /**
+         * Returns text.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("text") public LiveStudioOverlayNodeStyleElementsText getText() { return text; }
+        /**
+         * Sets text.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("text") public void setText(LiveStudioOverlayNodeStyleElementsText value) { text = value; markField("text"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("translation")) fields.put("translation", translation);
+            if (hasField("reference")) fields.put("reference", reference);
+            if (hasField("text")) fields.put("text", text);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "translation" -> { setTranslation(Json.MAPPER.convertValue(value, new TypeReference<LiveStudioOverlayNodeStyleElementsTranslation>() {})); yield true; }
+                case "reference" -> { setReference(Json.MAPPER.convertValue(value, new TypeReference<LiveStudioOverlayNodeStyleElementsReference>() {})); yield true; }
+                case "text" -> { setText(Json.MAPPER.convertValue(value, new TypeReference<LiveStudioOverlayNodeStyleElementsText>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "translation" -> translation = null;
+                case "reference" -> reference = null;
+                case "text" -> text = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of live studio overlay node style elements translation.
+     */
+    public static final class LiveStudioOverlayNodeStyleElementsTranslation extends Model {
+        private String font;
+        private Long size;
+        private Boolean bold;
+        private Boolean italic;
+        private String align;
+        private Long lineHeight;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public LiveStudioOverlayNodeStyleElementsTranslation() {}
+        /**
+         * Returns font.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("font") public String getFont() { return font; }
+        /**
+         * Sets font.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("font") public void setFont(String value) { font = value; markField("font"); }
+        /**
+         * Returns size.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("size") public Long getSize() { return size; }
+        /**
+         * Sets size.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("size") public void setSize(Long value) { size = value; markField("size"); }
+        /**
+         * Returns bold.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("bold") public Boolean getBold() { return bold; }
+        /**
+         * Sets bold.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("bold") public void setBold(Boolean value) { bold = value; markField("bold"); }
+        /**
+         * Returns italic.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("italic") public Boolean getItalic() { return italic; }
+        /**
+         * Sets italic.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("italic") public void setItalic(Boolean value) { italic = value; markField("italic"); }
+        /**
+         * Returns align.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("align") public String getAlign() { return align; }
+        /**
+         * Sets align.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("align") public void setAlign(String value) { align = value; markField("align"); }
+        /**
+         * Returns line height.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("lineHeight") public Long getLineHeight() { return lineHeight; }
+        /**
+         * Sets line height.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("lineHeight") public void setLineHeight(Long value) { lineHeight = value; markField("lineHeight"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("font")) fields.put("font", font);
+            if (hasField("size")) fields.put("size", size);
+            if (hasField("bold")) fields.put("bold", bold);
+            if (hasField("italic")) fields.put("italic", italic);
+            if (hasField("align")) fields.put("align", align);
+            if (hasField("lineHeight")) fields.put("lineHeight", lineHeight);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "font" -> { setFont(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "size" -> { setSize(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "bold" -> { setBold(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "italic" -> { setItalic(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "align" -> { setAlign(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "lineHeight" -> { setLineHeight(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "font" -> font = null;
+                case "size" -> size = null;
+                case "bold" -> bold = null;
+                case "italic" -> italic = null;
+                case "align" -> align = null;
+                case "lineHeight" -> lineHeight = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of live studio overlay node style elements reference.
+     */
+    public static final class LiveStudioOverlayNodeStyleElementsReference extends Model {
+        private String font;
+        private Long size;
+        private Boolean bold;
+        private Boolean italic;
+        private String align;
+        private Long lineHeight;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public LiveStudioOverlayNodeStyleElementsReference() {}
+        /**
+         * Returns font.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("font") public String getFont() { return font; }
+        /**
+         * Sets font.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("font") public void setFont(String value) { font = value; markField("font"); }
+        /**
+         * Returns size.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("size") public Long getSize() { return size; }
+        /**
+         * Sets size.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("size") public void setSize(Long value) { size = value; markField("size"); }
+        /**
+         * Returns bold.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("bold") public Boolean getBold() { return bold; }
+        /**
+         * Sets bold.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("bold") public void setBold(Boolean value) { bold = value; markField("bold"); }
+        /**
+         * Returns italic.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("italic") public Boolean getItalic() { return italic; }
+        /**
+         * Sets italic.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("italic") public void setItalic(Boolean value) { italic = value; markField("italic"); }
+        /**
+         * Returns align.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("align") public String getAlign() { return align; }
+        /**
+         * Sets align.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("align") public void setAlign(String value) { align = value; markField("align"); }
+        /**
+         * Returns line height.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("lineHeight") public Long getLineHeight() { return lineHeight; }
+        /**
+         * Sets line height.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("lineHeight") public void setLineHeight(Long value) { lineHeight = value; markField("lineHeight"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("font")) fields.put("font", font);
+            if (hasField("size")) fields.put("size", size);
+            if (hasField("bold")) fields.put("bold", bold);
+            if (hasField("italic")) fields.put("italic", italic);
+            if (hasField("align")) fields.put("align", align);
+            if (hasField("lineHeight")) fields.put("lineHeight", lineHeight);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "font" -> { setFont(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "size" -> { setSize(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "bold" -> { setBold(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "italic" -> { setItalic(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "align" -> { setAlign(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "lineHeight" -> { setLineHeight(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "font" -> font = null;
+                case "size" -> size = null;
+                case "bold" -> bold = null;
+                case "italic" -> italic = null;
+                case "align" -> align = null;
+                case "lineHeight" -> lineHeight = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of live studio overlay node style elements text.
+     */
+    public static final class LiveStudioOverlayNodeStyleElementsText extends Model {
+        private String font;
+        private Long size;
+        private Boolean bold;
+        private Boolean italic;
+        private String align;
+        private Long lineHeight;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public LiveStudioOverlayNodeStyleElementsText() {}
+        /**
+         * Returns font.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("font") public String getFont() { return font; }
+        /**
+         * Sets font.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("font") public void setFont(String value) { font = value; markField("font"); }
+        /**
+         * Returns size.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("size") public Long getSize() { return size; }
+        /**
+         * Sets size.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("size") public void setSize(Long value) { size = value; markField("size"); }
+        /**
+         * Returns bold.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("bold") public Boolean getBold() { return bold; }
+        /**
+         * Sets bold.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("bold") public void setBold(Boolean value) { bold = value; markField("bold"); }
+        /**
+         * Returns italic.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("italic") public Boolean getItalic() { return italic; }
+        /**
+         * Sets italic.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("italic") public void setItalic(Boolean value) { italic = value; markField("italic"); }
+        /**
+         * Returns align.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("align") public String getAlign() { return align; }
+        /**
+         * Sets align.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("align") public void setAlign(String value) { align = value; markField("align"); }
+        /**
+         * Returns line height.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("lineHeight") public Long getLineHeight() { return lineHeight; }
+        /**
+         * Sets line height.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("lineHeight") public void setLineHeight(Long value) { lineHeight = value; markField("lineHeight"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("font")) fields.put("font", font);
+            if (hasField("size")) fields.put("size", size);
+            if (hasField("bold")) fields.put("bold", bold);
+            if (hasField("italic")) fields.put("italic", italic);
+            if (hasField("align")) fields.put("align", align);
+            if (hasField("lineHeight")) fields.put("lineHeight", lineHeight);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "font" -> { setFont(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "size" -> { setSize(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "bold" -> { setBold(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "italic" -> { setItalic(Json.MAPPER.convertValue(value, new TypeReference<Boolean>() {})); yield true; }
+                case "align" -> { setAlign(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "lineHeight" -> { setLineHeight(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "font" -> font = null;
+                case "size" -> size = null;
+                case "bold" -> bold = null;
+                case "italic" -> italic = null;
+                case "align" -> align = null;
+                case "lineHeight" -> lineHeight = null;
+                default -> { }
+            }
+        }
+    }
+    /**
      * Typed scalar value for scope.
      */
     public static final class Scope {
@@ -11761,5 +14491,24 @@ public final class Models {
         @Override public boolean equals(Object other) { return other instanceof OAuthGrantedScope scalar && value.equals(scalar.value); }
         @Override public int hashCode() { return value.hashCode(); }
         @Override public String toString() { return "OAuthGrantedScope[redacted]"; }
+    }
+    /**
+     * Typed union object. Known variant fields share one wire object; the server validates variant-specific requirements.
+     */
+    public static final class BroadcastChannelResult {
+        private final BroadcastChannel value;
+        /**
+         * Creates a typed scalar without introducing a wire wrapper.
+         * @param value the scalar Java value
+         */
+        @JsonCreator(mode = JsonCreator.Mode.DELEGATING) public BroadcastChannelResult(BroadcastChannel value) { this.value = Objects.requireNonNull(value); }
+        /**
+         * Returns the scalar wire value.
+         * @return the Java scalar value
+         */
+        @JsonValue public BroadcastChannel value() { return value; }
+        @Override public boolean equals(Object other) { return other instanceof BroadcastChannelResult scalar && value.equals(scalar.value); }
+        @Override public int hashCode() { return value.hashCode(); }
+        @Override public String toString() { return "BroadcastChannelResult[redacted]"; }
     }
 }

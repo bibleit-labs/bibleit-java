@@ -310,4 +310,10 @@ public final class SshClient {
      */
     public LiveVerseResult popLive(String id) throws IOException, InterruptedException { return popLive(id, 0); }
 
+    /**
+     * Creates broadcast control-plane helpers over this same caller-owned executor.
+     * @return broadcast helpers; persistent upload calls must share the same shell
+     */
+    public BroadcastSshClient broadcast() { return new BroadcastSshClient(this); }
+
 }

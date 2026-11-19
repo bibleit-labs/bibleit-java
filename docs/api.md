@@ -202,3 +202,24 @@ getters for events and authorization results. Model fields now have ordinary Jav
 object identity; `toMap()` replaces the old tree representation. Scalar model
 constructors take their Java scalar type, and object models use setters or Jackson
 deserialization. HTTP and OAuth exceptions expose typed problem objects.
+
+## Broadcast Studio in 0.2.0
+
+This additive release supplies 21 Broadcast Studio REST operations and matching
+SSH command builders through `BroadcastCommands`. `ssh.broadcast()` returns
+the same generated Setup, channel, event, operation, publisher and write receipt
+models, retaining original SSH response metadata. Setup export verifies fixed
+revision, contiguous bytes and SHA-256 before returning a document.
+
+Workspace permissions and approval remain server enforced. REST uses personal
+`bt_` credentials with explicit `broadcast.*` ceilings; service and delegated
+credentials cannot substitute for workspace authority. Negotiate the three
+`broadcast.*.v1` SSH capabilities before use. Capture, Google consent and source
+takeover still require browser interaction. No reconnect starts publishing.
+
+Retain signed write tickets and the exact hashed JSON bytes. Use the raw
+`Options.body(...)` path for signed REST uploads, preserve `If-Match`, and poll
+the original durable request after uncertain replies. Upload commands require
+one caller-owned persistent SSH shell without a PTY. The SDK does not retry
+writes or generate replacement request IDs. Existing 0.1.0 methods and OAuth
+grant response scope models remain unchanged.

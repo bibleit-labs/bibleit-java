@@ -294,6 +294,513 @@ public final class BibleitClient {
     }
 
     /**
+     * attachBroadcastEvent.
+     * @param organizationId the organization_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response attachBroadcastEvent(String organizationId, Options options) throws IOException, InterruptedException {
+        return call("attachBroadcastEvent", Map.of("organization_id", organizationId), options);
+    }
+    /**
+     * attachBroadcastEvent. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response attachBroadcastEvent(String organizationId) throws IOException, InterruptedException {
+        return attachBroadcastEvent(organizationId, Options.defaults());
+    }
+
+    /**
+     * createBroadcastEvent.
+     * @param organizationId the organization_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response createBroadcastEvent(String organizationId, Options options) throws IOException, InterruptedException {
+        return call("createBroadcastEvent", Map.of("organization_id", organizationId), options);
+    }
+    /**
+     * createBroadcastEvent. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response createBroadcastEvent(String organizationId) throws IOException, InterruptedException {
+        return createBroadcastEvent(organizationId, Options.defaults());
+    }
+
+    /**
+     * createBroadcastSetup.
+     * @param organizationId the organization_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response createBroadcastSetup(String organizationId, Options options) throws IOException, InterruptedException {
+        return call("createBroadcastSetup", Map.of("organization_id", organizationId), options);
+    }
+    /**
+     * createBroadcastSetup. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response createBroadcastSetup(String organizationId) throws IOException, InterruptedException {
+        return createBroadcastSetup(organizationId, Options.defaults());
+    }
+
+    /**
+     * createBroadcastWriteRequest.
+     * @param organizationId the organization_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response createBroadcastWriteRequest(String organizationId, Options options) throws IOException, InterruptedException {
+        return call("createBroadcastWriteRequest", Map.of("organization_id", organizationId), options);
+    }
+    /**
+     * createBroadcastWriteRequest. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response createBroadcastWriteRequest(String organizationId) throws IOException, InterruptedException {
+        return createBroadcastWriteRequest(organizationId, Options.defaults());
+    }
+
+    /**
+     * deleteBroadcastSetup.
+     * @param organizationId the organization_id path identifier
+     * @param setupId the setup_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response deleteBroadcastSetup(String organizationId, String setupId, Options options) throws IOException, InterruptedException {
+        return call("deleteBroadcastSetup", Map.of("organization_id", organizationId, "setup_id", setupId), options);
+    }
+    /**
+     * deleteBroadcastSetup. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @param setupId the setup_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response deleteBroadcastSetup(String organizationId, String setupId) throws IOException, InterruptedException {
+        return deleteBroadcastSetup(organizationId, setupId, Options.defaults());
+    }
+
+    /**
+     * duplicateBroadcastSetup.
+     * @param organizationId the organization_id path identifier
+     * @param setupId the setup_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response duplicateBroadcastSetup(String organizationId, String setupId, Options options) throws IOException, InterruptedException {
+        return call("duplicateBroadcastSetup", Map.of("organization_id", organizationId, "setup_id", setupId), options);
+    }
+    /**
+     * duplicateBroadcastSetup. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @param setupId the setup_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response duplicateBroadcastSetup(String organizationId, String setupId) throws IOException, InterruptedException {
+        return duplicateBroadcastSetup(organizationId, setupId, Options.defaults());
+    }
+
+    /**
+     * getBroadcastChannel.
+     * @param organizationId the organization_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastChannel(String organizationId, Options options) throws IOException, InterruptedException {
+        return call("getBroadcastChannel", Map.of("organization_id", organizationId), options);
+    }
+    /**
+     * getBroadcastChannel. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastChannel(String organizationId) throws IOException, InterruptedException {
+        return getBroadcastChannel(organizationId, Options.defaults());
+    }
+
+    /**
+     * getBroadcastEvent.
+     * @param organizationId the organization_id path identifier
+     * @param eventId the event_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastEvent(String organizationId, String eventId, Options options) throws IOException, InterruptedException {
+        return call("getBroadcastEvent", Map.of("organization_id", organizationId, "event_id", eventId), options);
+    }
+    /**
+     * getBroadcastEvent. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @param eventId the event_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastEvent(String organizationId, String eventId) throws IOException, InterruptedException {
+        return getBroadcastEvent(organizationId, eventId, Options.defaults());
+    }
+
+    /**
+     * getBroadcastOperation.
+     * @param organizationId the organization_id path identifier
+     * @param operationId the operation_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastOperation(String organizationId, String operationId, Options options) throws IOException, InterruptedException {
+        return call("getBroadcastOperation", Map.of("organization_id", organizationId, "operation_id", operationId), options);
+    }
+    /**
+     * getBroadcastOperation. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @param operationId the operation_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastOperation(String organizationId, String operationId) throws IOException, InterruptedException {
+        return getBroadcastOperation(organizationId, operationId, Options.defaults());
+    }
+
+    /**
+     * getBroadcastPreflight.
+     * @param organizationId the organization_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastPreflight(String organizationId, Options options) throws IOException, InterruptedException {
+        return call("getBroadcastPreflight", Map.of("organization_id", organizationId), options);
+    }
+    /**
+     * getBroadcastPreflight. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastPreflight(String organizationId) throws IOException, InterruptedException {
+        return getBroadcastPreflight(organizationId, Options.defaults());
+    }
+
+    /**
+     * getBroadcastPublisher.
+     * @param organizationId the organization_id path identifier
+     * @param publisherId the publisher_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastPublisher(String organizationId, String publisherId, Options options) throws IOException, InterruptedException {
+        return call("getBroadcastPublisher", Map.of("organization_id", organizationId, "publisher_id", publisherId), options);
+    }
+    /**
+     * getBroadcastPublisher. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @param publisherId the publisher_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastPublisher(String organizationId, String publisherId) throws IOException, InterruptedException {
+        return getBroadcastPublisher(organizationId, publisherId, Options.defaults());
+    }
+
+    /**
+     * getBroadcastSetup.
+     * @param organizationId the organization_id path identifier
+     * @param setupId the setup_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastSetup(String organizationId, String setupId, Options options) throws IOException, InterruptedException {
+        return call("getBroadcastSetup", Map.of("organization_id", organizationId, "setup_id", setupId), options);
+    }
+    /**
+     * getBroadcastSetup. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @param setupId the setup_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastSetup(String organizationId, String setupId) throws IOException, InterruptedException {
+        return getBroadcastSetup(organizationId, setupId, Options.defaults());
+    }
+
+    /**
+     * getBroadcastWriteRequest.
+     * @param organizationId the organization_id path identifier
+     * @param requestId the request_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastWriteRequest(String organizationId, String requestId, Options options) throws IOException, InterruptedException {
+        return call("getBroadcastWriteRequest", Map.of("organization_id", organizationId, "request_id", requestId), options);
+    }
+    /**
+     * getBroadcastWriteRequest. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @param requestId the request_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getBroadcastWriteRequest(String organizationId, String requestId) throws IOException, InterruptedException {
+        return getBroadcastWriteRequest(organizationId, requestId, Options.defaults());
+    }
+
+    /**
+     * listBroadcastEvents.
+     * @param organizationId the organization_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response listBroadcastEvents(String organizationId, Options options) throws IOException, InterruptedException {
+        return call("listBroadcastEvents", Map.of("organization_id", organizationId), options);
+    }
+    /**
+     * listBroadcastEvents. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response listBroadcastEvents(String organizationId) throws IOException, InterruptedException {
+        return listBroadcastEvents(organizationId, Options.defaults());
+    }
+
+    /**
+     * listBroadcastOutputProfiles.
+     * @param organizationId the organization_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response listBroadcastOutputProfiles(String organizationId, Options options) throws IOException, InterruptedException {
+        return call("listBroadcastOutputProfiles", Map.of("organization_id", organizationId), options);
+    }
+    /**
+     * listBroadcastOutputProfiles. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response listBroadcastOutputProfiles(String organizationId) throws IOException, InterruptedException {
+        return listBroadcastOutputProfiles(organizationId, Options.defaults());
+    }
+
+    /**
+     * listBroadcastPublishers.
+     * @param organizationId the organization_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response listBroadcastPublishers(String organizationId, Options options) throws IOException, InterruptedException {
+        return call("listBroadcastPublishers", Map.of("organization_id", organizationId), options);
+    }
+    /**
+     * listBroadcastPublishers. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response listBroadcastPublishers(String organizationId) throws IOException, InterruptedException {
+        return listBroadcastPublishers(organizationId, Options.defaults());
+    }
+
+    /**
+     * listBroadcastSetups.
+     * @param organizationId the organization_id path identifier
+
+     * @param query the operation-specific query values
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response listBroadcastSetups(String organizationId, Queries.ListBroadcastSetupsQuery query, Options options) throws IOException, InterruptedException {
+        return call("listBroadcastSetups", Map.of("organization_id", organizationId), query, options);
+    }
+    /**
+     * listBroadcastSetups. Leaves query values unset for server defaults.
+     * @param organizationId the organization_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response listBroadcastSetups(String organizationId, Options options) throws IOException, InterruptedException {
+        return listBroadcastSetups(organizationId, Queries.ListBroadcastSetupsQuery.builder().build(), options);
+    }
+
+    /**
+     * listBroadcastSetups. Uses default HTTP request options.
+     * @param organizationId the organization_id path identifier
+     * @param query the operation-specific query values
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response listBroadcastSetups(String organizationId, Queries.ListBroadcastSetupsQuery query) throws IOException, InterruptedException {
+        return listBroadcastSetups(organizationId, query, Options.defaults());
+    }
+    /**
+     * listBroadcastSetups. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response listBroadcastSetups(String organizationId) throws IOException, InterruptedException {
+        return listBroadcastSetups(organizationId, Options.defaults());
+    }
+
+    /**
+     * replaceBroadcastSetup.
+     * @param organizationId the organization_id path identifier
+     * @param setupId the setup_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response replaceBroadcastSetup(String organizationId, String setupId, Options options) throws IOException, InterruptedException {
+        return call("replaceBroadcastSetup", Map.of("organization_id", organizationId, "setup_id", setupId), options);
+    }
+    /**
+     * replaceBroadcastSetup. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @param setupId the setup_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response replaceBroadcastSetup(String organizationId, String setupId) throws IOException, InterruptedException {
+        return replaceBroadcastSetup(organizationId, setupId, Options.defaults());
+    }
+
+    /**
+     * requestBroadcastTakeover.
+     * @param organizationId the organization_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response requestBroadcastTakeover(String organizationId, Options options) throws IOException, InterruptedException {
+        return call("requestBroadcastTakeover", Map.of("organization_id", organizationId), options);
+    }
+    /**
+     * requestBroadcastTakeover. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response requestBroadcastTakeover(String organizationId) throws IOException, InterruptedException {
+        return requestBroadcastTakeover(organizationId, Options.defaults());
+    }
+
+    /**
+     * stopBroadcastPublisher.
+     * @param organizationId the organization_id path identifier
+     * @param publisherId the publisher_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response stopBroadcastPublisher(String organizationId, String publisherId, Options options) throws IOException, InterruptedException {
+        return call("stopBroadcastPublisher", Map.of("organization_id", organizationId, "publisher_id", publisherId), options);
+    }
+    /**
+     * stopBroadcastPublisher. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @param publisherId the publisher_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response stopBroadcastPublisher(String organizationId, String publisherId) throws IOException, InterruptedException {
+        return stopBroadcastPublisher(organizationId, publisherId, Options.defaults());
+    }
+
+    /**
+     * transitionBroadcastEvent.
+     * @param organizationId the organization_id path identifier
+     * @param eventId the event_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response transitionBroadcastEvent(String organizationId, String eventId, Options options) throws IOException, InterruptedException {
+        return call("transitionBroadcastEvent", Map.of("organization_id", organizationId, "event_id", eventId), options);
+    }
+    /**
+     * transitionBroadcastEvent. Uses default request options.
+     * @param organizationId the organization_id path identifier
+     * @param eventId the event_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response transitionBroadcastEvent(String organizationId, String eventId) throws IOException, InterruptedException {
+        return transitionBroadcastEvent(organizationId, eventId, Options.defaults());
+    }
+
+    /**
      * Download the OpenAPI contract.
      * @param options immutable HTTP request options
      * @return the streaming response; the caller must close it
