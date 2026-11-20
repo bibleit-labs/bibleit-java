@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.1 — 2026-11-20
 
 - Refresh the bundled contract for explicit MCP workspace-read responses while preserving ordinary OAuth request scopes and REST operations.
 - Add typed optional workspace permissions to the MCP probe and retain unknown fields and scope strings for wire compatibility.
