@@ -5,7 +5,7 @@ import groovy.json.JsonSlurper
 
 plugins {
     `java-library`
-    id("org.openapi.generator") version "7.26.0"
+    id("org.openapi.generator") version "7.27.0"
     id("com.vanniktech.maven.publish") version "0.37.0"
 }
 
