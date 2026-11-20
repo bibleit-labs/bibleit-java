@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Refresh the bundled contract for explicit MCP workspace-read responses while preserving ordinary OAuth request scopes and REST operations.
+- Add typed optional workspace permissions to the MCP probe and retain unknown fields and scope strings for wire compatibility.
+- Qualify metadata, owner-grant and probe decoding, legacy field absence and the packaged strict-schema boundary.
+
 ## 0.2.0 — 2026-11-19
 
 - Add Broadcast Studio REST operations and shared typed Setup, channel, event, publisher and receipt models.
