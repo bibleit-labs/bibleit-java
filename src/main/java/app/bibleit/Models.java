@@ -11995,6 +11995,181 @@ public final class Models {
         }
     }
     /**
+     * Java representation of live overlay state.
+     */
+    public static final class LiveOverlayState extends Model {
+        private String liveId;
+        private Long sequence;
+        private LiveOverlaySelection overlay;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public LiveOverlayState() {}
+        /**
+         * Returns live id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("live_id") public String getLiveId() { return liveId; }
+        /**
+         * Sets live id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("live_id") public void setLiveId(String value) { liveId = value; markField("live_id"); }
+        /**
+         * Returns sequence.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("sequence") public Long getSequence() { return sequence; }
+        /**
+         * Sets sequence.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("sequence") public void setSequence(Long value) { sequence = value; markField("sequence"); }
+        /**
+         * Returns overlay.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("overlay") public LiveOverlaySelection getOverlay() { return overlay; }
+        /**
+         * Sets overlay.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("overlay") public void setOverlay(LiveOverlaySelection value) { overlay = value; markField("overlay"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("live_id")) fields.put("live_id", liveId);
+            if (hasField("sequence")) fields.put("sequence", sequence);
+            if (hasField("overlay")) fields.put("overlay", overlay);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "live_id" -> { setLiveId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "sequence" -> { setSequence(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "overlay" -> { setOverlay(Json.MAPPER.convertValue(value, new TypeReference<LiveOverlaySelection>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "live_id" -> liveId = null;
+                case "sequence" -> sequence = null;
+                case "overlay" -> overlay = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of live overlay selection.
+     */
+    public static final class LiveOverlaySelection extends Model {
+        private String designId;
+        private Long designRevision;
+        private String name;
+        private String youtubeUrl;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public LiveOverlaySelection() {}
+        /**
+         * Returns design id.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("design_id") public String getDesignId() { return designId; }
+        /**
+         * Sets design id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("design_id") public void setDesignId(String value) { designId = value; markField("design_id"); }
+        /**
+         * Returns design revision.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("design_revision") public Long getDesignRevision() { return designRevision; }
+        /**
+         * Sets design revision.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("design_revision") public void setDesignRevision(Long value) { designRevision = value; markField("design_revision"); }
+        /**
+         * Returns name.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("name") public String getName() { return name; }
+        /**
+         * Sets name.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("name") public void setName(String value) { name = value; markField("name"); }
+        /**
+         * Verified current YouTube watch URL for a stream-link overlay, otherwise null.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("youtube_url") public String getYoutubeUrl() { return youtubeUrl; }
+        /**
+         * Sets youtube url.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("youtube_url") public void setYoutubeUrl(String value) { youtubeUrl = value; markField("youtube_url"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("design_id")) fields.put("design_id", designId);
+            if (hasField("design_revision")) fields.put("design_revision", designRevision);
+            if (hasField("name")) fields.put("name", name);
+            if (hasField("youtube_url")) fields.put("youtube_url", youtubeUrl);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "design_id" -> { setDesignId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "design_revision" -> { setDesignRevision(Json.MAPPER.convertValue(value, new TypeReference<Long>() {})); yield true; }
+                case "name" -> { setName(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                case "youtube_url" -> { setYoutubeUrl(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "design_id" -> designId = null;
+                case "design_revision" -> designRevision = null;
+                case "name" -> name = null;
+                case "youtube_url" -> youtubeUrl = null;
+                default -> { }
+            }
+        }
+    }
+    /**
+     * Java representation of live overlay input.
+     */
+    public static final class LiveOverlayInput extends Model {
+        private String designId;
+        /**
+         * Creates an object with all properties unset.
+         */
+        public LiveOverlayInput() {}
+        /**
+         * Select a current organization overlay design or use null to clear the selection.
+         * @return the typed Java value, or null when absent or explicitly null
+         */
+        @JsonProperty("design_id") public String getDesignId() { return designId; }
+        /**
+         * Sets design id.
+         * @param value the Java value; null writes explicit JSON null
+         */
+        @JsonProperty("design_id") public void setDesignId(String value) { designId = value; markField("design_id"); }
+        @Override protected void appendFields(Map<String, Object> fields) {
+            if (hasField("design_id")) fields.put("design_id", designId);
+        }
+        @Override protected boolean assignKnownField(String name, Object value) {
+            return switch (name) {
+                case "design_id" -> { setDesignId(Json.MAPPER.convertValue(value, new TypeReference<String>() {})); yield true; }
+                default -> false;
+            };
+        }
+        @Override protected void clearKnownField(String name) {
+            switch (name) {
+                case "design_id" -> designId = null;
+                default -> { }
+            }
+        }
+    }
+    /**
      * Approved browser-code authorization, including the secret access token. Applications own secure storage.
      */
     public static final class AuthorizationResult extends Model {

@@ -316,4 +316,29 @@ public final class SshClient {
      */
     public BroadcastSshClient broadcast() { return new BroadcastSshClient(this); }
 
+    /** Reads the Live overlay.
+     * @param id Live ID
+     * @return selection and sequence
+     * @throws IOException for transport/protocol errors
+     * @throws InterruptedException if interrupted
+     */
+    public LiveOverlaySshClient.Result getLiveOverlay(String id) throws IOException,InterruptedException { return new LiveOverlaySshClient(this).get(id); }
+    /** Selects an overlay conditionally without starting playback.
+     * @param id Live ID
+     * @param designId saved or built-in design
+     * @param sequence expected sequence
+     * @return selection and sequence
+     * @throws IOException for transport/protocol errors
+     * @throws InterruptedException if interrupted
+     */
+    public LiveOverlaySshClient.Result setLiveOverlay(String id,String designId,long sequence) throws IOException,InterruptedException { return new LiveOverlaySshClient(this).set(id,designId,sequence); }
+    /** Restores normal output without changing the queue.
+     * @param id Live ID
+     * @param sequence expected sequence
+     * @return selection and sequence
+     * @throws IOException for transport/protocol errors
+     * @throws InterruptedException if interrupted
+     */
+    public LiveOverlaySshClient.Result clearLiveOverlay(String id,long sequence) throws IOException,InterruptedException { return new LiveOverlaySshClient(this).clear(id,sequence); }
+
 }

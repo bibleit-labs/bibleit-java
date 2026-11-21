@@ -13,56 +13,74 @@ public final class Commands {
      * Supported Live state, control and subscription actions.
      */
     public enum LiveAction {
-        /** Info protocol action. */
+        /** Info protocol action.
+     */
         INFO,
-        /** Stats protocol action. */
+        /** Stats protocol action.
+     */
         STATS,
-        /** Start protocol action. */
+        /** Start protocol action.
+     */
         START,
-        /** Stop protocol action. */
+        /** Stop protocol action.
+     */
         STOP,
-        /** Pause protocol action. */
+        /** Pause protocol action.
+     */
         PAUSE,
-        /** Resume protocol action. */
+        /** Resume protocol action.
+     */
         RESUME,
-        /** Clear protocol action. */
+        /** Clear protocol action.
+     */
         CLEAR,
-        /** Delete protocol action. */
+        /** Delete protocol action.
+     */
         DELETE,
-        /** Subscribe protocol action. */
+        /** Subscribe protocol action.
+     */
         SUBSCRIBE
     }
     /**
      * Fields replaceable through the Live SET command.
      */
     public enum LiveField {
-        /** Name protocol action. */
+        /** Name protocol action.
+     */
         NAME,
-        /** Reference protocol action. */
+        /** Reference protocol action.
+     */
         REFERENCE,
-        /** Translations protocol action. */
+        /** Translations protocol action.
+     */
         TRANSLATIONS
     }
     /**
      * Connection authentication and audience-secret management actions.
      */
     public enum SecretAction {
-        /** Authenticate protocol action. */
+        /** Authenticate protocol action.
+     */
         AUTHENTICATE,
-        /** Create protocol action. */
+        /** Create protocol action.
+     */
         CREATE,
-        /** Rotate protocol action. */
+        /** Rotate protocol action.
+     */
         ROTATE,
-        /** Delete protocol action. */
+        /** Delete protocol action.
+     */
         DELETE
     }
     /**
      * Actions on a Live reference stack.
      */
     public enum StackAction {
-        /** Info protocol action. */
+        /** Info protocol action.
+     */
         INFO,
-        /** Clear protocol action. */
+        /** Clear protocol action.
+     */
         CLEAR
     }
     private static Command command(String prefix, String... args) {
@@ -283,6 +301,31 @@ public final class Commands {
     public static Command liveSecretCommand(String id, SecretAction action) {
         if (action == SecretAction.AUTHENTICATE) throw new IllegalArgumentException("Authentication requires a secret value");
         return liveSecretCommand(id, action, "");
+    }
+
+    /** Builds a finite overlay read without changing playback.
+     * @param id Live ID
+     * @return validated command
+     */
+    public static Command getLiveOverlayCommand(String id) { return command("LIVE",id,"OVERLAY","GET"); }
+    /** Selects a saved or built-in overlay conditionally.
+     * @param id Live ID
+     * @param designId design ID
+     * @param sequence expected Live sequence
+     * @return validated command
+     */
+    public static Command setLiveOverlayCommand(String id,String designId,long sequence) {
+        if (designId==null || designId.isEmpty() || designId.getBytes(java.nio.charset.StandardCharsets.UTF_8).length>64 || sequence<0) throw new IllegalArgumentException("Invalid Live overlay selection");
+        return command("LIVE",id,"OVERLAY","SET",designId,Long.toString(sequence));
+    }
+    /** Restores normal output without clearing the queue.
+     * @param id Live ID
+     * @param sequence expected Live sequence
+     * @return validated command
+     */
+    public static Command clearLiveOverlayCommand(String id,long sequence) {
+        if(sequence<0) throw new IllegalArgumentException("Invalid Live sequence");
+        return command("LIVE",id,"OVERLAY","CLEAR",Long.toString(sequence));
     }
 
 }

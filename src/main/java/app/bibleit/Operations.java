@@ -63,6 +63,8 @@ final class Operations {
 
         operations.put("getLiveDisplay", new Operation("GET", "/lives/{live_id}/display", "Read the Live display"));
 
+        operations.put("getLiveOverlay", new Operation("GET", "/lives/{live_id}/overlay", "Read the selected Live overlay"));
+
         operations.put("getLivePlayback", new Operation("GET", "/lives/{live_id}/playback", "Read Live playback state"));
 
         operations.put("getLiveSettings", new Operation("GET", "/lives/{live_id}/settings", "Read retained reference and selected translations"));
@@ -78,6 +80,8 @@ final class Operations {
         operations.put("replaceLiveDisplay", new Operation("PUT", "/lives/{live_id}/display", "Replace or clear the Live display"));
 
         operations.put("rotateLiveAudienceSecret", new Operation("PUT", "/lives/{live_id}/audience-secret", "Rotate a one-time audience secret"));
+
+        operations.put("setLiveOverlay", new Operation("PUT", "/lives/{live_id}/overlay", "Select or clear the Live overlay"));
 
         operations.put("updateLivePlayback", new Operation("PATCH", "/lives/{live_id}/playback", "Update Live playback state"));
 

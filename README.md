@@ -21,8 +21,8 @@ Java 27 or newer is required. The package is `app.bibleit`.
 
 ## REST resources
 
-The generated surface covers **110 REST operations**, retains seven legacy
-protocol wrappers and represents all **139 schemas**. New MCP/browser protocol
+The generated surface covers **112 REST operations**, retains seven legacy
+protocol wrappers and represents all **142 schemas**. New MCP/browser protocol
 operations use separate protocol clients. All schema models are
 available. Credentials are explicit: personal `bt_`, delegated `oa_`, organization
 `svc_`, or an empty string for public discovery. The server enforces permissions.
@@ -171,3 +171,17 @@ docker build -t bibleit-java:verify .
 See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md),
 [contract provenance](contract/README.md) and [publishing setup](docs/releasing.md).
 MIT licensed; retain [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES).
+
+## Live overlays (candidate)
+
+`BibleitClient.getLiveOverlay` and `setLiveOverlay` expose the additive REST
+contract. Pass the read's ETag in `Options.builder().ifMatch(etag)` for writes;
+JSON `design_id: null` restores normal output. `SshClient.getLiveOverlay`,
+`setLiveOverlay` and `clearLiveOverlay` provide typed conditional operations on
+the existing executor. The expected sequence is a non-negative Java long.
+No helper retries a stale write, starts playback, or clears the retained queue.
+These helpers need the matching server candidate and are not a new SDK release.
+
+REST overlay writes require an organization-bound credential with `live.update`;
+personal REST Lives cannot select the organization design library. SSH continues
+to enforce the actor’s current organization authority.

@@ -909,6 +909,28 @@ public final class BibleitClient {
     }
 
     /**
+     * Read the selected Live overlay.
+     * @param liveId the live_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getLiveOverlay(String liveId, Options options) throws IOException, InterruptedException {
+        return call("getLiveOverlay", Map.of("live_id", liveId), options);
+    }
+    /**
+     * Read the selected Live overlay. Uses default request options.
+     * @param liveId the live_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response getLiveOverlay(String liveId) throws IOException, InterruptedException {
+        return getLiveOverlay(liveId, Options.defaults());
+    }
+
+    /**
      * Read Live playback state.
      * @param liveId the live_id path identifier
      * @param options immutable HTTP request options
@@ -1082,6 +1104,28 @@ public final class BibleitClient {
      */
     public Response rotateLiveAudienceSecret(String liveId) throws IOException, InterruptedException {
         return rotateLiveAudienceSecret(liveId, Options.defaults());
+    }
+
+    /**
+     * Select or clear the Live overlay.
+     * @param liveId the live_id path identifier
+     * @param options immutable HTTP request options
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response setLiveOverlay(String liveId, Options options) throws IOException, InterruptedException {
+        return call("setLiveOverlay", Map.of("live_id", liveId), options);
+    }
+    /**
+     * Select or clear the Live overlay. Uses default request options.
+     * @param liveId the live_id path identifier
+     * @return the streaming response; the caller must close it
+     * @throws IOException if transport or HTTP processing fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public Response setLiveOverlay(String liveId) throws IOException, InterruptedException {
+        return setLiveOverlay(liveId, Options.defaults());
     }
 
     /**

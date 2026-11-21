@@ -51,7 +51,7 @@ class ClientTest {
             try (var res = (Response) method.invoke(client, values.toArray())) { assertEquals(200, res.statusCode()); }
             assertEquals(verb.getKey().toUpperCase(Locale.ROOT), BibleitClient.operations().get(name).method());
         }
-        assertEquals(117, calls.get()); assertEquals(117, BibleitClient.operationNames().size());
+        assertEquals(119, calls.get()); assertEquals(119, BibleitClient.operationNames().size());
     }
     @Test void protocolOnlyAdditionsDoNotBecomeOrdinaryRestWrappers() {
         for (var name : List.of("probeMcpOAuth", "authorizeMcpOAuth", "decideMcpOAuth", "exchangeMcpOAuthToken", "getMcpOAuthMetadata", "getApplicationsSettingsPage", "disconnectSettingsApplication")) {
